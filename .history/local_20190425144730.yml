@@ -1,0 +1,45 @@
+version: "3.7"
+
+services:
+
+  mobile:
+    build:
+      context: mobile
+      dockerfile: mobile/Dockerfile
+    ports:
+      - 3030:3030
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3030
+    volumes:
+      - .:/app
+
+  admin:
+    build:
+      context: admin
+      dockerfile: admin/Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3000
+    volumes:
+      - .:/app
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin

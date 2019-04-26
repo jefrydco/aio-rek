@@ -1,0 +1,50 @@
+# Stage-1 dependencies
+FROM node:latest as dep
+
+RUN mkdir /sample
+WORKDIR /sample
+
+ADD package.json .
+RUN ["npm", "i", "--only=production"]
+
+FROM node:lts-alpine
+
+# Create app directory
+RUN mkdir -p /app
+WORKDIR /app
+
+# Install packages for node-canvas
+RUN apk --no-cache --virtual .build-deps add \
+        python \
+        make \
+        g++ \
+    && apk --no-cache --virtual .canvas-build-deps add \
+        build-base \
+        cairo-dev \
+        jpeg-dev \
+        pango-dev \
+        giflib-dev \
+        pixman-dev \
+        pangomm-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+    && apk --no-cache add \
+        pixman \
+        cairo \
+        pango \
+        giflib \
+    && apk del .build-deps \
+    && apk del .canvas-build-deps
+
+COPY package.json /app/
+RUN yarn install --build-from-source
+
+# Bundle app source
+COPY . /app
+# RUN yarn build
+
+# Clear the cache
+RUN yarn cache clean
+
+EXPOSE 3000
+CMD [ "yarn", "dev" ]

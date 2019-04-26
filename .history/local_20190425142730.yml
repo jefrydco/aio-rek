@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+
+  app:
+    build:
+      context: ./mobile
+      dockerfile: mobile/docker/local/Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3000
+    volumes:
+      - .:/app
+
+
+  admin:
+    build:
+      context: ./mobile
+      dockerfile: mobile/docker/local/Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3000
+    volumes:
+      - .:/app
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ayorek
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: admin
