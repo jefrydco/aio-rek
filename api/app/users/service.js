@@ -51,21 +51,8 @@ module.exports = app => ({
     }
   },
 
-  // Returns profile JSON for `user`. If `authenticatedUser` is passed, will
-  // indicate whether or not they are following `user`.
-  async getProfileJSON(user, authenticatedUser, { trx } = {}) {
-    let isAuthenticatedUserFollowing = false
-
-    if (authenticatedUser) {
-      await authenticatedUser.load('following', { transacting: trx })
-      isAuthenticatedUserFollowing = authenticatedUser
-        .related('following')
-        .some(({ id }) => id === user.id)
-    }
-
+  getProfileJSON(user, { trx } = {}) {
     return {
-      bio: user.get('bio'),
-      following: isAuthenticatedUserFollowing,
       image:
         user.get('image') ||
         'https://static.productionready.io/images/smiley-cyrus.jpg',
