@@ -61,6 +61,7 @@ module.exports = bookshelf =>
       }
     },
     async isValidPassword(password) {
-      await bcrypt.compare(password, this.get('hashed_password'))
+      const result = await bcrypt.compare(password, this.get('hashed_password'))
+      return result
     }
   })

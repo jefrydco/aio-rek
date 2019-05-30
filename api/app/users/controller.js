@@ -15,7 +15,12 @@ exports.create = errorCatcher(async (req, res) => {
   } = res
 
   const user = await users.create(
-    { email, image: '', username, password },
+    {
+      email,
+      image: '',
+      username,
+      password
+    },
     { trx }
   )
 
@@ -24,7 +29,6 @@ exports.create = errorCatcher(async (req, res) => {
 
 exports.login = (req, res) => {
   const { user } = req
-
   const {
     app: {
       locals: {
@@ -36,7 +40,7 @@ exports.login = (req, res) => {
   res.json({ user: users.getAuthJSON(user) })
 }
 
-exports.get = errorCatcher(async (req, res) => {
+exports.get = errorCatcher((req, res) => {
   const { user } = req
   const {
     app: {
@@ -46,7 +50,7 @@ exports.get = errorCatcher(async (req, res) => {
     }
   } = res
 
-  const token = await ExtractJwt.fromAuthHeaderWithScheme('Token')(req)
+  const token = ExtractJwt.fromAuthHeaderWithScheme('Token')(req)
 
   res.json({
     user: users.getAuthJSON(user, token)
