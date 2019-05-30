@@ -1,6 +1,6 @@
 'use strict'
 
-const bcrypt = require('bcrypt')
+const argon2 = require('argon2')
 const Checkit = require('checkit')
 const { isString } = require('lodash/fp')
 
@@ -55,13 +55,15 @@ module.exports = bookshelf =>
       )
 
       if (validatePassword) {
-        const hashedPassword = await bcrypt.hash(this._password, 12)
+        const hashedPassword = await argon2.hash(this._password, {
+          type: argon2.argon2id
+        })
         this.set('hashed_password', hashedPassword)
         delete this._password
       }
     },
     async isValidPassword(password) {
-      const result = await bcrypt.compare(password, this.get('hashed_password'))
+      const result = await argon2.verify(this.get('hashed_password'), password)
       return result
     }
   })
