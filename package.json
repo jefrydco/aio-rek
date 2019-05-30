@@ -42,7 +42,7 @@
   "dependencies": {
     "@hapi/boom": "^7.4.2",
     "@mdi/font": "^3.3.92",
-    "@nuxtjs/axios": "^5.3.6",
+    "@nuxt/http": "^0.3.1",
     "@nuxtjs/pwa": "^3.0.0-beta.16",
     "argon2": "^0.23.0",
     "async-error-catcher": "^1.2.0",

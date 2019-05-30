@@ -18,8 +18,8 @@ export default {
 
   // https://nuxtjs.org/api/configuration-modules
   modules: [
-    // https://axios.nuxtjs.org/
-    '@nuxtjs/axios',
+    // https://http.nuxtjs.org/
+    '@nuxt/http',
 
     // https://pwa.nuxtjs.org/
     '@nuxtjs/pwa',
