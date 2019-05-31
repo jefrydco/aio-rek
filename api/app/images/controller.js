@@ -12,7 +12,6 @@ exports.create = errorCatcher(async (req, res) => {
     },
     locals: { trx }
   } = res
-  console.log(payload)
   const imagesData = await Promise.all(
     payload.map(image => images.create({ ...image, owner: user.id }, trx))
   )
@@ -21,4 +20,19 @@ exports.create = errorCatcher(async (req, res) => {
       imagesData.map(image => images.toJSON(image, user, { trx }))
     )
   })
+})
+
+exports.del = errorCatcher(async (req, res) => {
+  const {
+    app: {
+      locals: {
+        services: { images }
+      }
+    },
+    locals: { image, trx } = {}
+  } = res
+
+  await images.del(image, { trx })
+
+  res.sendStatus(200)
 })

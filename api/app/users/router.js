@@ -3,7 +3,7 @@
 const bodyParser = require('body-parser')
 const router = require('express').Router()
 const { createTransaction, jwtAuth, localAuth } = require('../middleware')
-const { create, login, get, update } = require('./controller')
+const { create, login, get, images, update } = require('./controller')
 
 router.post('/users', bodyParser.json(), createTransaction, create)
 router.post(
@@ -14,6 +14,7 @@ router.post(
   login
 )
 router.get('/user', jwtAuth.required, get)
+router.get('/user/images', jwtAuth.required, images)
 router.put(
   '/user',
   bodyParser.json(),

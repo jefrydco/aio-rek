@@ -9,7 +9,7 @@ module.exports = () => {
   passport.use(
     new JwtStrategy(
       {
-        secretOrKey: config.get('secret'),
+        secretOrKey: config.get('publicKey'),
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Token')
       },
       ({ id }, done) => {
