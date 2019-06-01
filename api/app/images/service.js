@@ -32,7 +32,7 @@ module.exports = app => ({
     })
     return updatedImage
   },
-  toJSON(image, user, { trx } = {}) {
+  toJSON(image, { trx } = {}) {
     return {
       id: image.id,
       path: image.get('path'),
