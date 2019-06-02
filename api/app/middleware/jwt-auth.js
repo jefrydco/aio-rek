@@ -33,18 +33,20 @@ const callback = (req, res, next) => async (
     return next(Boom.unauthorized())
   }
 
-  req.user = user
+  req.user = {
+    ...user,
+    role: user.get('role')
+  }
 
   next()
 }
 
 exports.required = errorCatcher(async (req, res, next) => {
-  // prettier-ignore
   await passport.authenticate(
     'jwt',
-    {session: false},
-    callback(req, res, next),
-  )(req, res, next);
+    { session: false },
+    callback(req, res, next)
+  )(req, res, next)
 })
 
 exports.optional = errorCatcher(async (req, res, next) => {

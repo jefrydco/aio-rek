@@ -4,7 +4,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt
 const errorCatcher = require('async-error-catcher').default
 
 exports.create = errorCatcher(async (req, res) => {
-  const { body: { user: { email, password, username } = {} } = {} } = req
+  const { body: { user: { email, password, username, role } = {} } = {} } = req
   const {
     app: {
       locals: {
@@ -19,6 +19,7 @@ exports.create = errorCatcher(async (req, res) => {
       email,
       image: '',
       username,
+      role,
       password
     },
     { trx }

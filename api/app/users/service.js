@@ -35,7 +35,8 @@ module.exports = app => ({
     return jwt.sign(
       {
         id: user.id,
-        username: user.get('username')
+        username: user.get('username'),
+        role: [user.get('role')]
       },
       config.get('privateKey'),
       { algorithm: 'RS256', expiresIn: '1h' }

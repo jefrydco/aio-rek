@@ -15,6 +15,7 @@ exports.up = function(knex, Promise) {
       .string('email')
       .notNullable()
       .unique()
+    table.enum('role', ['admin', 'student']).defaultTo('student')
     table.string('hashed_password').notNullable()
     table.string('image').defaultTo('')
   })
