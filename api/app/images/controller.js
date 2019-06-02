@@ -1,24 +1,45 @@
 'use strict'
 
+const fs = require('fs')
 const errorCatcher = require('async-error-catcher').default
 
 exports.create = errorCatcher(async (req, res) => {
-  const { body: { images: payload } = {}, user } = req
+  const { user } = req
   const {
     app: {
       locals: {
         services: { images }
       }
     },
-    locals: { trx }
+    locals: { descriptors, trx }
   } = res
-  console.log(payload)
   const imagesData = await Promise.all(
-    payload.map(image => images.create({ ...image, owner: user.id }, trx))
+    descriptors.map(descriptor =>
+      images.create({ ...descriptor, owner: user.id }, trx)
+    )
   )
   res.status(201).json({
     images: await Promise.all(
-      imagesData.map(image => images.toJSON(image, user, { trx }))
+      imagesData.map(image => images.toJSON(image, { trx }))
     )
   })
+})
+
+exports.del = errorCatcher(async (req, res) => {
+  const {
+    app: {
+      locals: {
+        services: { images }
+      }
+    },
+    locals: { image, trx } = {}
+  } = res
+
+  const path = image.get('path')
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path)
+  }
+  await images.del(image, { trx })
+
+  res.sendStatus(200)
 })

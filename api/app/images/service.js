@@ -16,7 +16,7 @@ module.exports = app => ({
     })
     return image
   },
-  async delay(image, { trx } = {}) {
+  async del(image, { trx } = {}) {
     const deletedImage = await image.destroy({
       require: true,
       transacting: trx
@@ -32,15 +32,37 @@ module.exports = app => ({
     })
     return updatedImage
   },
-  async toJSON(image, user, { trx } = {}) {
-    await image.load(['owner'], { transacting: trx })
+  toJSON(image, { trx } = {}) {
     return {
+      id: image.id,
       path: image.get('path'),
-      descriptor: image.get('descriptor'),
-      owner: await app.locals.services.users.getProfileJSON(
-        image.related('owner'),
-        { trx }
+      descriptor: image.get('descriptor')
+    }
+  },
+  async getImagesJSON({ limit = 20, offset = 0 } = {}, user, { trx } = {}) {
+    const { models: images, pagination } = await app.locals.models.Image.forge()
+      .query('where', 'owner', user.id)
+      .orderBy('created_at', 'DESC')
+      .fetchPage({
+        limit,
+        offset,
+        transacting: trx
+      })
+
+    const imagesJSON = {
+      count: pagination.rowCount,
+      images: await Promise.all(
+        images.map(async image => {
+          const imageJSON = await app.locals.services.images.toJSON(
+            image,
+            user,
+            { trx }
+          )
+          return imageJSON
+        })
       )
     }
+
+    return imagesJSON
   }
 })

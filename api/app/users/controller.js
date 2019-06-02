@@ -57,6 +57,20 @@ exports.get = errorCatcher((req, res) => {
   })
 })
 
+exports.images = errorCatcher(async (req, res) => {
+  const { query: { limit, offset } = {}, user } = req
+  const {
+    app: {
+      locals: {
+        services: { images }
+      }
+    }
+  } = res
+
+  const imagesJSON = await images.getImagesJSON({ limit, offset }, user)
+  return res.json(imagesJSON)
+})
+
 exports.update = errorCatcher(async (req, res) => {
   const { body: { user: payload } = {}, user } = req
   const {

@@ -5,6 +5,15 @@ const path = require('path')
 const convict = require('convict')
 require('dotenv').config()
 
+const privateKey = fs.readFileSync(
+  path.resolve('api/keys', 'private.key'),
+  'utf-8'
+)
+const publicKey = fs.readFileSync(
+  path.resolve('api/keys', 'public.key'),
+  'utf-8'
+)
+
 const config = convict({
   env: {
     doc: 'The application environment.',
@@ -79,18 +88,25 @@ const config = convict({
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: path.resolve(__dirname, '../db/migrations')
+      directory: path.resolve('api/db/migrations')
     },
     seeds: {
-      directory: path.resolve(__dirname, '../db/seeds')
+      directory: path.resolve('api/db/seeds')
     }
   },
-  secret: {
-    doc: 'JWT secret',
+  privateKey: {
+    doc: 'JWT private',
     format: String,
-    default: null,
+    default: privateKey,
     sensitive: true,
-    env: 'SECRET'
+    env: 'PRIVATE_KEY'
+  },
+  publicKey: {
+    doc: 'JWT public',
+    format: String,
+    default: publicKey,
+    sensitive: true,
+    env: 'PUBLIC_KEY'
   },
   ci: {
     doc: `Flat indicating whether we're running on a CI server`,

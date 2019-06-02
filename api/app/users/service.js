@@ -37,8 +37,8 @@ module.exports = app => ({
         id: user.id,
         username: user.get('username')
       },
-      config.get('secret'),
-      { expiresIn: '60 days' }
+      config.get('privateKey'),
+      { algorithm: 'RS256', expiresIn: '1h' }
     )
   },
 

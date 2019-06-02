@@ -48,6 +48,8 @@ export default {
 
   serverMiddleware: ['~/api/index'],
 
+  watch: ['~/api/**/*.js'],
+
   // https://nuxtjs.org/api/configuration-build
   build: {
     extractCSS: !isDev,
