@@ -29,9 +29,9 @@
     "url": "https://jefrydco.id"
   },
   "scripts": {
-    "build": "nuxt build",
+    "api": "cross-env NODE_ENV=development nodemon api/start.js",
     "coverage": "codecov",
-    "dev": "nuxt",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "generate": "nuxt generate",
     "start": "nuxt start",
     "test": "npm run test:unit",
@@ -41,7 +41,6 @@
   },
   "dependencies": {
     "@hapi/boom": "^7.4.2",
-    "@mdi/font": "^3.3.92",
     "@nuxt/http": "^0.3.1",
     "@nuxtjs/pwa": "^3.0.0-beta.16",
     "argon2": "^0.23.0",
@@ -53,6 +52,7 @@
     "convict": "^5.0.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
+    "cross-env": "^5.2.0",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-interceptor": "^1.2.0",
@@ -111,6 +111,7 @@
     "jest-serializer-vue": "^2.0.2",
     "jest-transform-stub": "^2.0.0",
     "lint-staged": "^8.1.0",
+    "nodemon": "^1.19.1",
     "prettier": "^1.15.3",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",

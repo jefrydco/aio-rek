@@ -8,8 +8,25 @@ const {
   localAuth,
   handleRole
 } = require('../middleware')
-const { create, login, get, images, update } = require('./controller')
+const { handleId } = require('./middleware')
+const {
+  create,
+  login,
+  getAuth,
+  getProfile,
+  getAll,
+  getImages,
+  update,
+  del
+} = require('./controller')
 
+router.post(
+  '/users/login',
+  bodyParser.json(),
+  createTransaction,
+  localAuth,
+  login
+)
 router.post(
   '/users',
   bodyParser.json(),
@@ -18,21 +35,49 @@ router.post(
   handleRole('admin'),
   create
 )
-router.post(
-  '/users/login',
-  bodyParser.json(),
+router.delete(
+  '/users/:id',
   createTransaction,
-  localAuth,
-  login
+  jwtAuth.required,
+  handleRole('admin'),
+  handleId,
+  del
 )
-router.get('/user', jwtAuth.required, get)
-router.get('/user/images', jwtAuth.required, images)
+router.get(
+  '/users',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  getAll
+)
 router.put(
-  '/user',
+  '/users',
   bodyParser.json(),
   createTransaction,
   jwtAuth.required,
   update
+)
+
+router.get(
+  '/user/auth',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('student'),
+  getAuth
+)
+router.get(
+  '/user/profile',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('student'),
+  getProfile
+)
+router.get(
+  '/user/images',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('student'),
+  getImages
 )
 
 module.exports = router

@@ -4,7 +4,6 @@ const fs = require('fs')
 const errorCatcher = require('async-error-catcher').default
 
 exports.create = errorCatcher(async (req, res) => {
-  const { user } = req
   const {
     app: {
       locals: {
@@ -14,9 +13,7 @@ exports.create = errorCatcher(async (req, res) => {
     locals: { descriptors, trx }
   } = res
   const imagesData = await Promise.all(
-    descriptors.map(descriptor =>
-      images.create({ ...descriptor, owner: user.id }, trx)
-    )
+    descriptors.map(descriptor => images.create({ ...descriptor }, trx))
   )
   res.status(201).json({
     images: await Promise.all(

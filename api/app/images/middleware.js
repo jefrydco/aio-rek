@@ -64,7 +64,7 @@ exports.handleImage = errorCatcher((req, res, next) => {
 })
 
 exports.handleDescriptor = errorCatcher((req, res, next) => {
-  const { body: { descriptors: payload } = {}, files } = req
+  const { body: { descriptors: payload, owner } = {}, files } = req
 
   if (files.length === 0) {
     throw new Error('Images are required')
@@ -95,7 +95,8 @@ exports.handleDescriptor = errorCatcher((req, res, next) => {
     const { path } = files[i]
     return {
       path,
-      descriptor
+      descriptor,
+      owner
     }
   })
   res.locals.descriptors = descriptors

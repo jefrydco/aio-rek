@@ -29,16 +29,14 @@ const callback = (req, res, next) => async (
   let user
   try {
     user = await users.fetch({ id: userId }, { transacting: trx })
+
+    req.user = user
+    req.user.role = user.get('role')
+
+    next()
   } catch (error) {
     return next(Boom.unauthorized())
   }
-
-  req.user = {
-    ...user,
-    role: user.get('role')
-  }
-
-  next()
 }
 
 exports.required = errorCatcher(async (req, res, next) => {

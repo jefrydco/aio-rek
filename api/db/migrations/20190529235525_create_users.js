@@ -7,6 +7,7 @@ exports.up = function(knex, Promise) {
       .primary()
       .defaultTo(knex.raw('uuid_generate_v4()'))
     table.timestamps()
+    table.string('name').notNullable()
     table
       .string('username')
       .notNullable()

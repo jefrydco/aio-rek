@@ -1,8 +1,9 @@
-import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
+/* eslint-disable nuxt/no-cjs-in-config */
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 
 const isDev = process.env.NODE_ENV !== 'production'
 
-export default {
+module.exports = {
   // https://nuxtjs.org/api/configuration-modern
   modern: !isDev,
 
@@ -44,11 +45,9 @@ export default {
   plugins: ['~plugins/vuetify', '~plugins/vee-validate'],
 
   // https://nuxtjs.org/api/configuration-css
-  css: ['@mdi/font/css/materialdesignicons.css', '~assets/styles/app.styl'],
+  css: ['~assets/styles/app.styl'],
 
   serverMiddleware: ['~/api/index'],
-
-  watch: ['~/api/**/*.js'],
 
   // https://nuxtjs.org/api/configuration-build
   build: {

@@ -28,7 +28,21 @@ exports.create = errorCatcher(async (req, res) => {
   res.status(201).json({ user: users.getAuthJSON(user) })
 })
 
-exports.login = (req, res) => {
+exports.del = errorCatcher(async (req, res) => {
+  const {
+    app: {
+      locals: {
+        services: { users }
+      }
+    },
+    locals: { user, trx } = {}
+  } = res
+
+  await users.del(user, { trx })
+  res.sendStatus(200)
+})
+
+exports.login = errorCatcher((req, res) => {
   const { user } = req
   const {
     app: {
@@ -39,10 +53,10 @@ exports.login = (req, res) => {
   } = res
 
   res.json({ user: users.getAuthJSON(user) })
-}
+})
 
-exports.get = errorCatcher((req, res) => {
-  const { user } = req
+exports.getAll = errorCatcher(async (req, res) => {
+  const { query: { limit, offset } = {} } = req
   const {
     app: {
       locals: {
@@ -50,26 +64,8 @@ exports.get = errorCatcher((req, res) => {
       }
     }
   } = res
-
-  const token = ExtractJwt.fromAuthHeaderWithScheme('Token')(req)
-
-  res.json({
-    user: users.getAuthJSON(user, token)
-  })
-})
-
-exports.images = errorCatcher(async (req, res) => {
-  const { query: { limit, offset } = {}, user } = req
-  const {
-    app: {
-      locals: {
-        services: { images }
-      }
-    }
-  } = res
-
-  const imagesJSON = await images.getImagesJSON({ limit, offset }, user)
-  return res.json(imagesJSON)
+  const usersJSON = { users: await users.getUsersJSON({ limit, offset }) }
+  res.json(usersJSON)
 })
 
 exports.update = errorCatcher(async (req, res) => {
@@ -89,4 +85,50 @@ exports.update = errorCatcher(async (req, res) => {
   res.json({
     user: users.getAuthJSON(updatedUser, token)
   })
+})
+
+exports.getAuth = errorCatcher((req, res) => {
+  const { user } = req
+  const {
+    app: {
+      locals: {
+        services: { users }
+      }
+    }
+  } = res
+
+  const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req)
+
+  res.json({
+    user: users.getAuthJSON(user, token)
+  })
+})
+
+exports.getProfile = errorCatcher((req, res) => {
+  const { user } = req
+  const {
+    app: {
+      locals: {
+        services: { users }
+      }
+    }
+  } = res
+
+  res.json({
+    user: users.getProfileJSON(user)
+  })
+})
+
+exports.getImages = errorCatcher(async (req, res) => {
+  const { query: { limit, offset } = {}, user } = req
+  const {
+    app: {
+      locals: {
+        services: { images }
+      }
+    }
+  } = res
+
+  const imagesJSON = await images.getImagesJSON({ limit, offset }, user)
+  return res.json(imagesJSON)
 })

@@ -12,7 +12,6 @@ module.exports = app => ({
     })
     return user
   },
-
   async fetch(attributes, { trx } = {}) {
     const user = await app.locals.models.User.forge(attributes).fetch({
       require: true,
@@ -20,7 +19,13 @@ module.exports = app => ({
     })
     return user
   },
-
+  async del(user, { trx } = {}) {
+    const deletedUser = await user.destroy({
+      require: true,
+      transacting: trx
+    })
+    return deletedUser
+  },
   async update(user, attributes, { trx } = {}) {
     const updatedUser = await user.save(attributes, {
       method: 'update',
@@ -30,7 +35,6 @@ module.exports = app => ({
     })
     return updatedUser
   },
-
   generateJWT(user) {
     return jwt.sign(
       {
@@ -42,7 +46,6 @@ module.exports = app => ({
       { algorithm: 'RS256', expiresIn: '1h' }
     )
   },
-
   getAuthJSON(user, token) {
     return {
       email: user.get('email'),
@@ -51,13 +54,33 @@ module.exports = app => ({
       username: user.get('username')
     }
   },
-
   getProfileJSON(user, { trx } = {}) {
     return {
-      image:
-        user.get('image') ||
-        'https://static.productionready.io/images/smiley-cyrus.jpg',
-      username: user.get('username')
+      name: user.get('name'),
+      username: user.get('username'),
+      image: user.get('image')
     }
+  },
+  async getUsersJSON({ limit = 20, offset = 0 } = {}, { trx } = {}) {
+    const { models: users, pagination } = await app.locals.models.User.forge()
+      .query('where', 'role', 'student')
+      .fetchPage({ limit, offset, transacting: trx })
+
+    const usersJSON = {
+      ...pagination,
+      users: await Promise.all(
+        users.map(async user => {
+          const userJSON = await app.locals.services.users.getProfileJSON(
+            user,
+            { trx }
+          )
+          return {
+            id: user.id,
+            ...userJSON
+          }
+        })
+      )
+    }
+    return usersJSON
   }
 })

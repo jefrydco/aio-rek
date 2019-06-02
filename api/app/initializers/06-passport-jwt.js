@@ -10,7 +10,7 @@ module.exports = () => {
     new JwtStrategy(
       {
         secretOrKey: config.get('publicKey'),
-        jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Token')
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
       },
       ({ id }, done) => {
         // The real user is fetched within the callback, but we need to pass
