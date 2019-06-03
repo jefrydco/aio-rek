@@ -14,7 +14,7 @@ services:
     networks: 
       - ayo-rek
     volumes:
-      - ./docker/data:/var/lib/postgresql/data
+      - ./docker/postgres:/var/lib/postgresql/data
 
   pgadmin4:
     image: dpage/pgadmin4
@@ -26,6 +26,17 @@ services:
       - 8080:80
     networks: 
       - ayo-rek
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
+    networks: 
+      - ayo-rek
+    volumes:
+      - ./docker/redis:/data
+    entrypoint: redis-server --appendonly yes --requirepass admin123
 
 networks:
   ayo-rek:

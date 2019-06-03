@@ -13,7 +13,7 @@ export const mutations = {}
 export const actions = {
   async nuxtServerInit({ commit }, { $http, req }) {
     if (req.headers.cookie) {
-      const { token } = cookieparser.parse(req.headers.cookie)
+      const { t: token } = cookieparser.parse(req.headers.cookie)
       if (token) {
         $http.setToken(token, 'Bearer')
         try {

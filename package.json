@@ -77,6 +77,8 @@
     "pg": "^7.11.0",
     "pino": "^5.12.6",
     "pino-pretty": "^3.1.0",
+    "rate-limiter-flexible": "^1.0.2",
+    "redis": "^2.8.0",
     "require-directory": "^2.1.1",
     "rimraf": "^2.6.3",
     "sharp": "^0.22.1",

@@ -112,7 +112,7 @@ export default {
               password: this.credential.password
             }
           })
-          await Cookie.set('token', token, { expires: 1 / 12 })
+          await Cookie.set('t', token, { expires: 1 / 12 })
           await window.location.reload(true)
         }
       } catch ({ response }) {
@@ -120,7 +120,7 @@ export default {
           this.isNotify = true
           this.$store.commit(`error/${errorTypes.SET_ERROR}`, {
             message:
-              'Please check your email address and password and try again'
+              'Please check your email address and password then try again'
           })
         }
       } finally {

@@ -1,5 +1,6 @@
 static/uploads
-docker/data
+docker/postgres
+docker/redis
 # VSCode History Plugin
 .history
 

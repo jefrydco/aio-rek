@@ -94,6 +94,33 @@ const config = convict({
       directory: path.resolve('api/db/seeds')
     }
   },
+  redis: {
+    host: {
+      doc: 'Redis host',
+      format: '*',
+      default: '127.0.0.1',
+      env: 'REDIS_HOST'
+    },
+    port: {
+      doc: 'Redis port',
+      format: 'port',
+      default: 6379,
+      env: 'REDIS_PORT'
+    },
+    password: {
+      doc: 'Redis password',
+      format: String,
+      default: null,
+      sensitive: true,
+      env: 'REDIS_PASSWORD'
+    },
+    enable_offline_queue: {
+      doc: 'Redis offline queue',
+      format: Boolean,
+      default: false,
+      env: 'REDIS_OFFLINE_QUEUE'
+    }
+  },
   privateKey: {
     doc: 'JWT private',
     format: String,
