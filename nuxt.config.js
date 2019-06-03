@@ -35,6 +35,15 @@ module.exports = {
     }
   },
 
+  http: {
+    proxy: true,
+    prefix: '/api/'
+  },
+
+  proxy: {
+    '/api': 'http://localhost:3001'
+  },
+
   loading: {
     color: '#FF5722',
     height: '3px',
@@ -47,7 +56,7 @@ module.exports = {
   // https://nuxtjs.org/api/configuration-css
   css: ['~assets/styles/app.styl'],
 
-  serverMiddleware: ['~/api/index'],
+  // serverMiddleware: ['~/api/index'],
 
   // https://nuxtjs.org/api/configuration-build
   build: {

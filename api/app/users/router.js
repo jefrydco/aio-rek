@@ -55,6 +55,7 @@ router.put(
   bodyParser.json(),
   createTransaction,
   jwtAuth.required,
+  handleRole([['admin'], ['student']]),
   update
 )
 
@@ -62,21 +63,21 @@ router.get(
   '/user/auth',
   createTransaction,
   jwtAuth.required,
-  handleRole('student'),
+  handleRole([['admin'], ['student']]),
   getAuth
 )
 router.get(
   '/user/profile',
   createTransaction,
   jwtAuth.required,
-  handleRole('student'),
+  handleRole([['admin'], ['student']]),
   getProfile
 )
 router.get(
   '/user/images',
   createTransaction,
   jwtAuth.required,
-  handleRole('student'),
+  handleRole([['admin'], ['student']]),
   getImages
 )
 

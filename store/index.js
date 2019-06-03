@@ -1,25 +1,32 @@
-export const types = {
-  SET_EXAMPLE_STATE: 'SET_EXAMPLE_STATE'
-}
+import { types as errorTypes } from './error'
+import { types as userTypes } from './user'
+const cookieparser = process.server ? require('cookieparser') : null
 
-export const state = () => ({
-  exampleState: null
-})
+export const types = {}
 
-export const getters = {
-  getExampleState(state) {
-    return state.exampleState
-  }
-}
+export const state = () => ({})
 
-export const mutations = {
-  [types.SET_EXAMPLE_STATE](state, payload) {
-    state.exampleState = payload
-  }
-}
+export const getters = {}
+
+export const mutations = {}
 
 export const actions = {
-  [types.SET_EXAMPLE_STATE]({ commit }, payload) {
-    commit(types.SET_EXAMPLE_STATE, payload)
+  async nuxtServerInit({ commit }, { $http, req }) {
+    if (req.headers.cookie) {
+      const { token } = cookieparser.parse(req.headers.cookie)
+      if (token) {
+        $http.setToken(token, 'Bearer')
+        try {
+          const { user } = await $http.$get('user/auth')
+          commit(`user/${userTypes.SET_USER}`, user)
+        } catch ({ response }) {
+          if (response.status === 403) {
+            commit(`error/${errorTypes.SET_ERROR}`, {
+              message: 'Please login to continue'
+            })
+          }
+        }
+      }
+    }
   }
 }
