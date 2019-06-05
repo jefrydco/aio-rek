@@ -5,36 +5,45 @@
         <v-toolbar-title>Login</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
-        <v-text-field
-          v-model="credential.email"
-          v-validate="'required|email'"
-          :error-messages="errors.collect('email')"
-          :disabled="isLoading"
-          label="Email"
-          type="email"
-          data-vv-name="email"
-          data-vv-as="email"
-          required=""
-          clearable=""
-          box=""
-          data-vv-value-path="credential.email"
-        />
-        <v-text-field
-          v-model="credential.password"
-          v-validate="'required'"
-          :error-messages="errors.collect('password')"
-          :disabled="isLoading"
-          label="Password"
-          :type="isPassword ? 'password' : 'text'"
-          :append-icon="isPassword ? 'lock_open' : 'lock'"
-          data-vv-name="password"
-          data-vv-as="password"
-          required=""
-          clearable=""
-          box=""
-          data-vv-value-path="credential.password"
-          @click:append="() => (isPassword = !isPassword)"
-        />
+        <v-layout row="" wrap="">
+          <v-flex xs12="">
+            <v-text-field
+              v-model="credential.email"
+              v-validate="'required|email'"
+              :error-messages="errors.collect('email')"
+              :disabled="isLoading"
+              label="Email"
+              type="email"
+              data-vv-name="email"
+              data-vv-as="email"
+              required=""
+              clearable=""
+              box=""
+              autofocus=""
+              data-vv-value-path="credential.email"
+            />
+          </v-flex>
+        </v-layout>
+        <v-layout row="" wrap="">
+          <v-flex xs12="">
+            <v-text-field
+              v-model="credential.password"
+              v-validate="'required'"
+              :error-messages="errors.collect('password')"
+              :disabled="isLoading"
+              label="Password"
+              :type="isPassword ? 'password' : 'text'"
+              :append-icon="isPassword ? 'lock_open' : 'lock'"
+              data-vv-name="password"
+              data-vv-as="password"
+              required=""
+              clearable=""
+              box=""
+              data-vv-value-path="credential.password"
+              @click:append="() => (isPassword = !isPassword)"
+            />
+          </v-flex>
+        </v-layout>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -50,52 +59,35 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <v-snackbar v-model="isNotify" color="error" auto-height="" right="">
-      {{ message }}
-      <v-btn flat="" @click="isNotify = false">
-        Close
-      </v-btn>
-    </v-snackbar>
+    <app-notification />
   </form>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { types as errorTypes } from '~/store/error'
+import AppNotification from '~/components/AppNotification'
 const Cookie = process.client ? require('js-cookie') : null
 
 export default {
   layout: 'login',
+  $_veeValidate: {
+    validator: 'new'
+  },
+  components: {
+    AppNotification
+  },
   head() {
     return {
       title: 'Login'
     }
   },
-  $_veeValidate: {
-    validator: 'new'
-  },
   data() {
     return {
       isPassword: true,
       isLoading: false,
-      isNotify: false,
       credential: {
         email: '',
         password: ''
       }
-    }
-  },
-  computed: {
-    ...mapState('error', ['isError', 'message'])
-  },
-  watch: {
-    isError: {
-      handler(value) {
-        if (value) {
-          this.isNotify = value
-        }
-      },
-      immediate: true
     }
   },
   methods: {
@@ -115,14 +107,8 @@ export default {
           await Cookie.set('t', token, { expires: 1 / 12 })
           await window.location.reload(true)
         }
-      } catch ({ response }) {
-        if (response.status === 422) {
-          this.isNotify = true
-          this.$store.commit(`error/${errorTypes.SET_ERROR}`, {
-            message:
-              'Please check your email address and password then try again'
-          })
-        }
+      } catch (error) {
+        this.$handleError(error)
       } finally {
         this.isLoading = false
       }

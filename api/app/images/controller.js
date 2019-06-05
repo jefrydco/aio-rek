@@ -24,7 +24,7 @@ exports.create = errorCatcher(async (req, res) => {
   })
 })
 
-exports.del = errorCatcher(async (req, res) => {
+exports.destroy = errorCatcher(async (req, res) => {
   const {
     app: {
       locals: {

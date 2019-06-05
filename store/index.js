@@ -1,4 +1,3 @@
-import { types as errorTypes } from './error'
 import { types as userTypes } from './user'
 const cookieparser = process.server ? require('cookieparser') : null
 
@@ -11,17 +10,22 @@ export const getters = {}
 export const mutations = {}
 
 export const actions = {
-  async nuxtServerInit({ commit }, { $http, req }) {
+  async nuxtServerInit({ commit }, { $http, $notify, req }) {
     if (req.headers.cookie) {
       const { t: token } = cookieparser.parse(req.headers.cookie)
       if (token) {
         $http.setToken(token, 'Bearer')
         try {
-          const { user } = await $http.$get('user/auth')
-          commit(`user/${userTypes.SET_USER}`, user)
+          const [{ user }, { user: userProfile }] = await Promise.all([
+            $http.$get('user/auth'),
+            $http.$get('user/profile')
+          ])
+
+          commit(`user/${userTypes.SET_USER}`, { ...user, ...userProfile })
         } catch ({ response }) {
           if (response.status === 403) {
-            commit(`error/${errorTypes.SET_ERROR}`, {
+            $notify({
+              isError: true,
               message: 'Please login to continue'
             })
           }

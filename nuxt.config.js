@@ -51,7 +51,13 @@ module.exports = {
   },
 
   // https://nuxtjs.org/api/configuration-plugins
-  plugins: ['~plugins/vuetify', '~plugins/vee-validate'],
+  plugins: [
+    '~plugins/vuetify',
+    '~plugins/vee-validate',
+    '~plugins/api',
+    '~plugins/handle-error',
+    '~plugins/notify'
+  ],
 
   // https://nuxtjs.org/api/configuration-css
   css: ['~assets/styles/app.styl'],

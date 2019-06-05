@@ -1,3 +1,4 @@
+static/models
 static/uploads
 docker/postgres
 docker/redis

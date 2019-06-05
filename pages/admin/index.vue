@@ -1,11 +1,9 @@
 <template>
-  <v-container fluid="" grid-list-xl="">
-    <v-layout>
-      <v-flex xs12="">
-        hello
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <v-card>
+    <v-card-text>
+      Hello
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

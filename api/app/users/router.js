@@ -6,18 +6,21 @@ const {
   createTransaction,
   jwtAuth,
   localAuth,
-  handleRole
+  handleRole,
+  handleImage
 } = require('../middleware')
 const { handleId } = require('./middleware')
 const {
-  create,
   login,
+  create,
+  getAll,
+  getOnce,
+  destroy,
+  update,
+  updateSelf,
   getAuth,
   getProfile,
-  getAll,
-  getImages,
-  update,
-  del
+  getImages
 } = require('./controller')
 
 router.post(
@@ -35,14 +38,6 @@ router.post(
   handleRole('admin'),
   create
 )
-router.delete(
-  '/users/:id',
-  createTransaction,
-  jwtAuth.required,
-  handleRole('admin'),
-  handleId,
-  del
-)
 router.get(
   '/users',
   createTransaction,
@@ -50,15 +45,40 @@ router.get(
   handleRole('admin'),
   getAll
 )
-router.put(
-  '/users',
-  bodyParser.json(),
+router.get(
+  '/users/:id',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['student']]),
+  handleRole('admin'),
+  handleId,
+  getOnce
+)
+router.put(
+  '/users/:id',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  handleId,
+  handleImage('static/uploads/images/profiles').single('image'),
   update
 )
+router.delete(
+  '/users/:id',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  handleId,
+  destroy
+)
 
+router.put(
+  '/user/update',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('student'),
+  handleImage('static/uploads/images/profiles').single('image'),
+  updateSelf
+)
 router.get(
   '/user/auth',
   createTransaction,
@@ -77,7 +97,7 @@ router.get(
   '/user/images',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['student']]),
+  handleRole('student'),
   getImages
 )
 

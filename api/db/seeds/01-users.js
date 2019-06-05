@@ -25,6 +25,9 @@ exports.seed = async function(knex, Promise) {
   const adminHashedPassword = await argon2.hash('admin123', {
     type: argon2.argon2id
   })
+  const lecturerHashedPassword = await argon2.hash('lecturer123', {
+    type: argon2.argon2id
+  })
   return qb.insert(
     [
       {
@@ -35,26 +38,16 @@ exports.seed = async function(knex, Promise) {
         role: 'admin',
         created_at: date,
         updated_at: date
+      },
+      {
+        email: 'lecturer@gmail.com',
+        hashed_password: lecturerHashedPassword,
+        username: 'lecturer',
+        name: 'Lecturer',
+        role: 'lecturer',
+        created_at: date,
+        updated_at: date
       }
     ].concat(usersData)
   )
-  // return knex('users')
-  //   .del()
-  //   .then(() => {
-  //     return argon2.hash('admin123', { type: argon2.argon2id })
-  //   })
-  //   .then(hashedPassword => {
-  //     // Inserts seed entries
-  //     const date = new Date().toUTCString()
-  //     return knex('users').insert([
-  //       {
-  //         email: 'admin@gmail.com',
-  //         hashed_password: hashedPassword,
-  //         username: 'admin',
-  //         role: 'admin',
-  //         created_at: date,
-  //         updated_at: date
-  //       }
-  //     ])
-  //   })
 }

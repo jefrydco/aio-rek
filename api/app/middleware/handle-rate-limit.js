@@ -4,14 +4,24 @@ const { RateLimiterRedis } = require('rate-limiter-flexible')
 const Boom = require('@hapi/boom')
 const { redis } = require('../../redis/connection')
 
-const rateLimiter = new RateLimiterRedis({
+const options = {
   redis,
-  keyPrefix: 'middleware'
-})
+  keyPrefix: 'middleware',
+  points: 7
+}
+
+const rateLimiter = new RateLimiterRedis(options)
 
 const rateLimiterMiddleware = async (req, res, next) => {
   try {
-    await rateLimiter.consume(req.ip)
+    const rateLimiterRes = await rateLimiter.consume(req.ip)
+    const headers = {
+      'Retry-After': rateLimiterRes.msBeforeNext / 1000,
+      'X-RateLimit-Limit': options.points,
+      'X-RateLimit-Remaining': rateLimiterRes.remainingPoints,
+      'X-RateLimit-Reset': new Date(Date.now() + rateLimiterRes.msBeforeNext)
+    }
+    res.set(headers)
     await next()
   } catch (error) {
     next(Boom.tooManyRequests())

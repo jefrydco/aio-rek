@@ -3,16 +3,21 @@
 // const bodyParser = require('body-parser')
 const router = require('express').Router()
 
-const { createTransaction, jwtAuth, handleRole } = require('../middleware')
-const { handleId, handleImage, handleDescriptor } = require('./middleware')
-const { create, del } = require('./controller')
+const {
+  createTransaction,
+  jwtAuth,
+  handleRole,
+  handleImage
+} = require('../middleware')
+const { handleId, handleDescriptor } = require('./middleware')
+const { create, destroy } = require('./controller')
 
 router.post(
   '/images',
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleImage,
+  handleImage('static/uploads/images/datasets').array('images'),
   handleDescriptor,
   create
 )
@@ -22,7 +27,7 @@ router.delete(
   jwtAuth.required,
   handleRole('admin'),
   handleId,
-  del
+  destroy
 )
 
 module.exports = router

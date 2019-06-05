@@ -61,13 +61,21 @@ module.exports = app => ({
       image: user.get('image')
     }
   },
-  async getUsersJSON({ limit = 20, offset = 0 } = {}, { trx } = {}) {
+  async getUsersJSON(
+    { limit = 20, offset = 0, orderBy = 'username' } = {},
+    { trx } = {}
+  ) {
+    if (orderBy.length === 0) {
+      orderBy = 'username'
+    }
     const { models: users, pagination } = await app.locals.models.User.forge()
       .query('where', 'role', 'student')
+      .orderBy(orderBy)
       .fetchPage({ limit, offset, transacting: trx })
 
     const usersJSON = {
       ...pagination,
+      orderBy,
       users: await Promise.all(
         users.map(async user => {
           const userJSON = await app.locals.services.users.getProfileJSON(

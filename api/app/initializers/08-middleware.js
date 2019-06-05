@@ -20,6 +20,7 @@ const {
 
 module.exports = app => {
   app.use(helmet())
+  app.use(helmet.noCache())
   app.use(cors())
   app.use(pino({ level: config.get('pino.level') }))
   app.use(passport.initialize())
