@@ -136,8 +136,8 @@
                       <video
                         id="live-video"
                         ref="liveVideo"
-                        width="620"
-                        height="480"
+                        width="720"
+                        height="540"
                         autoplay=""
                       />
                     </v-flex>
@@ -145,8 +145,8 @@
                       <canvas
                         id="live-canvas"
                         ref="liveCanvas"
-                        width="620"
-                        height="480"
+                        width="720"
+                        height="540"
                       />
                     </v-flex>
                   </v-layout>
@@ -212,7 +212,7 @@
                           <v-card flat="" tile="" class="d-flex">
                             <v-img
                               :src="item.path"
-                              :aspect-ratio="620 / 480"
+                              :aspect-ratio="720 / 540"
                               class="grey lighten-2"
                             >
                               <template #placeholder="">
@@ -476,8 +476,8 @@ export default {
         const video = this.$refs.liveVideo
         const canvas = this.$refs.liveCanvas
         const canvasCtx = canvas.getContext('2d')
-        drawImage(canvasCtx, video, 0, 0, 620, 480, 0, true, false)
-        // canvasCtx.drawImage(video, 0, 0, 620, 480)
+        drawImage(canvasCtx, video, 0, 0, 720, 540, 0, true, false)
+        // canvasCtx.drawImage(video, 0, 0, 720, 540)
         const image = await getImageFromCanvas(canvas)
         let payload = {
           images: image,

@@ -70,7 +70,7 @@ export const actions = {
         const devices = await navigator.mediaDevices.enumerateDevices()
         const cameras = devices.filter(device => device.kind === 'videoinput')
         if (cameras.length > 0) {
-          const [{ deviceId }] = cameras
+          const [, { deviceId }] = cameras
           commit(types.SET_CAMERAS, cameras)
           commit(types.SET_SELECTED_CAMERA, deviceId)
         }
