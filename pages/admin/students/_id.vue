@@ -136,7 +136,7 @@
                       <video
                         id="live-video"
                         ref="liveVideo"
-                        width="720"
+                        width="620"
                         height="480"
                         autoplay=""
                       />
@@ -145,7 +145,7 @@
                       <canvas
                         id="live-canvas"
                         ref="liveCanvas"
-                        width="720"
+                        width="620"
                         height="480"
                       />
                     </v-flex>
@@ -212,7 +212,7 @@
                           <v-card flat="" tile="" class="d-flex">
                             <v-img
                               :src="item.path"
-                              :aspect-ratio="720 / 480"
+                              :aspect-ratio="620 / 480"
                               class="grey lighten-2"
                             >
                               <template #placeholder="">
@@ -246,9 +246,9 @@
                                       :disabled="isLoading"
                                       :loading="isLoading"
                                       color="primary"
-                                      @click="onUseAsProfile(item.path)"
+                                      @click="onUseAsAvatar(item.path)"
                                     >
-                                      Use as Profile
+                                      Use as Avatar
                                     </v-btn>
                                     <v-btn
                                       :disabled="isLoading"
@@ -476,8 +476,8 @@ export default {
         const video = this.$refs.liveVideo
         const canvas = this.$refs.liveCanvas
         const canvasCtx = canvas.getContext('2d')
-        drawImage(canvasCtx, video, 0, 0, 720, 480, 0, true, false)
-        // canvasCtx.drawImage(video, 0, 0, 720, 480)
+        drawImage(canvasCtx, video, 0, 0, 620, 480, 0, true, false)
+        // canvasCtx.drawImage(video, 0, 0, 620, 480)
         const image = await getImageFromCanvas(canvas)
         let payload = {
           images: image,
@@ -521,7 +521,7 @@ export default {
         this.isLoading = false
       }
     },
-    async onUseAsProfile(path) {
+    async onUseAsAvatar(path) {
       const payload = {
         ...this.editedUser,
         image: await getFileFromUrl(path)
