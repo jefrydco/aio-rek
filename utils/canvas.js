@@ -17,6 +17,7 @@ export const getImageFromCanvas = (
   })
 }
 
+// Taken from: https://stackoverflow.com/questions/3129099/how-to-flip-images-horizontally-with-html5
 export const drawImage = (
   context,
   img,

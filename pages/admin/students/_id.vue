@@ -67,7 +67,12 @@
                               align-center=""
                               justify-center=""
                             >
-                              <v-btn color="error" @click="onRemoveImage">
+                              <v-btn
+                                :disabled="isLoading"
+                                :loading="isLoading"
+                                color="error"
+                                @click="onRemoveImage"
+                              >
                                 Delete
                               </v-btn>
                             </v-layout>
@@ -88,7 +93,12 @@
                     accept="image/jpeg,image/jpg"
                     @change="onImageSelected"
                   />
-                  <v-btn color="primary" @click="onSelectImage">
+                  <v-btn
+                    :disabled="isLoading"
+                    :loading="isLoading"
+                    color="primary"
+                    @click="onSelectImage"
+                  >
                     Select Image
                   </v-btn>
                   <span>{{ image.name }}</span>
@@ -152,10 +162,20 @@
                       />
                     </v-flex>
                     <v-flex xs12="" sm6="">
-                      <v-btn color="accent" @click="onTakePhoto">
+                      <v-btn
+                        :disabled="isLoading"
+                        :loading="isLoading"
+                        color="accent"
+                        @click="onTakePhoto"
+                      >
                         Take a Photo
                       </v-btn>
-                      <v-btn color="error" @click="onResetPhoto">
+                      <v-btn
+                        :disabled="isLoading"
+                        :loading="isLoading"
+                        color="error"
+                        @click="onResetPhoto"
+                      >
                         Reset
                       </v-btn>
                     </v-flex>
@@ -216,13 +236,24 @@
                                   style="background-color: rgba(0, 0, 0, .5)"
                                 >
                                   <v-layout
+                                    row=""
+                                    wrap=""
                                     fill-height=""
                                     align-center=""
                                     justify-center=""
                                   >
                                     <v-btn
+                                      :disabled="isLoading"
+                                      :loading="isLoading"
+                                      color="primary"
+                                      @click="onUseAsProfile(item.path)"
+                                    >
+                                      Use as Profile
+                                    </v-btn>
+                                    <v-btn
+                                      :disabled="isLoading"
+                                      :loading="isLoading"
                                       color="error"
-                                      large=""
                                       @click="onRemoveImageTraining(item.id)"
                                     >
                                       Delete
@@ -323,12 +354,11 @@ export default {
     }
   },
   watch: {
-    'image.file': function(file) {
-      this.editedUser.image = file
-    },
-    'editedUser.image': async function(file) {
-      await this.onSave()
-      await this.getUser()
+    'image.file': async function(file) {
+      await this.onSave({
+        ...this.editedUser,
+        image: file
+      })
     },
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
@@ -469,8 +499,11 @@ export default {
       canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height)
       canvasCtx.beginPath()
     },
-    onRemoveImage() {
-      this.editedUser.image = ''
+    async onRemoveImage() {
+      await this.onSave({
+        ...this.editedUser,
+        image: ''
+      })
       this.image = {
         name: '',
         url: '',
@@ -488,16 +521,25 @@ export default {
         this.isLoading = false
       }
     },
-    async onSave() {
+    async onUseAsProfile(path) {
+      const payload = {
+        ...this.editedUser,
+        image: await getFileFromUrl(path)
+      }
+      await this.onSave(payload)
+    },
+    async onSave(payload = this.editedUser) {
       try {
         const valid = await this.$validator.validate()
         if (valid) {
           this.isLoading = true
-          const formData = toFormData(this.editedUser)
+          const formData = toFormData(payload)
           const {
             params: { id }
           } = this.$route
           const { user } = await this.$api.users.update(id, formData)
+          await this.getUser()
+          await this.prefillData()
           return user
         } else {
           this.$notify({
