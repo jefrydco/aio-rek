@@ -3,7 +3,7 @@ import { HTTPError } from 'ky-universal'
 import { types as userTypes } from '~/store/user'
 
 export default (
-  { $notify, app: { $http }, store: { commit }, redirect },
+  { app: { $http, $notify }, store: { commit }, redirect },
   inject
 ) => {
   const handleError = error => {

@@ -251,10 +251,8 @@ import { mapState, mapActions } from 'vuex'
 import uuidValidate from 'uuid-validate'
 import toFormData from 'json-form-data'
 
-import fileReader from '~/utils/file-reader'
-
-import urlToFile from '~/mixins/url-to-file'
-import canvasToImage from '~/mixins/canvas-to-image'
+import { getImageFromCanvas, drawImage } from '~/utils/canvas'
+import { fileReader, getFileFromUrl } from '~/utils/file'
 
 import AppAvatar from '~/components/AppAvatar'
 
@@ -267,7 +265,6 @@ export default {
   components: {
     AppAvatar
   },
-  mixins: [urlToFile, canvasToImage],
   data() {
     return {
       isLoading: false,
@@ -373,7 +370,7 @@ export default {
     async prefillData() {
       try {
         const { name, username, image } = this.user
-        const imageFile = await this.getFileFromUrl(image)
+        const imageFile = await getFileFromUrl(image)
         this.editedUser = {
           name,
           username,
@@ -449,8 +446,9 @@ export default {
         const video = this.$refs.liveVideo
         const canvas = this.$refs.liveCanvas
         const canvasCtx = canvas.getContext('2d')
-        canvasCtx.drawImage(video, 0, 0, 720, 480)
-        const image = await this.getImageFromCanvas(canvas)
+        drawImage(canvasCtx, video, 0, 0, 720, 480, 0, true, false)
+        // canvasCtx.drawImage(video, 0, 0, 720, 480)
+        const image = await getImageFromCanvas(canvas)
         let payload = {
           images: image,
           owner: id
@@ -518,10 +516,12 @@ export default {
 </script>
 
 <style>
+#live-video {
+  transform: scaleX(-1);
+}
 #live-video,
 #live-canvas {
   height: auto;
   width: 100%;
-  transform: scaleX(-1);
 }
 </style>

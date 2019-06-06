@@ -9,16 +9,15 @@
       <slot />
     </v-img>
     <span v-else="" :class="getClass">
-      {{ initials(name) }}
+      {{ getInitials(name) }}
     </span>
   </v-avatar>
 </template>
 
 <script>
-import avatar from '~/mixins/avatar'
+import { isDark, getMaterialColor, getInitials } from '~/utils/color'
 
 export default {
-  mixins: [avatar],
   props: {
     name: {
       type: String,
@@ -41,12 +40,12 @@ export default {
   },
   computed: {
     colorHash() {
-      return this.materialColorHash(this.name)
+      return getMaterialColor(this.name)
     },
     getClass() {
       let classes = this.textClass
       if (this.colorHash) {
-        if (this.isDarkColor(this.colorHash.backgroundColor)) {
+        if (isDark(this.colorHash.backgroundColor)) {
           classes = `${classes} white--text`
         }
         return classes
@@ -58,6 +57,9 @@ export default {
         return this.colorHash.materialColorName.toLowerCase()
       }
       return ''
+    },
+    getInitials() {
+      return string => getInitials(string)
     }
   }
 }

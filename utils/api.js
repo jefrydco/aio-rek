@@ -1,8 +1,6 @@
-'use strict'
-
 const qs = require('qs')
 
-module.exports = $http => resource => ({
+export default $http => resource => ({
   create(attributes, options) {
     return $http.$post(`${resource}`, attributes, options)
   },
