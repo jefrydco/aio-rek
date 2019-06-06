@@ -365,7 +365,10 @@ export default {
     },
     images(images, oldImages) {
       if (images.length > oldImages.length) {
-        const imageUris = images.map(({ path }) => path)
+        const filteredImages = images.filter(
+          ({ hasDescriptor }) => !hasDescriptor
+        )
+        const imageUris = filteredImages.map(({ path }) => path)
         this.getFaceDescriptors({ imageUris })
       }
     },
@@ -477,7 +480,6 @@ export default {
         const {
           images: { rowCount, images, ...filter }
         } = await this.$api.images.getAll({ orderBy, limit, offset, owner: id })
-        console.log(images)
         this.images = images
         this.imagesFilter = filter
         this.totalItems = rowCount

@@ -8,10 +8,15 @@ const { ulid } = require('ulid')
 const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
   const storage = multer.diskStorage({
     destination(req, file, cb) {
-      const { user } = req
+      const {
+        user,
+        query: { owner = '' }
+      } = req
       let uploadPath = path.join(location)
       if (user.role === 'student') {
         uploadPath = path.join(uploadPath, user.id)
+      } else if (user.role === 'admin') {
+        uploadPath = path.join(uploadPath, owner)
       }
       if (!fs.existsSync(uploadPath)) {
         fs.mkdirSync(uploadPath, { recursive: true })
