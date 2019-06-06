@@ -124,7 +124,11 @@ export default {
     try {
       const {
         users: { rowCount, users, ...filter }
-      } = await $api.users.getAll()
+      } = await $api.users.getAll({
+        orderBy: '-username',
+        limit: 20,
+        offset: 0
+      })
       return {
         filter,
         users,
@@ -135,7 +139,9 @@ export default {
     }
   },
   methods: {
-    async getUsers({ orderBy, limit, offset }) {
+    async getUsers(
+      { orderBy, limit, offset } = { orderBy: 'username', limit: 20, offset: 0 }
+    ) {
       try {
         this.isLoading = true
         const {

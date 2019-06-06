@@ -61,12 +61,21 @@ export const actions = {
     if (!state.loading && !state.loaded) {
       commit(types.LOADING)
       await Promise.all([
-        faceapi.loadFaceDetectionModel('/models'),
+        faceapi.loadFaceRecognitionModel('/models'),
         faceapi.loadFaceLandmarkModel('/models'),
         faceapi.loadFaceDetectionModel('/models'),
         faceapi.loadFaceExpressionModel('/models')
       ])
       await commit(types.LOADED)
     }
+  },
+  async getFaceDescriptors({ commit, state }, { imageUris }) {
+    const images = await Promise.all(
+      imageUris.map(async uri => {
+        const img = await faceapi.fetchImage(uri)
+        return faceapi.computeFaceDescriptor(img)
+      })
+    )
+    console.log(images)
   }
 }

@@ -76,8 +76,7 @@ export const actions = {
         }
         return cameras
       } catch (error) {
-        console.log(error)
-        throw error
+        this.$handleError(error)
       }
     } else {
       throw new Error(`This browser doesn't support WebRTC`)

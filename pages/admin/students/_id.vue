@@ -321,7 +321,7 @@ export default {
         limit: 0,
         offset: 0,
         pageCount: 0,
-        orderBy: ''
+        orderBy: '-created_at'
       },
       rowsPerPageItems: [
         9,
@@ -362,6 +362,26 @@ export default {
     },
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
+    },
+    images(images, oldImages) {
+      if (images.length > oldImages.length) {
+        const imageUris = images.map(({ path }) => path)
+        this.getFaceDescriptors({ imageUris })
+      }
+    },
+    pagination: {
+      handler({ descending, page, rowsPerPage, sortBy }) {
+        if (descending) {
+          sortBy = `-${sortBy}`
+        }
+        this.getImages({
+          orderBy: sortBy,
+          limit: rowsPerPage,
+          // Taken from: https://stackoverflow.com/a/3521002/7711812
+          offset: (page - 1) * rowsPerPage
+        })
+      },
+      deep: true
     }
   },
   async asyncData({
@@ -377,7 +397,15 @@ export default {
         {
           images: { rowCount, images: imagesData, ...filter }
         }
-      ] = await Promise.all([users.getOnce(id), images.getAll({ owner: id })])
+      ] = await Promise.all([
+        users.getOnce(id),
+        images.getAll({
+          orderBy: '-created_at',
+          limit: 9,
+          offset: 0,
+          owner: id
+        })
+      ])
       return {
         user,
         images: imagesData,
@@ -393,6 +421,7 @@ export default {
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
+    ...mapActions('face', ['getFaceDescriptors']),
     async init() {
       await Promise.all([this.prefillData(), this.getCameras()])
       await this.initCamera(this.selectedCamera)
@@ -435,13 +464,20 @@ export default {
         this.isLoading = false
       }
     },
-    async getImages() {
+    async getImages(
+      { orderBy, limit, offset } = {
+        orderBy: '-created_at',
+        limit: 9,
+        offset: 0
+      }
+    ) {
       try {
         this.isLoading = true
         const { id } = this.$route.params
         const {
           images: { rowCount, images, ...filter }
-        } = await this.$api.images.getAll({ owner: id })
+        } = await this.$api.images.getAll({ orderBy, limit, offset, owner: id })
+        console.log(images)
         this.images = images
         this.imagesFilter = filter
         this.totalItems = rowCount
@@ -481,10 +517,10 @@ export default {
         const image = await getImageFromCanvas(canvas)
         let payload = {
           images: image,
-          owner: id
+          has_descriptor: false
         }
         payload = toFormData(payload)
-        const { images } = await this.$api.images.create(payload)
+        const { images } = await this.$api.images.create(payload, { owner: id })
         await this.getImages()
         return images
       } catch (error) {

@@ -36,11 +36,11 @@ module.exports = app => ({
     return {
       id: image.id,
       path: image.get('path'),
-      descriptor: image.get('descriptor')
+      hasDescriptor: image.get('has_descriptor')
     }
   },
   async getImagesJSON(
-    { limit = 20, offset = 0, orderBy = '-created_at', owner } = {},
+    { limit = 9, offset = 0, orderBy = '-created_at', owner } = {},
     { trx } = {}
   ) {
     let queryResult = null

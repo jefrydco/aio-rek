@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 'use strict'
 
 const fs = require('fs')
@@ -5,7 +6,8 @@ const errorCatcher = require('async-error-catcher').default
 
 exports.create = errorCatcher(async (req, res) => {
   const {
-    body: { owner = {} },
+    query: { owner = {} },
+    body: { has_descriptor = false },
     files
   } = req
   const {
@@ -18,7 +20,12 @@ exports.create = errorCatcher(async (req, res) => {
   } = res
   const imagesData = await Promise.all(
     files.map(({ path }) =>
-      images.create({ path: path.replace('static', ''), owner })
+      images.create({
+        path: path.replace('static', ''),
+        // Taken from: https://stackoverflow.com/a/16313488/7711812
+        has_descriptor: !!+has_descriptor,
+        owner
+      })
     )
   )
   res.status(201).json({

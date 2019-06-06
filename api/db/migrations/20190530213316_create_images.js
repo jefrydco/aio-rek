@@ -9,6 +9,10 @@ exports.up = function(knex, Promise) {
     table.timestamps()
     table.string('path').notNullable()
     table
+      .boolean('has_descriptor')
+      .notNullable()
+      .defaultTo(false)
+    table
       .uuid('owner')
       .notNullable()
       .references('users.id')
