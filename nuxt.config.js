@@ -55,8 +55,8 @@ module.exports = {
     '~plugins/vuetify',
     '~plugins/vee-validate',
     '~plugins/api',
-    '~plugins/handle-error',
-    '~plugins/notify'
+    '~plugins/notify',
+    '~plugins/handle-error'
   ],
 
   // https://nuxtjs.org/api/configuration-css
@@ -75,6 +75,11 @@ module.exports = {
       }
     },
     extend(config, { isDev, isClient }) {
+      if (isClient) {
+        config.node = {
+          fs: 'empty'
+        }
+      }
       if (isDev && isClient) {
         config.module.rules.push({
           enforce: 'pre',

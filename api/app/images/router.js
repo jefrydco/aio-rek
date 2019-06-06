@@ -9,8 +9,8 @@ const {
   handleRole,
   handleImage
 } = require('../middleware')
-const { handleId, handleDescriptor } = require('./middleware')
-const { create, destroy } = require('./controller')
+const { handleId } = require('./middleware')
+const { create, getAll, getOnce, destroy } = require('./controller')
 
 router.post(
   '/images',
@@ -18,8 +18,22 @@ router.post(
   jwtAuth.required,
   handleRole('admin'),
   handleImage('static/uploads/images/datasets').array('images'),
-  handleDescriptor,
   create
+)
+router.get(
+  '/images',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  getAll
+)
+router.get(
+  '/images/:id',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  handleId,
+  getOnce
 )
 router.delete(
   '/images/:id',

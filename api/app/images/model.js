@@ -11,7 +11,6 @@ module.exports = bookshelf =>
     getValidators() {
       return {
         path: ['required', 'string'],
-        descriptor: ['required'],
         owner: ['required', 'uuid']
       }
     },

@@ -1,21 +1,21 @@
 'use strict'
 
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable('images', table => {
+  return knex.schema.createTable('descriptors', table => {
     table
       .uuid('id')
       .primary()
       .defaultTo(knex.raw('uuid_generate_v4()'))
     table.timestamps()
-    table.string('path').notNullable()
+    table.jsonb('descriptor').notNullable()
     table
-      .uuid('owner')
+      .uuid('image')
       .notNullable()
-      .references('users.id')
+      .references('images.id')
       .onDelete('CASCADE')
   })
 }
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTableIfExists('images')
+  return knex.schema.dropTableIfExists('descriptors')
 }

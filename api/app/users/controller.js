@@ -50,10 +50,11 @@ exports.getAll = errorCatcher(async (req, res) => {
       locals: {
         services: { users }
       }
-    }
+    },
+    locals: { trx }
   } = res
   const usersJSON = {
-    users: await users.getUsersJSON({ limit, offset, orderBy })
+    users: await users.getUsersJSON({ limit, offset, orderBy }, { trx })
   }
   res.json(usersJSON)
 })
@@ -65,7 +66,7 @@ exports.getOnce = errorCatcher((req, res) => {
         services: { users }
       }
     },
-    locals: { user, trx } = {}
+    locals: { user, trx }
   } = res
 
   res.json({ user: users.getProfileJSON(user, { trx }) })
@@ -78,10 +79,10 @@ exports.destroy = errorCatcher(async (req, res) => {
         services: { users }
       }
     },
-    locals: { user, trx } = {}
+    locals: { user, trx }
   } = res
 
-  await users.del(user, { trx })
+  await users.destroy(user, { trx })
   res.sendStatus(200)
 })
 
@@ -171,15 +172,19 @@ exports.getProfile = errorCatcher((req, res) => {
 })
 
 exports.getImages = errorCatcher(async (req, res) => {
-  const { query: { limit, offset } = {}, user } = req
+  const { query: { limit, offset, orderBy } = {}, user } = req
   const {
     app: {
       locals: {
         services: { images }
       }
-    }
+    },
+    locals: { trx }
   } = res
 
-  const imagesJSON = await images.getImagesJSON({ limit, offset }, user)
+  const imagesJSON = await images.getImagesJSON(
+    { limit, offset, orderBy, owner: user.id },
+    { trx }
+  )
   return res.json(imagesJSON)
 })

@@ -39,25 +39,39 @@ module.exports = app => ({
       descriptor: image.get('descriptor')
     }
   },
-  async getImagesJSON({ limit = 20, offset = 0 } = {}, user, { trx } = {}) {
-    const { models: images, pagination } = await app.locals.models.Image.forge()
-      .query('where', 'owner', user.id)
-      .orderBy('created_at', 'DESC')
-      .fetchPage({
-        limit,
-        offset,
-        transacting: trx
-      })
+  async getImagesJSON(
+    { limit = 20, offset = 0, orderBy = '-created_at', owner } = {},
+    { trx } = {}
+  ) {
+    let queryResult = null
+    if (owner) {
+      queryResult = await app.locals.models.Image.forge()
+        .query('where', 'owner', owner)
+        .orderBy(orderBy)
+        .fetchPage({
+          limit,
+          offset,
+          transacting: trx
+        })
+    } else {
+      queryResult = await app.locals.models.Image.forge()
+        .orderBy(orderBy)
+        .fetchPage({
+          limit,
+          offset,
+          transacting: trx
+        })
+    }
+    const { models: images, pagination } = queryResult
 
     const imagesJSON = {
-      count: pagination.rowCount,
+      ...pagination,
+      orderBy,
       images: await Promise.all(
         images.map(async image => {
-          const imageJSON = await app.locals.services.images.toJSON(
-            image,
-            user,
-            { trx }
-          )
+          const imageJSON = await app.locals.services.images.toJSON(image, {
+            trx
+          })
           return imageJSON
         })
       )

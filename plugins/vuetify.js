@@ -1,6 +1,6 @@
 import LRUCache from 'lru-cache'
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify, { VLayout } from 'vuetify/lib'
 import colors from 'vuetify/es5/util/colors'
 
 Vue.use(Vuetify, {
@@ -14,6 +14,9 @@ Vue.use(Vuetify, {
       maxAge: 1000 * 60 * 60 // 1 hour
     }),
     cspNonce: 'dQw4w9WgXcQ'
+  },
+  components: {
+    VLayout
   },
   theme: {
     primary: colors.cyan.base,

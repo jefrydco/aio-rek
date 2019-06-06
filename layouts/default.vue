@@ -57,6 +57,9 @@
           <v-flex xs12="">
             <nuxt />
             <app-notification />
+            <app-loading :value="isModelsLoading">
+              Please wait, we're loading the face recognition models
+            </app-loading>
           </v-flex>
         </v-layout>
       </v-container>
@@ -65,17 +68,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import AppNotification from '~/components/AppNotification'
 import AppAvatar from '~/components/AppAvatar'
+import AppLoading from '~/components/AppLoading'
+
 const Cookie = process.client ? require('js-cookie') : null
 
 export default {
   middleware: 'non-auth',
   components: {
     AppNotification,
-    AppAvatar
+    AppAvatar,
+    AppLoading
   },
   data() {
     return {
@@ -87,13 +93,21 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['user'])
+    ...mapState('user', ['user']),
+    ...mapState('face', {
+      isModelsLoading: 'isLoading'
+    })
   },
   mounted() {
     this.init()
   },
   methods: {
+    ...mapActions('face', ['getModels']),
     init() {
+      this.initToken()
+      this.getModels()
+    },
+    initToken() {
       const token = Cookie.get('t')
       if (token) {
         this.$http.setToken(token, 'Bearer')

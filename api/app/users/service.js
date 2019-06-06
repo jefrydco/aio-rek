@@ -19,7 +19,7 @@ module.exports = app => ({
     })
     return user
   },
-  async del(user, { trx } = {}) {
+  async destroy(user, { trx } = {}) {
     const deletedUser = await user.destroy({
       require: true,
       transacting: trx

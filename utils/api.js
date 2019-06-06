@@ -17,6 +17,6 @@ module.exports = $http => resource => ({
     return $http.$put(`${resource}/${id}`, attributes, options)
   },
   destroy(id, options) {
-    return $http.$delete(`${resource}/${id}`, options)
+    return $http.delete(`${resource}/${id}`, options)
   }
 })

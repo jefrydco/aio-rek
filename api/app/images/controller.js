@@ -5,16 +5,20 @@ const errorCatcher = require('async-error-catcher').default
 
 exports.create = errorCatcher(async (req, res) => {
   const {
+    body: { owner = {} },
+    files
+  } = req
+  const {
     app: {
       locals: {
         services: { images }
       }
     },
-    locals: { descriptors, trx }
+    locals: { trx }
   } = res
   const imagesData = await Promise.all(
-    descriptors.map(({ path, descriptor, owner }) =>
-      images.create({ path, descriptor, owner }, trx)
+    files.map(({ path }) =>
+      images.create({ path: path.replace('static', ''), owner })
     )
   )
   res.status(201).json({
@@ -24,6 +28,39 @@ exports.create = errorCatcher(async (req, res) => {
   })
 })
 
+exports.getAll = errorCatcher(async (req, res) => {
+  const { query: { limit, offset, orderBy, owner } = {} } = req
+  const {
+    app: {
+      locals: {
+        services: { images }
+      }
+    },
+    locals: { trx }
+  } = res
+
+  const imagesJSON = {
+    images: await images.getImagesJSON(
+      { limit, offset, orderBy, owner },
+      { trx }
+    )
+  }
+  res.json(imagesJSON)
+})
+
+exports.getOnce = errorCatcher((req, res) => {
+  const {
+    app: {
+      locals: {
+        services: { images }
+      }
+    },
+    locals: { image, trx }
+  } = res
+
+  res.json({ image: images.toJSON(image, { trx }) })
+})
+
 exports.destroy = errorCatcher(async (req, res) => {
   const {
     app: {
@@ -31,10 +68,11 @@ exports.destroy = errorCatcher(async (req, res) => {
         services: { images }
       }
     },
-    locals: { image, trx } = {}
+    locals: { image, trx }
   } = res
 
-  const path = image.get('path')
+  let path = image.get('path')
+  path = `static/${path}`
   if (fs.existsSync(path)) {
     fs.unlinkSync(path)
   }

@@ -72,7 +72,7 @@ export default {
         limit: 0,
         offset: 0,
         pageCount: 0,
-        rowCount: 0
+        orderBy: ''
       },
       isLoading: false,
       headers: [
@@ -92,7 +92,7 @@ export default {
         page: 1,
         rowsPerPage: 20,
         sortBy: 'username',
-        totalItems: 25
+        totalItems: 20
       },
       totalItems: 0
     }
@@ -123,16 +123,10 @@ export default {
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
       const {
-        users: { limit, offset, pageCount, rowCount, orderBy, users }
+        users: { rowCount, users, ...filter }
       } = await $api.users.getAll()
       return {
-        filter: {
-          limit,
-          offset,
-          pageCount,
-          rowCount,
-          orderBy
-        },
+        filter,
         users,
         totalItems: rowCount
       }
@@ -141,19 +135,14 @@ export default {
     }
   },
   methods: {
-    async getUsers(filter) {
+    async getUsers({ orderBy, limit, offset }) {
       try {
         this.isLoading = true
         const {
-          users: { limit, offset, pageCount, rowCount, orderBy, users }
-        } = await this.$api.users.getAll(filter)
-        this.filter = {
-          limit,
-          offset,
-          pageCount,
-          rowCount,
-          orderBy
-        }
+          users: { rowCount, users, ...filter }
+        } = await this.$api.users.getAll({ orderBy, limit, offset })
+        this.filter = filter
+        this.totalItems = rowCount
         this.users = users
       } catch ({ response }) {
         this.$handleError(response)
