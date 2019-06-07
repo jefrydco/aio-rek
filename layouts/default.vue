@@ -58,7 +58,7 @@
             <nuxt />
             <app-notification />
             <app-loading :value="isModelsLoading">
-              Please wait, we're loading the face recognition models
+              Loading the face recognition models
             </app-loading>
           </v-flex>
         </v-layout>

@@ -64,18 +64,23 @@ export const actions = {
         faceapi.loadFaceRecognitionModel('/models'),
         faceapi.loadFaceLandmarkModel('/models'),
         faceapi.loadFaceDetectionModel('/models'),
-        faceapi.loadFaceExpressionModel('/models')
+        faceapi.loadAgeGenderModel('/models')
       ])
       await commit(types.LOADED)
     }
   },
-  async getFaceDescriptors({ commit, state }, { imageUris, owner }) {
+  async getFaceDescriptors({ commit, state }, { images }) {
     const descriptors = await Promise.all(
-      imageUris.map(async uri => {
-        const img = await faceapi.fetchImage(uri)
-        return faceapi.computeFaceDescriptor(img)
+      images.map(async ({ id, path }) => {
+        const img = await faceapi.fetchImage(path)
+        const descriptor = await faceapi.computeFaceDescriptor(img)
+        return {
+          image: id,
+          descriptor
+        }
       })
     )
     console.log(descriptors)
+    return descriptors
   }
 }

@@ -37,6 +37,7 @@ module.exports = {
 
   http: {
     proxy: true,
+    // baseURL: 'http://localhost:3001',
     prefix: '/api/'
   },
 

@@ -203,7 +203,7 @@
                           </v-layout>
                         </template>
                       </v-img>
-                      <h2 class="headline">Good</h2>
+                      <h2 class="headline success--text">Good</h2>
                       <ol class="body-2">
                         <li>Face must be clearly visible</li>
                         <li>
@@ -237,7 +237,7 @@
                           </v-layout>
                         </template>
                       </v-img>
-                      <h2 class="headline">Bad</h2>
+                      <h2 class="headline error--text">Bad</h2>
                       <ol class="body-2">
                         <li>Face isn't clearly visible</li>
                         <li>
@@ -286,7 +286,9 @@
                   color="error"
                   @click="isRemoving = true"
                 >
-                  Remove {{ removingImages.length }} Image(s)
+                  Remove {{ removingImages.length }} image{{
+                    removingImages.length > 1 ? 's' : ''
+                  }}
                 </v-btn>
               </v-fade-transition>
             </v-toolbar>
@@ -407,26 +409,32 @@
                     </v-btn>
                   </v-fade-transition>
                 </template>
-                <span>Remove {{ removingImages.length }} Image(s)</span>
+                <span>
+                  Remove {{ removingImages.length }} image{{
+                    removingImages.length > 1 ? 's' : ''
+                  }}
+                </span>
               </v-tooltip>
             </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
-      <v-dialog v-model="isRemoving" width="300" @input="onCloseRemoving">
+      <v-dialog v-model="isRemoving" width="350" @input="onCloseRemoving">
         <v-card>
           <v-card-text>
             <div class="body-2">
               Are you sure you want to remove
-              {{ removingImages.length }} image(s)?
+              {{ removingImages.length }} image{{
+                removingImages.length > 1 ? 's' : ''
+              }}?
             </div>
           </v-card-text>
-          <v-divider />
           <v-card-actions>
             <v-spacer />
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
+              flat=""
               @click="onCloseRemoving"
             >
               Cancel
@@ -435,6 +443,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="error"
+              flat=""
               @click="onRemoveTrainingImage(removingImages)"
             >
               Remove
@@ -508,8 +517,7 @@ export default {
       totalItems: 0,
 
       isRemoving: false,
-      removingImages: [],
-      removingImageSingle: null
+      removingImages: []
     }
   },
   computed: {
@@ -543,14 +551,27 @@ export default {
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
     },
-    images(images, oldImages) {
+    async images(images, oldImages) {
       if (images.length > oldImages.length) {
-        const filteredImages = images.filter(
-          ({ hasDescriptor }) => !hasDescriptor
+        images = images.filter(({ hasDescriptor }) => !hasDescriptor)
+        const descriptors = await this.getFaceDescriptors({ images })
+        const {
+          descriptors: descriptorsRes
+        } = await this.$api.descriptors.create({
+          descriptors
+        })
+        const { images: imagesRes } = await Promise.all(
+          images.map(({ id }) =>
+            this.$api.images.update(id, {
+              image: { has_descriptor: true }
+            })
+          )
         )
-        const { id } = this.$route.params
-        const imageUris = filteredImages.map(({ path }) => path)
-        this.getFaceDescriptors({ imageUris, owner: id })
+        await this.getImages()
+        console.log(descriptorsRes)
+        console.log(imagesRes)
+        console.log(this.images)
+        return descriptors
       }
     },
     pagination: {

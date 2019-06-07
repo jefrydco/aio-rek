@@ -1,6 +1,6 @@
 'use strict'
 
-// const bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 const router = require('express').Router()
 
 const {
@@ -10,7 +10,7 @@ const {
   handleImage
 } = require('../middleware')
 const { handleId } = require('./middleware')
-const { create, getAll, getOnce, destroy } = require('./controller')
+const { create, getAll, getOnce, update, destroy } = require('./controller')
 
 router.post(
   '/images',
@@ -34,6 +34,15 @@ router.get(
   handleRole('admin'),
   handleId,
   getOnce
+)
+router.put(
+  '/images/:id',
+  bodyParser.json(),
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  handleId,
+  update
 )
 router.delete(
   '/images/:id',

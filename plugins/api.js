@@ -4,11 +4,12 @@
 import apiFactory from '~/utils/api'
 
 export default ({ $http }, inject) => {
-  const api = apiFactory($http)
+  const createApi = apiFactory($http)
 
   const apiList = {
-    users: api('users'),
-    images: api('images')
+    users: createApi('users'),
+    images: createApi('images'),
+    descriptors: createApi('descriptors')
   }
 
   inject('api', apiList)

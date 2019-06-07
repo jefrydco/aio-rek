@@ -23,6 +23,6 @@ module.exports = bookshelf =>
           required: `can't be blank`
         }
       })
-      await checkit.run(this.attrributes, options)
+      await checkit.run(this.attributes, options)
     }
   })

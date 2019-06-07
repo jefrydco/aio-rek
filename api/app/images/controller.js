@@ -68,6 +68,23 @@ exports.getOnce = errorCatcher((req, res) => {
   res.json({ image: images.toJSON(image, { trx }) })
 })
 
+exports.update = errorCatcher(async (req, res) => {
+  const { body: { image: { has_descriptor = false } } = {} } = req
+  const {
+    app: {
+      locals: {
+        services: { images }
+      }
+    },
+    locals: { image, trx }
+  } = res
+
+  const updatedImage = await images.update(image, { has_descriptor })
+  res.json({
+    image: images.toJSON(updatedImage, { trx })
+  })
+})
+
 exports.destroy = errorCatcher(async (req, res) => {
   const {
     app: {

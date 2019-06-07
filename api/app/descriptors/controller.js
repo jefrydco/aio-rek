@@ -15,9 +15,9 @@ exports.create = errorCatcher(async (req, res) => {
     locals: { trx }
   } = res
   const descriptorsData = await Promise.all(
-    descriptorsReq.map(({ descriptor, image }) =>
-      descriptors.create({ descriptor, image })
-    )
+    descriptorsReq.map(({ descriptor, image }) => {
+      return descriptors.create({ descriptor, image }, { trx })
+    })
   )
   res.status(201).json({
     descriptors: await Promise.all(

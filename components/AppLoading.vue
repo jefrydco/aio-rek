@@ -1,13 +1,11 @@
 <template>
-  <v-dialog :value="value" width="300" persistent="">
+  <v-dialog :value="value" width="350" persistent="">
     <v-card>
       <v-card-text>
-        <v-layout>
-          <v-progress-circular indeterminate="" color="accent" class="mr-3" />
-          <div class="body-2">
-            <slot />
-          </div>
-        </v-layout>
+        <div class="body-2">
+          <slot />
+        </div>
+        <v-progress-linear indeterminate="" height="5" color="accent" />
       </v-card-text>
     </v-card>
   </v-dialog>

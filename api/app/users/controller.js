@@ -72,20 +72,6 @@ exports.getOnce = errorCatcher((req, res) => {
   res.json({ user: users.getProfileJSON(user, { trx }) })
 })
 
-exports.destroy = errorCatcher(async (req, res) => {
-  const {
-    app: {
-      locals: {
-        services: { users }
-      }
-    },
-    locals: { user, trx }
-  } = res
-
-  await users.destroy(user, { trx })
-  await res.sendStatus(200)
-})
-
 exports.update = errorCatcher(async (req, res) => {
   const { body: payload = {}, file: { path } = {} } = req
   const {
@@ -116,6 +102,20 @@ exports.update = errorCatcher(async (req, res) => {
   res.json({
     user: users.getProfileJSON(updatedUser)
   })
+})
+
+exports.destroy = errorCatcher(async (req, res) => {
+  const {
+    app: {
+      locals: {
+        services: { users }
+      }
+    },
+    locals: { user, trx }
+  } = res
+
+  await users.destroy(user, { trx })
+  await res.sendStatus(200)
 })
 
 exports.updateSelf = errorCatcher(async (req, res) => {
