@@ -51,7 +51,7 @@
                     <template #default="{ hover }">
                       <app-avatar
                         :name="user.name"
-                        :image="image.url"
+                        :image="avatarImage.url"
                         :size="128"
                         text-class="headline"
                       >
@@ -86,22 +86,22 @@
               <v-layout row="" wrap="">
                 <v-flex xs12="">
                   <input
-                    ref="image"
+                    ref="avatarImage"
                     style="display: none"
                     type="file"
                     name="image"
                     accept="image/jpeg,image/jpg"
-                    @change="onImageSelected"
+                    @change="onAvatarImageSelected"
                   />
                   <v-btn
                     :disabled="isLoading"
                     :loading="isLoading"
                     color="primary"
-                    @click="onSelectImage"
+                    @click="onSelectAvatarImage"
                   >
                     Select Image
                   </v-btn>
-                  <span>{{ image.name }}</span>
+                  <span>{{ avatarImage.name }}</span>
                 </v-flex>
               </v-layout>
             </v-card-text>
@@ -181,7 +181,94 @@
                     </v-flex>
                   </v-layout>
                 </v-tab-item>
-                <v-tab-item value="file-upload">File Upload</v-tab-item>
+                <v-tab-item value="file-upload">
+                  <v-layout row="" wrap="">
+                    <v-flex xs12="" sm6="">
+                      <v-img
+                        src="/examples/images/tony-stark.jpg"
+                        :aspect-ratio="456 / 400"
+                        class="mb-3"
+                      >
+                        <template #placeholder="">
+                          <v-layout
+                            fill-height=""
+                            align-center=""
+                            justify-center=""
+                            ma-0=""
+                          >
+                            <v-progress-circular
+                              indeterminate=""
+                              color="grey lighten-5"
+                            />
+                          </v-layout>
+                        </template>
+                      </v-img>
+                      <h2 class="headline">Good</h2>
+                      <ol class="body-2">
+                        <li>Face must be clearly visible</li>
+                        <li>
+                          Face must not covered with glasses, masks or other
+                          objects that can cover
+                        </li>
+                        <li>If only one photo, face must face forward</li>
+                        <li>
+                          If more than one photo, at least there are 4 photos,
+                          faces face up, down, right and left
+                        </li>
+                      </ol>
+                    </v-flex>
+                    <v-flex xs12="" sm6="">
+                      <v-img
+                        src="/examples/images/iron-man.jpg"
+                        :aspect-ratio="456 / 400"
+                        class="mb-3"
+                      >
+                        <template #placeholder="">
+                          <v-layout
+                            fill-height=""
+                            align-center=""
+                            justify-center=""
+                            ma-0=""
+                          >
+                            <v-progress-circular
+                              indeterminate=""
+                              color="grey lighten-5"
+                            />
+                          </v-layout>
+                        </template>
+                      </v-img>
+                      <h2 class="headline">Bad</h2>
+                      <ol class="body-2">
+                        <li>Face isn't clearly visible</li>
+                        <li>
+                          Face is covered with glasses, masks or other objects
+                          that can cover
+                        </li>
+                      </ol>
+                    </v-flex>
+                  </v-layout>
+                  <v-layout row="" wrap="">
+                    <v-flex xs12="">
+                      <input
+                        ref="images"
+                        style="display: none"
+                        type="file"
+                        name="image"
+                        accept="image/jpeg,image/jpg"
+                        multiple
+                        @change="onImagesSelected"
+                      />
+                      <v-btn
+                        :disabled="isLoading"
+                        :loading="isLoading"
+                        color="primary"
+                        @click="onSelectImages"
+                      >
+                        Select Images
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-tab-item>
               </v-tabs-items>
             </v-card-text>
           </v-card>
@@ -391,7 +478,7 @@ export default {
         username: '',
         image: ''
       },
-      image: {
+      avatarImage: {
         name: '',
         url: '',
         file: null
@@ -440,7 +527,14 @@ export default {
     }
   },
   watch: {
-    'image.file': async function(file) {
+    currentTab(currentTab) {
+      if (currentTab === 'capture') {
+        this.initCamera()
+      } else {
+        this.stopCamera()
+      }
+    },
+    'avatarImage.file': async function(file) {
       await this.onSave({
         ...this.editedUser,
         image: file
@@ -525,19 +619,15 @@ export default {
           username,
           image: imageFile
         }
-        this.image.url = image
+        this.avatarImage.url = image
       } catch (error) {
         this.$handleError(error)
       }
     },
     async initCamera(deviceId) {
       try {
-        if (this.currentTab === 'capture') {
-          const videoStream = await this.startCamera(deviceId)
-          this.$refs.liveVideo.srcObject = videoStream
-        } else {
-          await this.stopCamera()
-        }
+        const videoStream = await this.startCamera(deviceId)
+        this.$refs.liveVideo.srcObject = videoStream
       } catch (error) {
         this.$handleError(error)
       }
@@ -576,19 +666,51 @@ export default {
         this.isLoading = false
       }
     },
-    onSelectImage() {
-      this.$refs.image.click()
+    onSelectAvatarImage() {
+      this.$refs.avatarImage.click()
     },
-    async onImageSelected(event) {
+    async onAvatarImageSelected(event) {
       try {
-        const file = event.target.files[0]
-        if (file !== null) {
-          const url = await fileReader(file)
-          this.image = {
-            name: file.name,
-            url,
-            file
+        const {
+          target: { files = [] }
+        } = event
+        if (files.length > 0) {
+          const [file] = files
+          if (file !== null) {
+            const url = await fileReader(file)
+            this.avatarImage = {
+              name: file.name,
+              url,
+              file
+            }
           }
+        }
+      } catch (error) {
+        this.$handleError(error)
+      }
+    },
+    onSelectImages() {
+      this.$refs.images.click()
+    },
+    async onImagesSelected(event) {
+      try {
+        const {
+          target: { files }
+        } = event
+        if (files.length > 0) {
+          const { id } = this.$route.params
+          // Taken from: https://stackoverflow.com/a/55781766/7711812
+          const payload = new FormData()
+          payload.append('has_descriptor', false)
+          // Taken from: https://stackoverflow.com/a/40902462/7711812
+          Array.from(files).forEach(file => {
+            payload.append('images', file)
+          })
+          const { images } = await this.$api.images.create(payload, {
+            owner: id
+          })
+          await this.getImages()
+          return images
         }
       } catch (error) {
         this.$handleError(error)
@@ -602,7 +724,6 @@ export default {
         const canvas = this.$refs.liveCanvas
         const canvasCtx = canvas.getContext('2d')
         drawImage(canvasCtx, video, 0, 0, 720, 540, 0, true, false)
-        // canvasCtx.drawImage(video, 0, 0, 720, 540)
         const image = await getImageFromCanvas(canvas)
         let payload = {
           images: image,
@@ -629,7 +750,7 @@ export default {
         ...this.editedUser,
         image: ''
       })
-      this.image = {
+      this.avatarImage = {
         name: '',
         url: '',
         file: null
