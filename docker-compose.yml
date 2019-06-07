@@ -17,7 +17,7 @@ services:
       - ./docker/postgres:/var/lib/postgresql/data
 
   pgadmin4:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: jefrydco@gmail.com
