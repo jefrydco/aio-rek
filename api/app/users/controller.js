@@ -83,7 +83,7 @@ exports.destroy = errorCatcher(async (req, res) => {
   } = res
 
   await users.destroy(user, { trx })
-  res.sendStatus(200)
+  await res.sendStatus(200)
 })
 
 exports.update = errorCatcher(async (req, res) => {

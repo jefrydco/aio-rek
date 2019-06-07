@@ -73,7 +73,7 @@
                                 color="error"
                                 @click="onRemoveImage"
                               >
-                                Delete
+                                Remove
                               </v-btn>
                             </v-layout>
                           </v-container>
@@ -192,6 +192,16 @@
           <v-card>
             <v-toolbar card="">
               <v-toolbar-title>Photos</v-toolbar-title>
+              <v-spacer />
+              <v-fade-transition>
+                <v-btn
+                  v-if="removingImages.length > 0"
+                  color="error"
+                  @click="isRemoving = true"
+                >
+                  Remove {{ removingImages.length }} Image(s)
+                </v-btn>
+              </v-fade-transition>
             </v-toolbar>
             <v-card-text>
               <v-container grid-list-xl="" fluid="">
@@ -206,73 +216,145 @@
                   wrap=""
                 >
                   <template #item="{ item }">
-                    <v-flex xs12="" sm6="" md4="" d-flex="">
-                      <v-hover>
-                        <template #default="{ hover }">
-                          <v-card flat="" tile="" class="d-flex">
-                            <v-img
-                              :src="item.path"
-                              :aspect-ratio="720 / 540"
-                              class="grey lighten-2"
-                            >
-                              <template #placeholder="">
-                                <v-layout
-                                  fill-height=""
-                                  align-center=""
-                                  justify-center=""
-                                  ma-0=""
-                                >
-                                  <v-progress-circular
-                                    indeterminate=""
-                                    color="grey lighten-5"
-                                  />
-                                </v-layout>
-                              </template>
-                              <v-fade-transition>
-                                <v-container
-                                  v-if="hover"
-                                  fluid=""
-                                  fill-height=""
-                                  style="background-color: rgba(0, 0, 0, .5)"
-                                >
+                    <v-fade-transition>
+                      <v-flex xs12="" sm6="" md4="" d-flex="">
+                        <v-hover>
+                          <template #default="{ hover }">
+                            <v-card flat="" tile="" class="d-flex">
+                              <v-img :src="item.path" :aspect-ratio="720 / 540">
+                                <template #placeholder="">
                                   <v-layout
-                                    row=""
-                                    wrap=""
                                     fill-height=""
                                     align-center=""
                                     justify-center=""
+                                    ma-0=""
                                   >
-                                    <v-btn
-                                      :disabled="isLoading"
-                                      :loading="isLoading"
-                                      color="primary"
-                                      @click="onUseAsAvatar(item.path)"
-                                    >
-                                      Use as Avatar
-                                    </v-btn>
-                                    <v-btn
-                                      :disabled="isLoading"
-                                      :loading="isLoading"
-                                      color="error"
-                                      @click="onRemoveImageTraining(item.id)"
-                                    >
-                                      Delete
-                                    </v-btn>
+                                    <v-progress-circular
+                                      indeterminate=""
+                                      color="grey lighten-5"
+                                    />
                                   </v-layout>
-                                </v-container>
-                              </v-fade-transition>
-                            </v-img>
-                          </v-card>
-                        </template>
-                      </v-hover>
-                    </v-flex>
+                                </template>
+                                <v-fade-transition>
+                                  <v-container
+                                    v-if="removingImages.includes(item.id)"
+                                    fluid=""
+                                    fill-height=""
+                                    style="background-color: rgba(0, 0, 0, .5)"
+                                  >
+                                    <v-layout
+                                      row=""
+                                      wrap=""
+                                      fill-height=""
+                                      align-center=""
+                                      justify-center=""
+                                    >
+                                      <v-btn
+                                        :disabled="isLoading"
+                                        :loading="isLoading"
+                                        color="accent"
+                                        @click="onTriggerSelecting(item.id)"
+                                      >
+                                        Unselect
+                                      </v-btn>
+                                    </v-layout>
+                                  </v-container>
+                                </v-fade-transition>
+                                <v-fade-transition>
+                                  <v-container
+                                    v-if="hover"
+                                    fluid=""
+                                    fill-height=""
+                                    style="background-color: rgba(0, 0, 0, .5)"
+                                  >
+                                    <v-layout
+                                      row=""
+                                      wrap=""
+                                      fill-height=""
+                                      align-center=""
+                                      justify-center=""
+                                    >
+                                      <v-btn
+                                        :disabled="isLoading"
+                                        :loading="isLoading"
+                                        color="primary"
+                                        @click="onUseAsAvatar(item.path)"
+                                      >
+                                        Use as Avatar
+                                      </v-btn>
+                                      <v-btn
+                                        :disabled="isLoading"
+                                        :loading="isLoading"
+                                        color="accent"
+                                        @click="onTriggerSelecting(item.id)"
+                                      >
+                                        Select
+                                      </v-btn>
+                                    </v-layout>
+                                  </v-container>
+                                </v-fade-transition>
+                              </v-img>
+                            </v-card>
+                          </template>
+                        </v-hover>
+                      </v-flex>
+                    </v-fade-transition>
                   </template>
                 </v-data-iterator>
               </v-container>
+              <v-tooltip left="">
+                <template #activator="{ on }">
+                  <v-fade-transition>
+                    <v-btn
+                      v-if="removingImages.length > 0"
+                      color="error"
+                      icon=""
+                      fab=""
+                      bottom=""
+                      right=""
+                      fixed=""
+                      v-on="on"
+                      @click="isRemoving = true"
+                    >
+                      <v-icon>delete</v-icon>
+                    </v-btn>
+                  </v-fade-transition>
+                </template>
+                <span>Remove {{ removingImages.length }} Image(s)</span>
+              </v-tooltip>
             </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
+      <v-dialog v-model="isRemoving" width="300" @input="onCloseRemoving">
+        <v-card>
+          <v-card-text>
+            <div class="body-2">
+              Are you sure you want to remove
+              {{ removingImages.length }} image(s)?
+            </div>
+          </v-card-text>
+          <v-divider />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              :loading="isLoading"
+              :disabled="isLoading"
+              @click="onCloseRemoving"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              :loading="isLoading"
+              :disabled="isLoading"
+              color="error"
+              @click="onRemoveTrainingImage(removingImages)"
+            >
+              Remove
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-flex>
   </v-layout>
 </template>
@@ -336,7 +418,11 @@ export default {
         sortBy: 'created_at',
         totalItems: 9
       },
-      totalItems: 0
+      totalItems: 0,
+
+      isRemoving: false,
+      removingImages: [],
+      removingImageSingle: null
     }
   },
   computed: {
@@ -368,8 +454,9 @@ export default {
         const filteredImages = images.filter(
           ({ hasDescriptor }) => !hasDescriptor
         )
+        const { id } = this.$route.params
         const imageUris = filteredImages.map(({ path }) => path)
-        this.getFaceDescriptors({ imageUris })
+        this.getFaceDescriptors({ imageUris, owner: id })
       }
     },
     pagination: {
@@ -548,11 +635,32 @@ export default {
         file: null
       }
     },
-    async onRemoveImageTraining(id) {
+    onTriggerSelecting(id) {
+      if (this.removingImages.includes(id)) {
+        const removingId = this.removingImages.findIndex(
+          imageId => imageId === id
+        )
+        this.removingImages.splice(removingId, 1)
+      } else {
+        this.removingImages.push(id)
+      }
+    },
+    onCloseRemoving(isReset = false) {
+      this.isRemoving = false
+      if (isReset) {
+        this.removingImages = []
+      }
+    },
+    async onRemoveTrainingImage(removingImages = []) {
       try {
         this.isLoading = true
-        await this.$api.images.destroy(id)
-        await this.getImages()
+        if (removingImages.length > 0) {
+          await Promise.all(
+            removingImages.map(id => this.$api.images.destroy(id))
+          )
+          await this.getImages()
+          await this.onCloseRemoving(true)
+        }
       } catch (error) {
         this.$handleError(error)
       } finally {

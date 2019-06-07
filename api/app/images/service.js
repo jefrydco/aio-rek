@@ -16,7 +16,7 @@ module.exports = app => ({
     })
     return image
   },
-  async del(image, { trx } = {}) {
+  async destroy(image, { trx } = {}) {
     const deletedImage = await image.destroy({
       require: true,
       transacting: trx

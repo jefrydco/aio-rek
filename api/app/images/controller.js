@@ -83,7 +83,7 @@ exports.destroy = errorCatcher(async (req, res) => {
   if (fs.existsSync(path)) {
     fs.unlinkSync(path)
   }
-  await images.del(image, { trx })
+  await images.destroy(image, { trx })
 
-  res.sendStatus(200)
+  await res.sendStatus(200)
 })

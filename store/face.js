@@ -69,13 +69,13 @@ export const actions = {
       await commit(types.LOADED)
     }
   },
-  async getFaceDescriptors({ commit, state }, { imageUris }) {
-    const images = await Promise.all(
+  async getFaceDescriptors({ commit, state }, { imageUris, owner }) {
+    const descriptors = await Promise.all(
       imageUris.map(async uri => {
         const img = await faceapi.fetchImage(uri)
         return faceapi.computeFaceDescriptor(img)
       })
     )
-    console.log(images)
+    console.log(descriptors)
   }
 }
