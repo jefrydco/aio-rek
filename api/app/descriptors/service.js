@@ -42,7 +42,7 @@ module.exports = app => ({
       descriptor: descriptor.get('descriptor')
     }
   },
-  async getImagesJSON(
+  async getDescriptorsJSON(
     { limit = 9, offset = 0, orderBy = '-created_at', image } = {},
     { trx } = {}
   ) {

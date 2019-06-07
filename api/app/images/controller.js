@@ -36,7 +36,7 @@ exports.create = errorCatcher(async (req, res) => {
 })
 
 exports.getAll = errorCatcher(async (req, res) => {
-  const { query: { limit, offset, orderBy, owner } = {} } = req
+  const { query: { limit, offset, orderBy, owner, withDescriptor } = {} } = req
   const {
     app: {
       locals: {
@@ -48,7 +48,7 @@ exports.getAll = errorCatcher(async (req, res) => {
 
   const imagesJSON = {
     images: await images.getImagesJSON(
-      { limit, offset, orderBy, owner },
+      { limit, offset, orderBy, owner, withDescriptor },
       { trx }
     )
   }

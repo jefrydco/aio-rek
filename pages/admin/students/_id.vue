@@ -215,6 +215,9 @@
                           If more than one photo, at least there are 4 photos,
                           faces face up, down, right and left
                         </li>
+                        <li>
+                          Image resolution must be greater or equal than 720x540
+                        </li>
                       </ol>
                     </v-flex>
                     <v-flex xs12="" sm6="">
@@ -555,12 +558,10 @@ export default {
       if (images.length > oldImages.length) {
         images = images.filter(({ hasDescriptor }) => !hasDescriptor)
         const descriptors = await this.getFaceDescriptors({ images })
-        const {
-          descriptors: descriptorsRes
-        } = await this.$api.descriptors.create({
+        await this.$api.descriptors.create({
           descriptors
         })
-        const { images: imagesRes } = await Promise.all(
+        await Promise.all(
           images.map(({ id }) =>
             this.$api.images.update(id, {
               image: { has_descriptor: true }
@@ -568,9 +569,6 @@ export default {
           )
         )
         await this.getImages()
-        console.log(descriptorsRes)
-        console.log(imagesRes)
-        console.log(this.images)
         return descriptors
       }
     },

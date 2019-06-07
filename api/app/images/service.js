@@ -40,7 +40,13 @@ module.exports = app => ({
     }
   },
   async getImagesJSON(
-    { limit = 9, offset = 0, orderBy = '-created_at', owner } = {},
+    {
+      limit = 9,
+      offset = 0,
+      orderBy = '-created_at',
+      owner,
+      withDescriptor = 0
+    } = {},
     { trx } = {}
   ) {
     let queryResult = null
@@ -72,6 +78,21 @@ module.exports = app => ({
           const imageJSON = await app.locals.services.images.toJSON(image, {
             trx
           })
+          if (+withDescriptor) {
+            const {
+              descriptors: [descriptor]
+            } = await app.locals.services.descriptors.getDescriptorsJSON(
+              {
+                limit: 1,
+                image: image.id
+              },
+              { trx }
+            )
+            return {
+              ...imageJSON,
+              ...descriptor
+            }
+          }
           return imageJSON
         })
       )
