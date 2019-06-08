@@ -2,19 +2,32 @@
 
 module.exports = app => ({
   async create(attributes, { trx } = {}) {
-    const image = await app.locals.models.Image.forge(attributes).save(null, {
+    const {
+      locals: {
+        models: { Image }
+      }
+    } = app
+    const image = new Image(attributes)
+    const queryResult = await image.save(null, {
       method: 'insert',
       require: true,
       transacting: trx
     })
-    return image
+    return queryResult
   },
   async fetch(attributes, { trx } = {}) {
-    const image = await app.locals.models.Image.forge(attributes).fetch({
+    const {
+      locals: {
+        models: { Image }
+      }
+    } = app
+    const image = new Image(attributes)
+
+    const queryResult = await image.fetch({
       require: true,
       transacting: trx
     })
-    return image
+    return queryResult
   },
   async destroy(image, { trx } = {}) {
     const deletedImage = await image.destroy({
@@ -49,9 +62,16 @@ module.exports = app => ({
     } = {},
     { trx } = {}
   ) {
+    const {
+      locals: {
+        models: { Image }
+      }
+    } = app
+    const image = new Image()
+
     let queryResult = null
     if (owner) {
-      queryResult = await app.locals.models.Image.forge()
+      queryResult = await image
         .query('where', 'owner', owner)
         .orderBy(orderBy)
         .fetchPage({
@@ -60,13 +80,11 @@ module.exports = app => ({
           transacting: trx
         })
     } else {
-      queryResult = await app.locals.models.Image.forge()
-        .orderBy(orderBy)
-        .fetchPage({
-          limit,
-          offset,
-          transacting: trx
-        })
+      queryResult = await image.orderBy(orderBy).fetchPage({
+        limit,
+        offset,
+        transacting: trx
+      })
     }
     const { models: images, pagination } = queryResult
 

@@ -24,7 +24,7 @@ router.get(
   '/images',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   getAll
 )
 router.get(

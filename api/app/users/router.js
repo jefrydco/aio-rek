@@ -83,14 +83,14 @@ router.get(
   '/user/auth',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['student']]),
+  handleRole([['admin'], ['lecturer'], ['room'], ['student']]),
   getAuth
 )
 router.get(
   '/user/profile',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['student']]),
+  handleRole([['admin'], ['lecturer'], ['room'], ['student']]),
   getProfile
 )
 router.get(

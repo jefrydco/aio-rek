@@ -82,5 +82,6 @@ export const actions = {
     )
     console.log(descriptors)
     return descriptors
-  }
+  },
+  async getFaceMatcher({ commit, state }, { descriptors }) {}
 }

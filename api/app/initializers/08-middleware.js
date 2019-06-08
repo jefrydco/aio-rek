@@ -15,7 +15,8 @@ const {
   handlePostgresUniqueError,
   handleRouteNotFoundError,
   rollbackTransaction,
-  handleRateLimit
+  handleRateLimit,
+  handleCors
 } = require('../middleware')
 
 module.exports = app => {
@@ -25,6 +26,7 @@ module.exports = app => {
   app.use(pino({ level: config.get('pino.level') }))
   app.use(passport.initialize())
   app.use(handleRateLimit)
+  app.use(handleCors)
 
   requireDirectory(module, path.join(__dirname, '..'), {
     include: /router\.js$/,
@@ -39,4 +41,6 @@ module.exports = app => {
   app.use(handlePostgresUniqueError)
   app.use(handleBoomError)
   app.use(handleError)
+
+  app.enable('trust proxy')
 }

@@ -1,5 +1,5 @@
-export default ({ store, redirect }) => {
-  if (!store.getters['user/isAuth']) {
+export default ({ store: { getters }, redirect }) => {
+  if (!getters['user/isAuth']) {
     redirect({ name: 'index' })
   }
 }

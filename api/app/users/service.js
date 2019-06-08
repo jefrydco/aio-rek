@@ -5,19 +5,33 @@ const config = require('../../config')
 
 module.exports = app => ({
   async create(attributes, { trx } = {}) {
-    const user = await app.locals.models.User.forge(attributes).save(null, {
+    const {
+      locals: {
+        models: { User }
+      }
+    } = app
+    const user = new User(attributes)
+
+    const queryResult = await user.save(null, {
       method: 'insert',
       require: true,
       transacting: trx
     })
-    return user
+    return queryResult
   },
   async fetch(attributes, { trx } = {}) {
-    const user = await app.locals.models.User.forge(attributes).fetch({
+    const {
+      locals: {
+        models: { User }
+      }
+    } = app
+    const user = new User(attributes)
+
+    const queryResult = await user.fetch({
       require: true,
       transacting: trx
     })
-    return user
+    return queryResult
   },
   async destroy(user, { trx } = {}) {
     const deletedUser = await user.destroy({
@@ -51,7 +65,8 @@ module.exports = app => ({
       email: user.get('email'),
       image: user.get('image'),
       token: token || this.generateJWT(user),
-      username: user.get('username')
+      username: user.get('username'),
+      role: user.get('role')
     }
   },
   getProfileJSON(user, { trx } = {}) {
@@ -65,10 +80,18 @@ module.exports = app => ({
     { limit = 20, offset = 0, orderBy = 'username' } = {},
     { trx } = {}
   ) {
+    const {
+      locals: {
+        models: { User }
+      }
+    } = app
+    const user = new User()
+
     if (orderBy.length === 0) {
       orderBy = 'username'
     }
-    const { models: users, pagination } = await app.locals.models.User.forge()
+
+    const { models: users, pagination } = await user
       .query('where', 'role', 'student')
       .orderBy(orderBy)
       .fetchPage({ limit, offset, transacting: trx })

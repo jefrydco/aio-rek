@@ -31,7 +31,7 @@
   "scripts": {
     "api": "cross-env NODE_ENV=development nodemon api/start.js",
     "coverage": "codecov",
-    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server nuxt.config.js",
     "generate": "nuxt generate",
     "start": "nuxt start",
     "test": "npm run test:unit",

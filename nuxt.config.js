@@ -11,9 +11,9 @@ module.exports = {
   head: {
     titleTemplate(title) {
       if (title) {
-        return `${title} - Ayo Rek Admin`
+        return `${title} - Ayo Rek`
       }
-      return 'Ayo Rek Admin'
+      return 'Ayo Rek'
     }
   },
 
@@ -36,13 +36,12 @@ module.exports = {
   },
 
   http: {
-    proxy: true,
-    // baseURL: 'http://localhost:3001',
-    prefix: '/api/'
+    // proxy: true,
+    baseURL: 'http://localhost:3001/api'
   },
 
   proxy: {
-    '/api': 'http://localhost:3001'
+    // '/api': 'http://localhost:3001'
   },
 
   loading: {
@@ -61,7 +60,7 @@ module.exports = {
   ],
 
   // https://nuxtjs.org/api/configuration-css
-  css: ['~assets/styles/app.styl'],
+  css: ['~assets/styles/app', '~/assets/styles/main'],
 
   // serverMiddleware: ['~/api/index'],
 

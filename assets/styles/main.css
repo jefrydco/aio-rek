@@ -1,0 +1,8 @@
+#live-video {
+  transform: scaleX(-1);
+}
+#live-video,
+#live-canvas {
+  height: auto;
+  width: 100%;
+}

@@ -2,23 +2,33 @@
 
 module.exports = app => ({
   async create(attributes, { trx } = {}) {
-    const descriptor = await app.locals.models.Descriptor.forge(
-      attributes
-    ).save(null, {
+    const {
+      locals: {
+        models: { Descriptor }
+      }
+    } = app
+    const descriptor = new Descriptor(attributes)
+
+    const queryResult = await descriptor.save(null, {
       method: 'insert',
       require: true,
       transacting: trx
     })
-    return descriptor
+    return queryResult
   },
   async fetch(attributes, { trx } = {}) {
-    const descriptor = await app.locals.models.Descriptor.forge(
-      attributes
-    ).fetch({
+    const {
+      locals: {
+        models: { Descriptor }
+      }
+    } = app
+    const descriptor = new Descriptor(attributes)
+
+    const queryResult = await descriptor.fetch({
       require: true,
       transacting: trx
     })
-    return descriptor
+    return queryResult
   },
   async destroy(descriptor, { trx } = {}) {
     const deletedDescriptor = await descriptor.destroy({
@@ -46,9 +56,16 @@ module.exports = app => ({
     { limit = 9, offset = 0, orderBy = '-created_at', image } = {},
     { trx } = {}
   ) {
+    const {
+      locals: {
+        models: { Descriptor }
+      }
+    } = app
+    const descriptor = new Descriptor()
+
     let queryResult = null
     if (image) {
-      queryResult = await app.locals.models.Descriptor.forge()
+      queryResult = await descriptor
         .query('where', 'image', image)
         .orderBy(orderBy)
         .fetchPage({ limit, offset, transacting: trx })

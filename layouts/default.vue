@@ -85,18 +85,23 @@ export default {
   },
   data() {
     return {
-      isSidebar: false,
-      menus: [
-        { text: 'Home', to: { name: 'admin' } },
-        { text: 'Students', to: { name: 'admin-students' } }
-      ]
+      isSidebar: false
     }
   },
   computed: {
     ...mapState('user', ['user']),
     ...mapState('face', {
       isModelsLoading: 'isLoading'
-    })
+    }),
+    menus() {
+      if (this.user.role === 'room') {
+        return [{ text: 'Home', to: { name: 'room' } }]
+      }
+      return [
+        { text: 'Home', to: { name: 'admin' } },
+        { text: 'Students', to: { name: 'admin-students' } }
+      ]
+    }
   },
   mounted() {
     this.init()

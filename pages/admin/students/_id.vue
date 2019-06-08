@@ -1,8 +1,16 @@
 <template>
   <v-layout row="" wrap="">
     <v-flex xs12="">
+      <v-layout row="" wrap="" justify-end="">
+        <v-flex xs12="" md3="">
+          <v-autocomplete label="Grade" box="" hide-details="" />
+        </v-flex>
+        <v-flex xs12="" md3="">
+          <v-autocomplete label="Student" box="" hide-details="" />
+        </v-flex>
+      </v-layout>
       <v-layout row="" wrap="">
-        <v-flex xs12="" sm4="">
+        <v-flex xs12="" md4="">
           <v-card>
             <v-toolbar card="">
               <v-toolbar-title>
@@ -119,7 +127,7 @@
             </v-card-actions>
           </v-card>
         </v-flex>
-        <v-flex xs12="" sm8="">
+        <v-flex xs12="" md8="">
           <v-card>
             <v-toolbar card="">
               <v-toolbar-title>Photo</v-toolbar-title>
@@ -132,7 +140,7 @@
               <v-tabs-items v-model="currentTab">
                 <v-tab-item value="capture">
                   <v-layout row="" wrap="">
-                    <v-flex xs12="" sm6="">
+                    <v-flex xs12="" md6="">
                       <video
                         id="live-video"
                         ref="liveVideo"
@@ -141,7 +149,7 @@
                         autoplay=""
                       />
                     </v-flex>
-                    <v-flex xs12="" sm6="">
+                    <v-flex xs12="" md6="">
                       <canvas
                         id="live-canvas"
                         ref="liveCanvas"
@@ -151,7 +159,7 @@
                     </v-flex>
                   </v-layout>
                   <v-layout row="" wrap="">
-                    <v-flex xs12="" sm6="">
+                    <v-flex xs12="" md6="">
                       <v-select
                         v-model="selectedCamera"
                         :items="cameras"
@@ -161,7 +169,7 @@
                         item-text="label"
                       />
                     </v-flex>
-                    <v-flex xs12="" sm6="">
+                    <v-flex xs12="" md6="">
                       <v-btn
                         :disabled="isLoading"
                         :loading="isLoading"
@@ -183,7 +191,7 @@
                 </v-tab-item>
                 <v-tab-item value="file-upload">
                   <v-layout row="" wrap="">
-                    <v-flex xs12="" sm6="">
+                    <v-flex xs12="" md6="">
                       <v-img
                         src="/examples/images/tony-stark.jpg"
                         :aspect-ratio="456 / 400"
@@ -220,7 +228,7 @@
                         </li>
                       </ol>
                     </v-flex>
-                    <v-flex xs12="" sm6="">
+                    <v-flex xs12="" md6="">
                       <v-img
                         src="/examples/images/iron-man.jpg"
                         :aspect-ratio="456 / 400"
@@ -480,6 +488,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      selectedUser: null,
       user: {
         name: '',
         username: '',
@@ -502,7 +511,8 @@ export default {
         limit: 0,
         offset: 0,
         pageCount: 0,
-        orderBy: '-created_at'
+        orderBy: '-created_at',
+        withDescriptor: 0
       },
       rowsPerPageItems: [
         9,
@@ -626,6 +636,7 @@ export default {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
     ...mapActions('face', ['getFaceDescriptors']),
     async init() {
+      await this.getUser()
       await Promise.all([this.prefillData(), this.getCameras()])
       await this.initCamera(this.selectedCamera)
     },
@@ -842,14 +853,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#live-video {
-  transform: scaleX(-1);
-}
-#live-video,
-#live-canvas {
-  height: auto;
-  width: 100%;
-}
-</style>
