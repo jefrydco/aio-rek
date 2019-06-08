@@ -66,7 +66,7 @@
     "js-cookie": "^2.2.0",
     "json-form-data": "^1.4.1",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.17.3",
+    "knex": "^0.17.5",
     "lodash": "^4.17.11",
     "lru-cache": "^5.1.1",
     "material-color-hash": "^0.1.6",
@@ -88,7 +88,7 @@
     "rimraf": "^2.6.3",
     "ulid": "^2.3.0",
     "uuid-validate": "^0.0.3",
-    "vee-validate": "^2.2.9",
+    "vee-validate": "^2.2.10",
     "vuetify": "^1.5.14",
     "vuetify-loader": "^1.2.2"
   },
@@ -121,7 +121,7 @@
     "jest-transform-stub": "^2.0.0",
     "lint-staged": "^8.2.0",
     "nodemon": "^1.19.1",
-    "prettier": "^1.18.1",
+    "prettier": "^1.18.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-jest": "^3.0.4"

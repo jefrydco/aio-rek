@@ -7073,10 +7073,10 @@ kleur@^3.0.2:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-knex@^0.17.3:
-  version "0.17.3"
-  resolved "https://registry.yarnpkg.com/knex/-/knex-0.17.3.tgz#699e6cee9239f54e221d69bd472721ee1e63d57a"
-  integrity sha512-EAaBfRmpiZGUT+kTMDXg+NoUyAWH0Qv910HRWDUwTjSM3Dv7enW5ttGFanI0I/xUZL+RGFwcqC/b57+5+gUxkA==
+knex@^0.17.5:
+  version "0.17.5"
+  resolved "https://registry.yarnpkg.com/knex/-/knex-0.17.5.tgz#44d4e95585c2330944c311c66978dbb0c1a44a4d"
+  integrity sha512-2BUau9Mg7vE+Isl2MfRhw+XtusTdAj9K5dSzor4N1yxHMLCfvPLIEY7Gmyq4QIz51cLRBNoQETyygdCE9BOmxw==
   dependencies:
     "@babel/polyfill" "^7.4.4"
     "@types/bluebird" "^3.5.27"
@@ -9638,7 +9638,7 @@ prettier@1.16.3:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.16.3.tgz#8c62168453badef702f34b45b6ee899574a6a65d"
   integrity sha512-kn/GU6SMRYPxUakNXhpP0EedT/KmaPzr0H5lIsDogrykbaxOpOfAFfk5XA7DZrJyMAv1wlMV3CPcZruGXVVUZw==
 
-prettier@^1.18.1:
+prettier@^1.18.2:
   version "1.18.2"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.18.2.tgz#6823e7c5900017b4bd3acf46fe9ac4b4d7bda9ea"
   integrity sha512-OeHeMc0JhFE9idD4ZdtNibzY0+TPHSpSSb9h8FqtP+YnoZZ1sl8Vc9b1sasjfymH3SonAF4QcA2+mzHPhMvIiw==
@@ -11785,10 +11785,10 @@ vary@^1, vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vee-validate@^2.2.9:
-  version "2.2.9"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-2.2.9.tgz#4d4be9464acb00556cbc5c360f41b7bfd180412f"
-  integrity sha512-+nfg8dwH3rDOg8Y9sZ1TCvFFWXecRxG2L6sZelQECKrqLVjX4/UuFoyezhfPGMTfI6Lx66ygERgeRdOw4S3r4g==
+vee-validate@^2.2.10:
+  version "2.2.10"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-2.2.10.tgz#c209b6fbcf3dd57f1c2a70d988bb8ff360b9a7a9"
+  integrity sha512-I48yS0Fvd7E7zCZpBgyyXlN2yUICyAIH6lHsyphTQ8gg/8BaTrgQOAdznSsB85qdS+tOJpJa/adwgk9Nyw3mSA==
 
 vendors@^1.0.0:
   version "1.0.3"
