@@ -30,10 +30,11 @@ const {
 //   getImages
 // } = require('./controller')
 const {
+  name,
   login,
   create,
-  getAll,
-  getOnce,
+  fetchPage,
+  fetch,
   update,
   destroy
 } = require('./controller')
@@ -58,15 +59,15 @@ router.get(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  getAll
+  fetchPage
 )
 router.get(
   '/users/:id',
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId('user'),
-  getOnce
+  handleId(name),
+  fetch
 )
 router.put(
   '/users/:id',
@@ -74,7 +75,7 @@ router.put(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId('user'),
+  handleId(name),
   update
 )
 router.delete(
@@ -82,7 +83,7 @@ router.delete(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId('user'),
+  handleId(name),
   destroy
 )
 

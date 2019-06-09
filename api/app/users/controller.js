@@ -3,42 +3,58 @@
 // const fs = require('fs')
 // const ExtractJwt = require('passport-jwt').ExtractJwt
 const errorCatcher = require('async-error-catcher').default
+const Controller = require('../../base/Controller')
 
-exports.login = errorCatcher((req, res) => {
-  const { user } = req
-  const {
-    app: {
-      locals: {
-        services: { users }
-      }
-    }
-  } = res
+class UserController extends Controller {
+  constructor() {
+    super(UserController.name)
+  }
+  login(req, res, next) {
+    return errorCatcher((req, res) => {
+      const { user } = req
+      const service = this._getService(res)
+      return res.json({ user: service.getAuthJSON(user) })
+    })(req, res, next)
+  }
+}
 
-  return res.json({ user: users.getAuthJSON(user) })
-})
+module.exports = new UserController()
 
-exports.create = errorCatcher(async (req, res) => {
-  const { body: { user: { email, password, role } = {} } = {} } = req
-  const {
-    app: {
-      locals: {
-        services: { users }
-      }
-    },
-    locals: { trx }
-  } = res
+// exports.login = errorCatcher((req, res) => {
+//   const { user } = req
+//   const {
+//     app: {
+//       locals: {
+//         services: { users }
+//       }
+//     }
+//   } = res
 
-  const user = await users.create(
-    {
-      email,
-      role,
-      password
-    },
-    { trx }
-  )
+//   return res.json({ user: users.getAuthJSON(user) })
+// })
 
-  return res.status(201).json({ user: users.getAuthJSON(user) })
-})
+// exports.create = errorCatcher(async (req, res) => {
+//   const { body: { user: { email, password, role } = {} } = {} } = req
+//   const {
+//     app: {
+//       locals: {
+//         services: { users }
+//       }
+//     },
+//     locals: { trx }
+//   } = res
+
+//   const user = await users.create(
+//     {
+//       email,
+//       role,
+//       password
+//     },
+//     { trx }
+//   )
+
+//   return res.status(201).json({ user: users.getAuthJSON(user) })
+// })
 
 exports.getAll = errorCatcher(async (req, res) => {
   const { query: { limit, offset, orderBy, role } = {} } = req

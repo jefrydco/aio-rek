@@ -8,7 +8,7 @@
     <v-card-text>
       <v-data-table
         :headers="headers"
-        :items="users"
+        :items="students"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
         :total-items="totalItems"
@@ -67,7 +67,7 @@ export default {
         password: '',
         username: ''
       },
-      users: [],
+      students: [],
       filter: {
         limit: 0,
         offset: 0,
@@ -78,7 +78,6 @@ export default {
       headers: [
         { text: 'Image', value: 'image', sortable: false },
         { text: 'Name', value: 'name' },
-        { text: 'Username', value: 'username' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [
@@ -103,7 +102,7 @@ export default {
         if (descending) {
           sortBy = `-${sortBy}`
         }
-        this.getUsers({
+        this.getStudents({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
@@ -123,15 +122,15 @@ export default {
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
       const {
-        users: { rowCount, users, ...filter }
-      } = await $api.users.getAll({
-        orderBy: '-username',
+        students: { rowCount, students, ...filter }
+      } = await $api.students.getAll({
+        orderBy: '-identifier',
         limit: 20,
         offset: 0
       })
       return {
         filter,
-        users,
+        students,
         totalItems: rowCount
       }
     } catch ({ response }) {
@@ -139,17 +138,21 @@ export default {
     }
   },
   methods: {
-    async getUsers(
-      { orderBy, limit, offset } = { orderBy: 'username', limit: 20, offset: 0 }
+    async getStudents(
+      { orderBy, limit, offset } = {
+        orderBy: '-identifier',
+        limit: 20,
+        offset: 0
+      }
     ) {
       try {
         this.isLoading = true
         const {
-          users: { rowCount, users, ...filter }
-        } = await this.$api.users.getAll({ orderBy, limit, offset })
+          students: { rowCount, students, ...filter }
+        } = await this.$api.students.getAll({ orderBy, limit, offset })
         this.filter = filter
         this.totalItems = rowCount
-        this.users = users
+        this.students = students
       } catch ({ response }) {
         this.$handleError(response)
       } finally {

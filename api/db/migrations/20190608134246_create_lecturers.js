@@ -10,6 +10,7 @@ exports.up = function(knex, Promise) {
       .string('identifier')
       .notNullable()
       .unique()
+    table.string('image')
     table.boolean('is_active').defaultTo(true)
     table
       .uuid('user_id')

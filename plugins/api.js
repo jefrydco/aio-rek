@@ -7,7 +7,7 @@ export default ({ $http }, inject) => {
   const createApi = apiFactory($http)
 
   const apiList = {
-    users: createApi('users'),
+    students: createApi('students'),
     images: createApi('images'),
     descriptors: createApi('descriptors')
   }
