@@ -53,7 +53,6 @@ module.exports = app => ({
     return jwt.sign(
       {
         id: user.id,
-        username: user.get('username'),
         role: [user.get('role')]
       },
       config.get('privateKey'),
@@ -63,21 +62,18 @@ module.exports = app => ({
   getAuthJSON(user, token) {
     return {
       email: user.get('email'),
-      image: user.get('image'),
       token: token || this.generateJWT(user),
-      username: user.get('username'),
       role: user.get('role')
     }
   },
-  getProfileJSON(user, { trx } = {}) {
+  getProfileJSON(user) {
     return {
-      name: user.get('name'),
-      username: user.get('username'),
-      image: user.get('image')
+      email: user.get('email'),
+      role: user.get('role')
     }
   },
   async getUsersJSON(
-    { limit = 20, offset = 0, orderBy = 'username' } = {},
+    { limit = 20, offset = 0, orderBy = '-created_at', role } = {},
     { trx } = {}
   ) {
     const {
@@ -88,30 +84,83 @@ module.exports = app => ({
     const user = new User()
 
     if (orderBy.length === 0) {
-      orderBy = 'username'
+      orderBy = '-created_at'
     }
 
+    if (role) {
+      const { models: users, pagination } = await user
+        .query('where', '=', role)
+        .orderBy(orderBy)
+        .fetchPage({ limit, offset, transacting: trx })
+
+      return {
+        ...pagination,
+        orderBy,
+        users: await Promise.all(
+          users.map(user => ({
+            id: user.id,
+            ...this.getProfileJSON(user)
+          }))
+        )
+      }
+    }
     const { models: users, pagination } = await user
-      .query('where', 'role', 'student')
       .orderBy(orderBy)
       .fetchPage({ limit, offset, transacting: trx })
-
-    const usersJSON = {
+    return {
       ...pagination,
       orderBy,
       users: await Promise.all(
-        users.map(async user => {
-          const userJSON = await app.locals.services.users.getProfileJSON(
-            user,
-            { trx }
-          )
-          return {
-            id: user.id,
-            ...userJSON
-          }
-        })
+        users.map(user => ({
+          id: user.id,
+          ...this.getProfileJSON(user)
+        }))
       )
     }
-    return usersJSON
   }
+  // getProfileJSON(user, { trx } = {}) {
+  //   return {
+  //     name: user.get('name'),
+  //     username: user.get('username'),
+  //     image: user.get('image')
+  //   }
+  // }
+  // async getUsersJSON(
+  //   { limit = 20, offset = 0, orderBy = 'username' } = {},
+  //   { trx } = {}
+  // ) {
+  //   const {
+  //     locals: {
+  //       models: { User }
+  //     }
+  //   } = app
+  //   const user = new User()
+
+  //   if (orderBy.length === 0) {
+  //     orderBy = 'username'
+  //   }
+
+  //   const { models: users, pagination } = await user
+  //     .query('where', 'role', 'student')
+  //     .orderBy(orderBy)
+  //     .fetchPage({ limit, offset, transacting: trx })
+
+  //   const usersJSON = {
+  //     ...pagination,
+  //     orderBy,
+  //     users: await Promise.all(
+  //       users.map(async user => {
+  //         const userJSON = await app.locals.services.users.getProfileJSON(
+  //           user,
+  //           { trx }
+  //         )
+  //         return {
+  //           id: user.id,
+  //           ...userJSON
+  //         }
+  //       })
+  //     )
+  //   }
+  //   return usersJSON
+  // }
 })

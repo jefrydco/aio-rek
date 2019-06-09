@@ -10,15 +10,7 @@ module.exports = bookshelf =>
     getValidators() {
       return {
         email: ['required', 'email', this.unsafeValidateUnique(['email'])],
-        name: ['string'],
-        image: ['string'],
-        role: ['string'],
-        username: [
-          'required',
-          'string',
-          'alphaNumeric',
-          this.unsafeValidateUnique(['username'])
-        ]
+        role: ['string']
       }
     },
     getMaybeValidators() {

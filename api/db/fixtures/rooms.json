@@ -2,86 +2,86 @@
   {
     "id": "9e8bd174-7244-4d84-86fc-304892f8721f",
     "name": "C 103",
-    "user": "80e15d43-936f-4ae7-82cd-ed268f99aa59"
+    "user_id": "80e15d43-936f-4ae7-82cd-ed268f99aa59"
   },
   {
     "id": "927a9e09-5642-4dca-a2c0-5e1b5b11f341",
     "name": "C 105",
-    "user": "1bd10cd3-a06f-4a40-b802-28e04d047534"
+    "user_id": "1bd10cd3-a06f-4a40-b802-28e04d047534"
   },
   {
     "id": "82a04d32-dd73-475c-a168-a1b3092d707c",
     "name": "C 203",
-    "user": "64d10cdb-707f-4b46-9d77-c6a70dbd9362"
+    "user_id": "64d10cdb-707f-4b46-9d77-c6a70dbd9362"
   },
   {
     "id": "764bf373-7543-46fa-8078-ecdbeb8a7d06",
     "name": "C 205",
-    "user": "18c7cb81-35c0-4a4f-bf3f-d3a40438c3a5"
+    "user_id": "18c7cb81-35c0-4a4f-bf3f-d3a40438c3a5"
   },
   {
     "id": "960581df-9da4-463f-a1bd-b3399392f8ba",
     "name": "C 303",
-    "user": "8ca9528d-26da-4994-84df-08a31d361c9f"
+    "user_id": "8ca9528d-26da-4994-84df-08a31d361c9f"
   },
   {
     "id": "c24a29d5-ebb8-46b7-b732-6ed8872671f5",
     "name": "C 305",
-    "user": "83c21e33-50cd-4117-81cf-cc318e190de4"
+    "user_id": "83c21e33-50cd-4117-81cf-cc318e190de4"
   },
   {
     "id": "1f38c427-eb2f-43f5-8c4f-7b9409c748ff",
     "name": "A 301",
-    "user": "252cba09-6fbd-4a98-8d1b-71bd08f13adb"
+    "user_id": "252cba09-6fbd-4a98-8d1b-71bd08f13adb"
   },
   {
     "id": "4cb9066b-9886-452a-b90d-db17242444cc",
     "name": "A 302",
-    "user": "3a7a1e59-6a1e-4aff-be92-d593b7832263"
+    "user_id": "3a7a1e59-6a1e-4aff-be92-d593b7832263"
   },
   {
     "id": "e2159b7a-8f1b-4fd4-b6e9-6de402e650e8",
     "name": "A 303",
-    "user": "81f5385b-9c13-4bde-a48b-f5e606247573"
+    "user_id": "81f5385b-9c13-4bde-a48b-f5e606247573"
   },
   {
     "id": "a5e65093-a6ff-471f-ad9a-73d5616e626f",
     "name": "A 304",
-    "user": "03a743ba-99cd-47de-9a41-3a1137d6561b"
+    "user_id": "03a743ba-99cd-47de-9a41-3a1137d6561b"
   },
   {
     "id": "628867de-e485-411f-ac09-6176a565823f",
     "name": "A 305",
-    "user": "2104705e-2e93-42e5-bad2-b1a82ef0fbde"
+    "user_id": "2104705e-2e93-42e5-bad2-b1a82ef0fbde"
   },
   {
     "id": "beb9a460-4f8b-4930-8a48-896d195c5750",
     "name": "B 301",
-    "user": "7c6b9e23-c317-40e0-b76f-9c8297e7699b"
+    "user_id": "7c6b9e23-c317-40e0-b76f-9c8297e7699b"
   },
   {
     "id": "a22f7565-8974-45f5-be1f-d6d83069ac05",
     "name": "B 302",
-    "user": "1018c380-f59b-44eb-acbf-0ece60ab84ba"
+    "user_id": "1018c380-f59b-44eb-acbf-0ece60ab84ba"
   },
   {
     "id": "97938eef-d220-4017-9b24-1bd64b16ed0e",
     "name": "B 303",
-    "user": "82faca9c-d72b-47bc-986b-9e8f9810e2aa"
+    "user_id": "82faca9c-d72b-47bc-986b-9e8f9810e2aa"
   },
   {
     "id": "688dab87-162d-4216-be81-22fd479e74cf",
     "name": "B 304",
-    "user": "96a5945d-af1d-4a6d-b8b4-e75e604259ad"
+    "user_id": "96a5945d-af1d-4a6d-b8b4-e75e604259ad"
   },
   {
     "id": "5775dd93-b834-4de1-9787-856dc974dfec",
     "name": "B 305",
-    "user": "eea8d148-bb4c-442f-bd87-cbd55748176a"
+    "user_id": "eea8d148-bb4c-442f-bd87-cbd55748176a"
   },
   {
     "id": "5714f93d-12a6-462c-8d88-550b4e885d33",
     "name": "PS-03.11",
-    "user": "0c40a1b8-711e-4522-84f9-61eb528c1989"
+    "user_id": "0c40a1b8-711e-4522-84f9-61eb528c1989"
   }
 ]

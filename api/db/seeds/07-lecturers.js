@@ -5,11 +5,11 @@ exports.seed = async function(knex, Promise) {
   await qb.del()
   const lecturersData = lecturers.map(
     // eslint-disable-next-line
-    ({ id, user, identifier, name }) => ({
+    ({ id, user_id, identifier, name }) => ({
       id,
       identifier,
       name,
-      user
+      user_id
     })
   )
   return qb.insert(lecturersData)

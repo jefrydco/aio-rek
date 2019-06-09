@@ -7,7 +7,7 @@ exports.up = function(knex, Promise) {
     table.timestamps(true, true)
     table.string('image').notNullable()
     table.uuid('student').references('students.id')
-    table.uuid('attendance').references('attendances.id')
+    table.uuid('attendance_id').references('attendances.id')
   })
 }
 

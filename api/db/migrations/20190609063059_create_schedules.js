@@ -9,15 +9,15 @@ exports.up = function(knex, Promise) {
     table.time('start_time').notNullable()
     table.time('end_time').notNullable()
     table
-      .uuid('subject')
+      .uuid('subject_id')
       .references('subjects.id')
       .onDelete('SET NULL')
     table
-      .uuid('lecturer')
+      .uuid('lecturer_id')
       .references('lecturers.id')
       .onDelete('SET NULL')
     table
-      .uuid('room')
+      .uuid('room_id')
       .references('rooms.id')
       .onDelete('SET NULL')
   })

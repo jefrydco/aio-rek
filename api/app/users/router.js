@@ -2,25 +2,40 @@
 
 const bodyParser = require('body-parser')
 const router = require('express').Router()
+// const {
+//   createTransaction,
+//   jwtAuth,
+//   localAuth,
+//   handleRole,
+//   handleImage
+// } = require('../middleware')
+// const { handleId } = require('./middleware')
 const {
   createTransaction,
   jwtAuth,
   localAuth,
   handleRole,
-  handleImage
+  handleId
 } = require('../middleware')
-const { handleId } = require('./middleware')
+// const {
+//   login,
+//   create,
+//   getAll,
+//   getOnce,
+//   update,
+//   destroy,
+//   updateSelf,
+//   getAuth,
+//   getProfile,
+//   getImages
+// } = require('./controller')
 const {
   login,
   create,
   getAll,
   getOnce,
   update,
-  destroy,
-  updateSelf,
-  getAuth,
-  getProfile,
-  getImages
+  destroy
 } = require('./controller')
 
 router.post(
@@ -50,16 +65,16 @@ router.get(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId,
+  handleId('user'),
   getOnce
 )
 router.put(
   '/users/:id',
+  bodyParser.json(),
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId,
-  handleImage('static/uploads/images/profiles').single('image'),
+  handleId('user'),
   update
 )
 router.delete(
@@ -67,38 +82,38 @@ router.delete(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId,
+  handleId('user'),
   destroy
 )
 
-router.put(
-  '/user/update',
-  createTransaction,
-  jwtAuth.required,
-  handleRole('student'),
-  handleImage('static/uploads/images/profiles').single('image'),
-  updateSelf
-)
-router.get(
-  '/user/auth',
-  createTransaction,
-  jwtAuth.required,
-  handleRole([['admin'], ['lecturer'], ['room'], ['student']]),
-  getAuth
-)
-router.get(
-  '/user/profile',
-  createTransaction,
-  jwtAuth.required,
-  handleRole([['admin'], ['lecturer'], ['room'], ['student']]),
-  getProfile
-)
-router.get(
-  '/user/images',
-  createTransaction,
-  jwtAuth.required,
-  handleRole('student'),
-  getImages
-)
+// router.put(
+//   '/user/update',
+//   createTransaction,
+//   jwtAuth.required,
+//   handleRole('student'),
+//   handleImage('static/uploads/images/profiles').single('image'),
+//   updateSelf
+// )
+// router.get(
+//   '/user/auth',
+//   createTransaction,
+//   jwtAuth.required,
+//   handleRole([['admin'], ['lecturer'], ['room'], ['student']]),
+//   getAuth
+// )
+// router.get(
+//   '/user/profile',
+//   createTransaction,
+//   jwtAuth.required,
+//   handleRole([['admin'], ['lecturer'], ['room'], ['student']]),
+//   getProfile
+// )
+// router.get(
+//   '/user/images',
+//   createTransaction,
+//   jwtAuth.required,
+//   handleRole('student'),
+//   getImages
+// )
 
 module.exports = router

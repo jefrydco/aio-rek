@@ -8,8 +8,9 @@ exports.seed = async function(knex, Promise) {
   await qb.del()
 
   const studentsData = await Promise.all(
-    students.map(async ({ user, identifier, name }) => ({
-      id: user,
+    // eslint-disable-next-line
+    students.map(async ({ user_id, identifier, name }) => ({
+      id: user_id,
       email: `${identifier}@gmail.com`,
       role: 'student',
       hashed_password: await argon2.hash(`${identifier}123`, {
@@ -18,8 +19,9 @@ exports.seed = async function(knex, Promise) {
     }))
   )
   const lecturersData = await Promise.all(
-    lecturers.map(async ({ user, identifier, name }, i) => ({
-      id: user,
+    // eslint-disable-next-line
+    lecturers.map(async ({ user_id, identifier, name }, i) => ({
+      id: user_id,
       email: `lecturer${i}@gmail.com`,
       role: 'lecturer',
       hashed_password: await argon2.hash(`lecturer${i}123`, {
@@ -28,8 +30,9 @@ exports.seed = async function(knex, Promise) {
     }))
   )
   const roomsData = await Promise.all(
-    rooms.map(async ({ user, name }, i) => ({
-      id: user,
+    // eslint-disable-next-line
+    rooms.map(async ({ user_id, name }, i) => ({
+      id: user_id,
       email: `${name
         .replace(/[^\w\s]/gi, '')
         .replace(' ', '')

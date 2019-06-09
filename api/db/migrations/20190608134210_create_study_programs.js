@@ -7,7 +7,7 @@ exports.up = function(knex, Promise) {
     table.timestamps(true, true)
     table.string('name').notNullable()
     table
-      .uuid('department')
+      .uuid('department_id')
       .references('departments.id')
       .onDelete('SET NULL')
   })

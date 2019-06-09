@@ -12,16 +12,16 @@ exports.up = function(knex, Promise) {
       .unique()
     table.boolean('is_active').defaultTo(true)
     table
-      .uuid('user')
+      .uuid('user_id')
       .notNullable()
       .references('users.id')
       .onDelete('CASCADE')
     table
-      .uuid('study_program')
+      .uuid('study_program_id')
       .references('study_programs.id')
       .onDelete('SET NULL')
     table
-      .uuid('class')
+      .uuid('class_id')
       .references('classes.id')
       .onDelete('SET NULL')
   })

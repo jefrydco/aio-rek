@@ -12,7 +12,7 @@ exports.up = function(knex, Promise) {
       .unique()
     table.boolean('is_active').defaultTo(true)
     table
-      .uuid('user')
+      .uuid('user_id')
       .notNullable()
       .references('users.id')
       .onDelete('CASCADE')

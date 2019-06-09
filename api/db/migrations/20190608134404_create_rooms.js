@@ -8,7 +8,7 @@ exports.up = function(knex, Promise) {
     table.string('name').notNullable()
     table.boolean('in_use').defaultTo(false)
     table
-      .uuid('user')
+      .uuid('user_id')
       .notNullable()
       .references('users.id')
       .onDelete('CASCADE')

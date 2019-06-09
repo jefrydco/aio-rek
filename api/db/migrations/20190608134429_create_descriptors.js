@@ -7,7 +7,7 @@ exports.up = function(knex, Promise) {
     table.timestamps(true, true)
     table.jsonb('descriptor').notNullable()
     table
-      .uuid('image')
+      .uuid('image_id')
       .notNullable()
       .references('images.id')
       .onDelete('CASCADE')
