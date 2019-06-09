@@ -1,0 +1,38 @@
+[
+  {
+    "id": "3bdf1f32-8765-425e-a1ac-af3550574c24",
+    "day": "monday",
+    "start_time": "08:00:00",
+    "end_time": "11:00:00",
+    "subject": "9c562542-c199-4eac-8035-8c7651b78417",
+    "lecturer": "3f82ae22-4603-47d4-8a70-9bd2a228f5b5",
+    "room": "82a04d32-dd73-475c-a168-a1b3092d707c"
+  },
+  {
+    "id": "6f77bdb1-f1db-47ef-8b48-c01f9fe63d58",
+    "day": "monday",
+    "start_time": "12:20:00",
+    "end_time": "13:50:00",
+    "subject": "e22084e8-552a-4d4e-a56b-12b1524f6af5",
+    "lecturer": "0f52399f-59c0-4e33-8ee8-6bc535e4ce46",
+    "room": "5714f93d-12a6-462c-8d88-550b4e885d33"
+  },
+  {
+    "id": "a8bffcbd-ac6a-4dfa-b034-5f4799b23716",
+    "day": "tuesday",
+    "start_time": "08:00:00",
+    "end_time": "09:30:00",
+    "subject": "61921b7a-cf8a-4dc9-9627-9509d3e0babb",
+    "lecturer": "13c274dc-cb1d-4b29-a89f-1960a83986cc",
+    "room": "5775dd93-b834-4de1-9787-856dc974dfec"
+  },
+  {
+    "id": "627b122c-b4d6-419a-b418-fd4f8aec8411",
+    "day": "tuesday",
+    "start_time": "09:40:00",
+    "end_time": "11:10",
+    "subject": "0ab06739-7007-4d8a-bc04-3acbdf0d1e3c",
+    "lecturer": "bc0de76a-eba8-4848-8667-8d62d2330e38",
+    "room": "5775dd93-b834-4de1-9787-856dc974dfec"
+  }
+]

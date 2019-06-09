@@ -1,0 +1,307 @@
+[
+  {
+    "id": "6de642c3-9213-49c7-9d27-ada2e1f3c226",
+    "name": "Konsep Teknologi Informasi",
+    "identifier": "VI031105"
+  },
+  {
+    "id": "65fc716b-192e-4f57-a2c7-0526b9804a1e",
+    "name": "Logika & Algoritma",
+    "identifier": "VI031106"
+  },
+  {
+    "id": "7863e0c1-bbcf-4d92-9a2e-79d33660d228",
+    "name": "Dasar Sistem Informasi",
+    "identifier": "VI031107"
+  },
+  {
+    "id": "9d148b42-1b5f-4dc4-919f-ca0257bd6557",
+    "name": "Konsep Pemrograman",
+    "identifier": "VI031108"
+  },
+  {
+    "id": "96232b01-1c22-48a7-b6f5-f9887f1917df",
+    "name": "Workshop Ketrampilan Komputer",
+    "identifier": "VI031109"
+  },
+  {
+    "id": "3aed8fd7-58d8-4408-84f4-30752e3be559",
+    "name": "Agama",
+    "identifier": "VI031201"
+  },
+  {
+    "id": "e7448c5e-d331-4c55-bcfe-c55e56db3a6b",
+    "name": "Bahasa Inggris Untuk Percakapan",
+    "identifier": "VI031202"
+  },
+  {
+    "id": "a9540ac7-f91b-4556-9135-36345905e80c",
+    "name": "Matematika 1",
+    "identifier": "VI031203"
+  },
+  {
+    "id": "a13c6743-3ac3-4fc1-ba14-4d1a7fa8d8ad",
+    "name": "Kewarganegaraan",
+    "identifier": "VI031204"
+  },
+  {
+    "id": "f028d28b-1783-44e3-9266-47cf29a809cf",
+    "name": "Prak. Konsep Pemrograman",
+    "identifier": "VI031110"
+  },
+  {
+    "id": "680cd0ed-c015-4984-bed7-2c9b0e2182b7",
+    "name": "Metode Numerik",
+    "identifier": "VI032103"
+  },
+  {
+    "id": "57590dbe-e687-4ad3-acf0-391f22fcc92c",
+    "name": "Sistem Operasi",
+    "identifier": "VI032104"
+  },
+  {
+    "id": "731f47a0-eda5-4a90-bb7d-f7a3791e1874",
+    "name": "Desain & Pemrograman Web",
+    "identifier": "VI032105"
+  },
+  {
+    "id": "4ade893e-c8f9-4607-8ade-66c5af2f5b03",
+    "name": "Pemrograman Berorientasi Obyek",
+    "identifier": "VI032106"
+  },
+  {
+    "id": "e749859c-1186-4e76-9f5e-f36ab0bd5fe5",
+    "name": "Bahasa Inggris Untuk Teknik",
+    "identifier": "VI032201"
+  },
+  {
+    "id": "a3fdbf51-dd83-42a9-b62d-7b6fb94723aa",
+    "name": "Matematika 2",
+    "identifier": "VI032202"
+  },
+  {
+    "id": "2600a159-84fa-45c8-b358-c1f75563d831",
+    "name": "Prak. Metode Numerik",
+    "identifier": "VI032107"
+  },
+  {
+    "id": "b6829f38-aaae-4c44-8c6f-41c5ac775d49",
+    "name": "Prak. Sistem Operasi",
+    "identifier": "VI032108"
+  },
+  {
+    "id": "8beea962-7e0d-41b0-85cf-afff0205aaa5",
+    "name": "Prak. Desain & Pemrograman Web",
+    "identifier": "VI032109"
+  },
+  {
+    "id": "e300764d-27ea-48d1-92e9-6db853b5c35a",
+    "name": "Prak. Pemrograman Berorientasi Obyek",
+    "identifier": "VI032110"
+  },
+  {
+    "id": "2119003c-cbad-406e-9eda-776394d871de",
+    "name": "Algoritma & Struktur Data",
+    "identifier": "VI033104"
+  },
+  {
+    "id": "98b5bdf4-367e-42d8-a8f9-7bfd1d631124",
+    "name": "Konsep Jaringan",
+    "identifier": "VI033105"
+  },
+  {
+    "id": "a2074671-4e56-4147-9f15-6f9a4b5b7917",
+    "name": "Basis Data",
+    "identifier": "VI033106"
+  },
+  {
+    "id": "1a214ae6-c850-40d6-8888-912f045ee043",
+    "name": "Rekayasa Perangkat Lunak",
+    "identifier": "VI033107"
+  },
+  {
+    "id": "4c8b4c9a-c3a0-49c6-acb8-45f2da6e9d85",
+    "name": "Interaksi Manusia & Komputer",
+    "identifier": "VI033108"
+  },
+  {
+    "id": "b6fc3b19-95a4-46f1-9ed0-59ba1384d763",
+    "name": "Bahasa Inggris Untuk Ketrampilan Berkomunikasi 1",
+    "identifier": "VI033201"
+  },
+  {
+    "id": "cc75b52d-a15f-46cf-9f01-13b0ac86c509",
+    "name": "Matematika Diskrit",
+    "identifier": "VI033202"
+  },
+  {
+    "id": "32ac59d0-f7ad-43ed-8869-89f366e3e4e5",
+    "name": "Matematika 3",
+    "identifier": "VI033203"
+  },
+  {
+    "id": "2edc92a0-f40a-4fab-bd9f-699a5b9d8211",
+    "name": "Prak. Algoritma & Struktur Data",
+    "identifier": "VI033109"
+  },
+  {
+    "id": "166620cc-f255-4422-9b49-4d886dfed38f",
+    "name": "Prak. Konsep Jaringan",
+    "identifier": "VI033110"
+  },
+  {
+    "id": "fa404d44-001d-4999-a937-b7616b5827a6",
+    "name": "Prak. Basis Data",
+    "identifier": "VI033111"
+  },
+  {
+    "id": "c2774e27-5dcf-4a6f-b24b-ed49e2539648",
+    "name": "Prak. Rekayasa Perangkat Lunak",
+    "identifier": "VI033112"
+  },
+  {
+    "id": "00188f4f-ba49-4962-b1c9-b5b610294d19",
+    "name": "Sistem Pendukung Keputusan",
+    "identifier": "VI034103"
+  },
+  {
+    "id": "2f836239-427d-443d-938a-af0430370ef8",
+    "name": "Basis Data Lanjut",
+    "identifier": "VI034104"
+  },
+  {
+    "id": "6f012f7f-1665-4d3e-b281-e0b93bb4c2e7",
+    "name": "Pemrograman Lanjut",
+    "identifier": "VI034105"
+  },
+  {
+    "id": "924d1746-70e0-428f-9bbd-10602dccc5d7",
+    "name": "Sistem Informasi Geografis",
+    "identifier": "VI034106"
+  },
+  {
+    "id": "4db5f741-1781-4fd4-8e4f-4affc3b4c13f",
+    "name": "Administrasi & Manajemen Jaringan",
+    "identifier": "VI034107"
+  },
+  {
+    "id": "c1be26ee-5113-4b8a-b330-3bbcc703abc3",
+    "name": "Pengolahan Citra",
+    "identifier": "VI034108"
+  },
+  {
+    "id": "89db0ca6-52e9-4c7f-9b87-36b2a7b08444",
+    "name": "Kecerdasan Buatan",
+    "identifier": "VI034109"
+  },
+  {
+    "id": "57189812-09ce-4fa8-9884-5c2bb98ba56b",
+    "name": "Bahasa Inggris Untuk Ketrampilan Berkomunikasi 2",
+    "identifier": "VI034201"
+  },
+  {
+    "id": "59d2ee7a-beb4-4dc2-9d8b-8d439a0fdb2e",
+    "name": "Statistik & Probabilitas",
+    "identifier": "VI034202"
+  },
+  {
+    "id": "01aeb315-e73b-493a-be55-48201c4b8f8b",
+    "name": "Prak. Basis Data Lanjut",
+    "identifier": "VI034110"
+  },
+  {
+    "id": "0c5d0c4a-31b0-4be0-9bc7-dacc737c1514",
+    "name": "Prak. Sistem Informasi Geografis",
+    "identifier": "VI034111"
+  },
+  {
+    "id": "8e2d6df8-0a31-4748-9919-d448a4b3270b",
+    "name": "Prak. Pengolahan Citra",
+    "identifier": "VI034112"
+  },
+  {
+    "id": "75061c85-95dc-4cc9-8832-9e2d435cd154",
+    "name": "Manajemen Pemrosesan Data",
+    "identifier": "VI035105"
+  },
+  {
+    "id": "eefbe74d-b75c-4965-9a37-46d87293005a",
+    "name": "Manajemen Proyek Sistem Informasi",
+    "identifier": "VI035106"
+  },
+  {
+    "id": "cf33e2cd-a03f-4510-913b-54a6a4829248",
+    "name": "Workshop SIM",
+    "identifier": "VI035107"
+  },
+  {
+    "id": "585278be-78c0-41ed-a450-ed186438e6f3",
+    "name": "Workshop Grafika Komputer",
+    "identifier": "VI035108"
+  },
+  {
+    "id": "89aea2e5-45f0-49a1-bc43-a00c3e898514",
+    "name": "Keamanan Jaringan",
+    "identifier": "VI035109"
+  },
+  {
+    "id": "0bcb8112-5cf6-4271-b5ae-7ba7bedc3c56",
+    "name": "Administrasi Basis Data",
+    "identifier": "VI035110"
+  },
+  {
+    "id": "788ad859-191e-41ce-941d-15c09e084ff2",
+    "name": "Aplikasi & Teknologi Web",
+    "identifier": "VI035111"
+  },
+  {
+    "id": "41ffa2b6-d012-4f26-9e30-9fca64c55209",
+    "name": "Bahasa Inggris Untuk Karir",
+    "identifier": "VI035201"
+  },
+  {
+    "id": "5d854caf-0e35-4f28-af63-825987ac8285",
+    "name": "Proposal Proyek Akhir",
+    "identifier": "VI035202"
+  },
+  {
+    "id": "8fd71144-469d-48a4-9320-735192ad802f",
+    "name": "Bahasa Indonesia & TTKI",
+    "identifier": "VI035203"
+  },
+  {
+    "id": "cae98cfe-e3ee-4351-93f0-8b039b326501",
+    "name": "Ketrampilan Komunikasi",
+    "identifier": "VI035204"
+  },
+  {
+    "id": "9c562542-c199-4eac-8035-8c7651b78417",
+    "name": "Workshop Aplikasi Teknologi Informasi",
+    "identifier": "VI036106"
+  },
+  {
+    "id": "0ab06739-7007-4d8a-bc04-3acbdf0d1e3c",
+    "name": "Bahasa Inggris 6",
+    "identifier": "VI036201"
+  },
+  {
+    "id": "8e988aca-0344-4019-8364-0601ec5fa07b",
+    "name": "Kerja Praktik",
+    "identifier": "VI036202"
+  },
+  {
+    "id": "d65ae816-a834-4174-9b84-54458b8b764c",
+    "name": "Proyek Akhir",
+    "identifier": "VI036203"
+  },
+  {
+    "id": "e22084e8-552a-4d4e-a56b-12b1524f6af5",
+    "name": "Kewirausahaan",
+    "identifier": "VI036204"
+  },
+  {
+    "id": "61921b7a-cf8a-4dc9-9627-9509d3e0babb",
+    "name": "Etika Profesi",
+    "identifier": "VI036205"
+  }
+]

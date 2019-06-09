@@ -1,5 +1,3 @@
-'use strict'
-
 exports.up = function(knex, Promise) {
   return knex.raw('create extension if not exists "uuid-ossp"')
 }

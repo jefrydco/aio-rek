@@ -1,69 +1,63 @@
-'use strict'
-
 const argon2 = require('argon2')
-const users = require('../fixtures/users')
+const students = require('../fixtures/students.json')
+const lecturers = require('../fixtures/lecturers.json')
+const rooms = require('../fixtures/rooms.json')
 
 exports.seed = async function(knex, Promise) {
-  const date = new Date().toUTCString()
   const qb = knex('users')
   await qb.del()
 
-  const lecturersData = await Promise.all(
-    Array.from({ length: 3 }, async (v, k) => ({
-      email: `lecturer-${k}@gmail.com`,
-      hashed_password: await argon2.hash(`lecturer-${k}123`, {
+  const studentsData = await Promise.all(
+    students.map(async ({ user, identifier, name }) => ({
+      id: user,
+      email: `${identifier}@gmail.com`,
+      role: 'student',
+      hashed_password: await argon2.hash(`${identifier}123`, {
         type: argon2.argon2id
-      }),
-      username: `lecturer-${k}`,
-      name: `Lecturer ${k}`,
+      })
+    }))
+  )
+  const lecturersData = await Promise.all(
+    lecturers.map(async ({ user, identifier, name }, i) => ({
+      id: user,
+      email: `lecturer${i}@gmail.com`,
       role: 'lecturer',
-      created_at: date,
-      updated_at: date
+      hashed_password: await argon2.hash(`lecturer${i}123`, {
+        type: argon2.argon2id
+      })
     }))
   )
   const roomsData = await Promise.all(
-    Array.from({ length: 3 }, async (v, k) => ({
-      email: `room-${k}@gmail.com`,
-      hashed_password: await argon2.hash(`room-${k}123`, {
-        type: argon2.argon2id
-      }),
-      username: `room-${k}`,
-      name: `Room ${k}`,
+    rooms.map(async ({ user, name }, i) => ({
+      id: user,
+      email: `${name
+        .replace(/[^\w\s]/gi, '')
+        .replace(' ', '')
+        .toLowerCase()}@gmail.com`,
       role: 'room',
-      created_at: date,
-      updated_at: date
-    }))
-  )
-  const usersData = await Promise.all(
-    users.map(async ({ nrp, name }, i) => {
-      return {
-        email: `${nrp}@gmail.com`,
-        hashed_password: await argon2.hash(`${nrp}123`, {
+      hashed_password: await argon2.hash(
+        `${name
+          .replace(/[^\w\s]/gi, '')
+          .replace(' ', '')
+          .toLowerCase()}123`,
+        {
           type: argon2.argon2id
-        }),
-        username: nrp,
-        name,
-        created_at: date,
-        updated_at: date
-      }
-    })
+        }
+      )
+    }))
   )
   return qb.insert(
     [
       {
         email: 'admin@gmail.com',
-        hashed_password: await argon2.hash('admin123', {
-          type: argon2.argon2id
-        }),
-        username: 'admin',
-        name: 'Admin',
         role: 'admin',
-        created_at: date,
-        updated_at: date
+        hashed_password: await argon2.hash(`admin123`, {
+          type: argon2.argon2id
+        })
       }
     ]
+      .concat(studentsData)
       .concat(lecturersData)
       .concat(roomsData)
-      .concat(usersData)
   )
 }

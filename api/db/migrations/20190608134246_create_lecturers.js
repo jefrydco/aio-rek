@@ -1,19 +1,18 @@
-'use strict'
-
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable('images', table => {
+  return knex.schema.createTable('lecturers', table => {
     table
       .uuid('id')
       .primary()
       .defaultTo(knex.raw('uuid_generate_v4()'))
-    table.timestamps()
-    table.string('path').notNullable()
+    table.timestamps(true, true)
+    table.string('name').notNullable()
     table
-      .boolean('has_descriptor')
+      .string('identifier')
       .notNullable()
-      .defaultTo(false)
+      .unique()
+    table.boolean('is_active').defaultTo(true)
     table
-      .uuid('owner')
+      .uuid('user')
       .notNullable()
       .references('users.id')
       .onDelete('CASCADE')
@@ -21,5 +20,5 @@ exports.up = function(knex, Promise) {
 }
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTableIfExists('images')
+  return knex.schema.dropTableIfExists('lecturers')
 }
