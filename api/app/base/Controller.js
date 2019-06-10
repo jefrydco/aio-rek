@@ -1,14 +1,14 @@
 'use strict'
 
 const errorCatcher = require('async-error-catcher').default
-const { lowerCase } = require('lodash/fp')
+const { camelCase } = require('lodash/fp')
 const autoBind = require('auto-bind')
 const pluralize = require('pluralize')
 
 module.exports = class Controller {
   constructor(name) {
     // UserController -> user
-    this.name = lowerCase(name.replace('Controller', ''))
+    this.name = camelCase(name.replace('Controller', ''))
     autoBind(this)
   }
   _getPluralName() {

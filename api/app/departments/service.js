@@ -1,6 +1,6 @@
 'use strict'
 
-const Service = require('../../base/Service')
+const Service = require('../base/Service')
 
 class DepartmentService extends Service {
   constructor(app) {

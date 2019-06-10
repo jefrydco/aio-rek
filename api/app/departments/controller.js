@@ -1,6 +1,6 @@
 'use strict'
 
-const Controller = require('../../base/Controller')
+const Controller = require('../base/Controller')
 
 class DepartmentController extends Controller {
   constructor() {

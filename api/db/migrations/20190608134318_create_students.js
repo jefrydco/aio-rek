@@ -22,8 +22,8 @@ exports.up = function(knex, Promise) {
       .references('study_programs.id')
       .onDelete('SET NULL')
     table
-      .uuid('class_id')
-      .references('classes.id')
+      .uuid('group_id')
+      .references('groups.id')
       .onDelete('SET NULL')
   })
 }

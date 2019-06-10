@@ -3,7 +3,7 @@
 // const fs = require('fs')
 // const ExtractJwt = require('passport-jwt').ExtractJwt
 const errorCatcher = require('async-error-catcher').default
-const Controller = require('../../base/Controller')
+const Controller = require('../base/Controller')
 
 class UserController extends Controller {
   constructor() {

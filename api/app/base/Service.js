@@ -1,8 +1,8 @@
 'use strict'
 
 const pluralize = require('pluralize')
-const { omit, lowerCase } = require('lodash/fp')
-const { removeEmpty } = require('../utils/objects')
+const { omit, camelCase } = require('lodash/fp')
+const { removeEmpty } = require('../../utils/objects')
 
 module.exports = class Service {
   constructor(name, app, defaultFilter = []) {
@@ -85,7 +85,7 @@ module.exports = class Service {
     return {
       ...pagination,
       orderBy,
-      [lowerCase(this._getPluralName())]: jsonArray
+      [camelCase(this._getPluralName())]: jsonArray
     }
   }
   toJSON(model, additionalKey = []) {

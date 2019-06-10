@@ -1,5 +1,5 @@
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable('classes', table => {
+  return knex.schema.createTable('groups', table => {
     table
       .uuid('id')
       .primary()
@@ -13,5 +13,5 @@ exports.up = function(knex, Promise) {
 }
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTableIfExists('classes')
+  return knex.schema.dropTableIfExists('groups')
 }

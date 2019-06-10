@@ -3,7 +3,7 @@
 const jwt = require('jsonwebtoken')
 const config = require('../../config')
 
-const Service = require('../../base/Service')
+const Service = require('../base/Service')
 
 class UserService extends Service {
   constructor(app) {
