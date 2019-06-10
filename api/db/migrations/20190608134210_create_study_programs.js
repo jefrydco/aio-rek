@@ -5,7 +5,10 @@ exports.up = function(knex, Promise) {
       .primary()
       .defaultTo(knex.raw('uuid_generate_v4()'))
     table.timestamps(true, true)
-    table.string('name').notNullable()
+    table
+      .string('name')
+      .unique()
+      .notNullable()
     table
       .uuid('department_id')
       .references('departments.id')

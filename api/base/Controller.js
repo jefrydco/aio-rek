@@ -6,9 +6,9 @@ const autoBind = require('auto-bind')
 const pluralize = require('pluralize')
 
 module.exports = class Controller {
-  constructor(name, defaultFilter) {
+  constructor(name) {
+    // UserController -> user
     this.name = lowerCase(name.replace('Controller', ''))
-    this.defaultFilter = defaultFilter
     autoBind(this)
   }
   _getPluralName() {
@@ -24,27 +24,32 @@ module.exports = class Controller {
   }) {
     return services[this._getPluralName()]
   }
-  _getTransaction({ locals: { trx } = {} }) {
+  _getTrx({ locals: { trx } = {} }) {
     return trx
+  }
+  _getParamsId({ params: { id } }) {
+    return id
   }
   create(req, res, next) {
     return errorCatcher(async (req, res) => {
       const payload = this._getPayload(req)
-      const service = this._getService(res)
-      const transaction = this._getTransaction(res)
+      const service = this._getService(req)
 
-      const queryResult = await service.create(payload, { trx: transaction })
+      const trx = this._getTrx(res)
+
+      const queryResult = await service.create(payload, { trx })
       return res.status(201).json({
-        [this.name]: service.toJSON(queryResult, this.defaultFilter)
+        [this.name]: service.toJSON(queryResult)
       })
     })(req, res, next)
   }
   fetchPage(req, res, next) {
     return errorCatcher(async (req, res) => {
       const service = this._getService(req)
-      const transaction = this._getTransaction(res)
+
+      const trx = this._getTrx(res)
       const { models, pagination } = await service.fetchPage(req.query, {
-        trx: transaction
+        trx
       })
       const json = await service.toJSONArray({
         models,
@@ -55,14 +60,40 @@ module.exports = class Controller {
     })(req, res, next)
   }
   fetch(req, res, next) {
-    return errorCatcher(async (req, res) => {})(req, res, next)
+    return errorCatcher(async (req, res) => {
+      const service = this._getService(req)
+      const id = this._getParamsId(req)
+
+      const trx = this._getTrx(res)
+      const queryResult = await service.fetch({ id }, { trx })
+      return res.json({
+        [this.name]: service.toJSON(queryResult)
+      })
+    })(req, res, next)
   }
   update(req, res, next) {
-    return errorCatcher(async (req, res) => {})(req, res, next)
+    return errorCatcher(async (req, res) => {
+      const payload = this._getPayload(req)
+      const service = this._getService(req)
+      const id = this._getParamsId(req)
+
+      const trx = this._getTrx(res)
+      const queryResult = await service.fetch({ id }, { trx })
+      const updated = await service.update(queryResult, payload, { trx })
+      return res.json({
+        [this.name]: service.toJSON(updated)
+      })
+    })(req, res, next)
   }
   destroy(req, res, next) {
-    return errorCatcher((req, res) => {
-      console.log(req.locals[this.name])
+    return errorCatcher(async (req, res) => {
+      const service = this._getService(req)
+      const id = this._getParamsId(req)
+
+      const trx = this._getTrx(res)
+      const queryResult = await service.fetch({ id }, { trx })
+      await queryResult.destroy(queryResult, { trx })
+      return res.sendStatus(200)
     })(req, res, next)
   }
 }

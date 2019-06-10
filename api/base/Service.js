@@ -1,14 +1,15 @@
 'use strict'
 
 const pluralize = require('pluralize')
-const { omit } = require('lodash/fp')
+const { omit, lowerCase } = require('lodash/fp')
 const { removeEmpty } = require('../utils/objects')
 
 module.exports = class Service {
   constructor(name, app, defaultFilter = []) {
+    // UserService -> User
     this.name = name.replace('Service', '')
     this.app = app
-    this.defaultFilter = defaultFilter
+    this.defaultFilter = [...defaultFilter, 'created_at', 'updated_at']
   }
   _getPluralName() {
     return pluralize(this.name)
@@ -84,12 +85,13 @@ module.exports = class Service {
     return {
       ...pagination,
       orderBy,
-      [this._getPluralName()]: jsonArray
+      [lowerCase(this._getPluralName())]: jsonArray
     }
   }
-  toJSON(model) {
+  toJSON(model, additionalKey = []) {
     const json = model.toJSON()
-    this.defaultFilter.forEach(key => delete json[key])
+    const deletedKey = [...additionalKey, ...this.defaultFilter]
+    deletedKey.forEach(key => delete json[key])
     return json
   }
 }

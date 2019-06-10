@@ -7,12 +7,7 @@ const Service = require('../../base/Service')
 
 class UserService extends Service {
   constructor(app) {
-    super(UserService.name, app, [
-      'id',
-      'hashed_password',
-      'created_at',
-      'updated_at'
-    ])
+    super(UserService.name, app, ['hashed_password'])
   }
   generateJWT(user) {
     return jwt.sign(
@@ -26,7 +21,7 @@ class UserService extends Service {
   }
   getAuthJSON(user, token) {
     return {
-      ...this.toJSON(user),
+      ...this.toJSON(user, ['id']),
       token: token || this.generateJWT(user)
     }
   }

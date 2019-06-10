@@ -3,7 +3,7 @@
 const Service = require('../../base/Service')
 
 class DepartmentService extends Service {
-  constructor(name, app) {
+  constructor(app) {
     super(DepartmentService.name, app)
   }
 }

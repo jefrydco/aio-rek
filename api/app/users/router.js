@@ -14,8 +14,7 @@ const {
   createTransaction,
   jwtAuth,
   localAuth,
-  handleRole,
-  handleId
+  handleRole
 } = require('../middleware')
 // const {
 //   login,
@@ -30,7 +29,6 @@ const {
 //   getImages
 // } = require('./controller')
 const {
-  name,
   login,
   create,
   fetchPage,
@@ -66,7 +64,6 @@ router.get(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId(name),
   fetch
 )
 router.put(
@@ -75,7 +72,6 @@ router.put(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId(name),
   update
 )
 router.delete(
@@ -83,7 +79,6 @@ router.delete(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleId(name),
   destroy
 )
 

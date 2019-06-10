@@ -7,8 +7,8 @@ exports.up = function(knex, Promise) {
     table.timestamps(true, true)
     table
       .string('email')
-      .notNullable()
       .unique()
+      .notNullable()
     table.enum('role', ['admin', 'lecturer', 'student', 'room']).notNullable()
     table.string('hashed_password').notNullable()
   })

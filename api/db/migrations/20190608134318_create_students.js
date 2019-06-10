@@ -8,8 +8,8 @@ exports.up = function(knex, Promise) {
     table.string('name').notNullable()
     table
       .string('identifier')
-      .notNullable()
       .unique()
+      .notNullable()
     table.string('image')
     table.boolean('is_active').defaultTo(true)
     table
