@@ -13,11 +13,17 @@ class PresenceController extends Controller {
       const {
         // eslint-disable-next-line
         body: { student_id, attendance_id },
-        file: { path }
+        file
       } = this._getFormDataPayload(req)
       const service = this._getService(req)
 
       const trx = this._getTrx(res)
+
+      if (!file) {
+        throw new Error(`Image field shouldn't be empty`)
+      }
+
+      const { path } = file
 
       const payload = {
         image: path.replace('static', ''),
@@ -39,12 +45,18 @@ class PresenceController extends Controller {
       const {
         // eslint-disable-next-line
         body,
-        file: { path }
+        file
       } = this._getFormDataPayload(req)
       const service = this._getService(req)
       const id = this._getParamsId(req)
 
       const trx = this._getTrx(res)
+
+      if (!file) {
+        throw new Error(`Image field shouldn't be empty`)
+      }
+
+      const { path } = file
 
       const queryResult = await service.fetch({ id }, trx)
 

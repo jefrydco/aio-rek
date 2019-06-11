@@ -25,6 +25,10 @@ class ImageController extends Controller {
 
       const trx = this._getTrx(res)
 
+      if (files.length === 0) {
+        throw new Error(`Images field should contain at least one image`)
+      }
+
       const queryResults = await Promise.all(
         files.map(({ path }) =>
           service.create(
@@ -48,16 +52,23 @@ class ImageController extends Controller {
     return errorCatcher(async (req, res) => {
       const {
         body: { has_descriptor = false },
-        file: { path }
+        file
       } = this._getFormDataPayload(req)
+      const {
+        query: { student_id }
+      } = req
       const service = this._getService(req)
       const id = this._getParamsId(req)
 
       const trx = this._getTrx(res)
 
-      const queryResult = await service.fetch({ id }, { trx })
+      if (!file) {
+        throw new Error(`Image field shouldn't be empty`)
+      }
 
-      const student_id = queryResult.get('student_id')
+      const { path } = file
+
+      const queryResult = await service.fetch({ id }, { trx })
 
       let oldPath = queryResult.get('path')
       if (oldPath) {
@@ -87,6 +98,7 @@ class ImageController extends Controller {
       const trx = this._getTrx(res)
 
       const queryResult = await service.fetch({ id }, { trx })
+
       let oldPath = queryResult.get('path')
       if (oldPath) {
         oldPath = `static/${oldPath}`
