@@ -1,3 +1,4 @@
+// Taken from: https://stackoverflow.com/a/38340730/7711812
 const removeEmpty = obj =>
   Object.keys(obj)
     .filter(k => obj[k] !== null && obj[k] !== undefined) // Remove undef. and null.

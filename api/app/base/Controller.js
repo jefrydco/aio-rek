@@ -14,6 +14,13 @@ module.exports = class Controller {
   _getPluralName() {
     return pluralize(this.name)
   }
+  _getFormDataPayload({ file, files = [], body }) {
+    return {
+      file,
+      files,
+      body
+    }
+  }
   _getPayload({ body }) {
     return body[this.name]
   }

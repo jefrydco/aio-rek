@@ -8,8 +8,16 @@ exports.up = function(knex, Promise) {
     table.boolean('is_active').defaultTo(true)
     table.datetime('start_datetime').notNullable()
     table.datetime('end_datetime').notNullable()
-    table.uuid('schedule_id').references('schedules.id')
-    table.uuid('room_id').references('rooms.id')
+    table
+      .uuid('schedule_id')
+      .notNullable()
+      .references('schedules.id')
+      .onDelete('SET NULL')
+    table
+      .uuid('room_id')
+      .notNullable()
+      .references('rooms.id')
+      .onDelete('SET NULL')
   })
 }
 

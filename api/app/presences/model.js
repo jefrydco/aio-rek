@@ -3,15 +3,19 @@
 const Checkit = require('checkit')
 
 module.exports = bookshelf =>
-  bookshelf.model('Descriptor', {
-    tableName: 'descriptors',
-    image_id() {
-      return this.belongsTo('Image', 'image_id')
+  bookshelf.model('Presence', {
+    tableName: 'presences',
+    student_id() {
+      return this.belongsTo('Student', 'student_id')
+    },
+    attendance_id() {
+      return this.belongsTo('Attendance', 'attendance_id')
     },
     getValidators() {
       return {
-        descriptor: ['required'],
-        image_id: ['required', 'uuid']
+        image: ['required', 'string'],
+        student_id: ['required', 'uuid'],
+        attendance_id: ['required', 'uuid']
       }
     },
     initialize() {

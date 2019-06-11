@@ -5,20 +5,35 @@ exports.up = function(knex, Promise) {
       .primary()
       .defaultTo(knex.raw('uuid_generate_v4()'))
     table.timestamps(true, true)
-    table.enum('day', ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])
+    table
+      .enum('day', ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])
+      .notNullable()
     table.time('start_time').notNullable()
     table.time('end_time').notNullable()
     table
       .uuid('subject_id')
+      .notNullable()
       .references('subjects.id')
       .onDelete('SET NULL')
     table
       .uuid('lecturer_id')
+      .notNullable()
       .references('lecturers.id')
       .onDelete('SET NULL')
     table
       .uuid('room_id')
+      .notNullable()
       .references('rooms.id')
+      .onDelete('SET NULL')
+    table
+      .uuid('study_program_id')
+      .notNullable()
+      .references('study_programs.id')
+      .onDelete('SET NULL')
+    table
+      .uuid('group_id')
+      .notNullable()
+      .references('groups.id')
       .onDelete('SET NULL')
   })
 }

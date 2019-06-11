@@ -6,8 +6,17 @@ exports.up = function(knex, Promise) {
       .defaultTo(knex.raw('uuid_generate_v4()'))
     table.timestamps(true, true)
     table.string('image').notNullable()
-    table.uuid('student').references('students.id')
-    table.uuid('attendance_id').references('attendances.id')
+    table.boolean('is_late').defaultTo(false)
+    table
+      .uuid('student_id')
+      .notNullable()
+      .references('students.id')
+      .onDelete('SET NULL')
+    table
+      .uuid('attendance_id')
+      .notNullable()
+      .references('attendances.id')
+      .onDelete('SET NULL')
   })
 }
 
