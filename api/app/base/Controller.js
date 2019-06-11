@@ -99,7 +99,7 @@ module.exports = class Controller {
 
       const trx = this._getTrx(res)
       const queryResult = await service.fetch({ id }, { trx })
-      await queryResult.destroy(queryResult, { trx })
+      await service.destroy(queryResult, { trx })
       return res.sendStatus(200)
     })(req, res, next)
   }

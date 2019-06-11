@@ -5,14 +5,14 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Image', {
     tableName: 'images',
-    owner() {
-      return this.belongsTo('User', 'owner')
+    student_id() {
+      return this.belongsTo('Student', 'student_id')
     },
     getValidators() {
       return {
         path: ['required', 'string'],
-        has_descriptor: ['required', 'boolean'],
-        owner: ['required', 'uuid']
+        has_descriptor: ['boolean'],
+        student_id: ['required', 'uuid']
       }
     },
     initialize() {

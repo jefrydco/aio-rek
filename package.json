@@ -49,6 +49,7 @@
     "auto-bind": "^2.1.0",
     "body-parser": "^1.19.0",
     "bookshelf": "^0.14.2",
+    "boolean": "^1.0.0",
     "chance": "^1.0.18",
     "checkit": "^0.7.0",
     "convict": "^5.0.0",

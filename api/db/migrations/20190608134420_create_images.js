@@ -8,9 +8,9 @@ exports.up = function(knex, Promise) {
     table.string('path').notNullable()
     table.boolean('has_descriptor').defaultTo(false)
     table
-      .uuid('owner_id')
+      .uuid('student_id')
       .notNullable()
-      .references('users.id')
+      .references('students.id')
       .onDelete('CASCADE')
   })
 }

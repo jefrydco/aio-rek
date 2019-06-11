@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const Boom = require('@hapi/boom')
 const multer = require('multer')
 const { ulid } = require('ulid')
 
@@ -10,17 +11,18 @@ const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
     destination(req, file, cb) {
       const {
         user,
-        query: { owner = '' }
+        // eslint-disable-next-line
+        query: { student_id = '' }
       } = req
-      let uploadPath = path.join(location)
-      if (user.role === 'student') {
-        uploadPath = path.join(uploadPath, user.id)
-      } else if (user.role === 'admin') {
-        uploadPath = path.join(uploadPath, owner)
+      if (user.role !== 'admin') {
+        return Boom.unauthorized()
       }
+      const uploadPath = path.join(location, student_id)
+
       if (!fs.existsSync(uploadPath)) {
         fs.mkdirSync(uploadPath, { recursive: true })
       }
+
       cb(null, uploadPath)
     },
     filename(req, file, cb) {

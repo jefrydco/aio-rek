@@ -38,7 +38,7 @@ class PresenceController extends Controller {
     return errorCatcher(async (req, res) => {
       const {
         // eslint-disable-next-line
-        body: { student_id, attendance_id },
+        body,
         file: { path }
       } = this._getFormDataPayload(req)
       const service = this._getService(req)
@@ -58,8 +58,7 @@ class PresenceController extends Controller {
 
       const payload = {
         image: path.replace('static', ''),
-        student_id,
-        attendance_id
+        ...body
       }
 
       const updated = await service.update(queryResult, payload, {
