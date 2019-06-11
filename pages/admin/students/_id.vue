@@ -1,27 +1,19 @@
 <template>
   <v-layout row="" wrap="">
     <v-flex xs12="">
-      <v-layout row="" wrap="" justify-end="">
-        <v-flex xs12="" md3="">
-          <v-autocomplete label="Grade" box="" hide-details="" />
-        </v-flex>
-        <v-flex xs12="" md3="">
-          <v-autocomplete label="Student" box="" hide-details="" />
-        </v-flex>
-      </v-layout>
       <v-layout row="" wrap="">
         <v-flex xs12="" md4="">
           <v-card>
             <v-toolbar card="">
               <v-toolbar-title>
-                <h2 class="headline">{{ user.name }}</h2>
+                <h2 class="headline">{{ student.name }}</h2>
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
               <v-layout row="" wrap="">
                 <v-flex xs12="">
                   <v-text-field
-                    v-model="editedUser.name"
+                    v-model="editedStudent.name"
                     v-validate="'required'"
                     :error-messages="errors.collect('name')"
                     :disabled="isLoading"
@@ -32,24 +24,24 @@
                     clearable=""
                     box=""
                     autofocus=""
-                    data-vv-value-path="editedUser.name"
+                    data-vv-value-path="editedStudent.name"
                   />
                 </v-flex>
               </v-layout>
               <v-layout row="" wrap="">
                 <v-flex xs12="">
                   <v-text-field
-                    v-model="editedUser.username"
+                    v-model="editedStudent.identifier"
                     v-validate="'required'"
-                    :error-messages="errors.collect('username')"
+                    :error-messages="errors.collect('identifier')"
                     :disabled="isLoading"
-                    label="Username"
-                    data-vv-name="username"
-                    data-vv-as="username"
+                    label="Identifier"
+                    data-vv-name="identifier"
+                    data-vv-as="identifier"
                     required=""
                     clearable=""
                     box=""
-                    data-vv-value-path="editedUser.username"
+                    data-vv-value-path="editedStudent.identifier"
                   />
                 </v-flex>
               </v-layout>
@@ -58,7 +50,7 @@
                   <v-hover>
                     <template #default="{ hover }">
                       <app-avatar
-                        :name="user.name"
+                        :name="student.name"
                         :image="avatarImage.url"
                         :size="128"
                         text-class="headline"
@@ -488,15 +480,14 @@ export default {
   data() {
     return {
       isLoading: false,
-      selectedUser: null,
-      user: {
+      student: {
         name: '',
-        username: '',
+        identifier: '',
         image: ''
       },
-      editedUser: {
+      editedStudent: {
         name: '',
-        username: '',
+        identifier: '',
         image: ''
       },
       avatarImage: {
@@ -557,7 +548,7 @@ export default {
     },
     'avatarImage.file': async function(file) {
       await this.onSave({
-        ...this.editedUser,
+        ...this.editedStudent,
         image: file
       })
     },
@@ -567,19 +558,23 @@ export default {
     async images(images, oldImages) {
       if (images.length > oldImages.length) {
         images = images.filter(({ hasDescriptor }) => !hasDescriptor)
+
         const descriptors = await this.getFaceDescriptors({ images })
-        await this.$api.descriptors.create({
-          descriptors
-        })
         await Promise.all(
-          images.map(({ id }) =>
-            this.$api.images.update(id, {
-              image: { has_descriptor: true }
+          // eslint-disable-next-line
+          descriptors.map(({ image_id, descriptor }) =>
+            this.$api.descriptors.create({
+              descriptor: { image_id, descriptor }
             })
           )
         )
-        await this.getImages()
-        return descriptors
+
+        await Promise.all(
+          images.map(({ id }) =>
+            this.$api.images.update(id, { has_descriptor: true })
+          )
+        )
+        await this.fetchImages()
       }
     },
     pagination: {
@@ -587,7 +582,7 @@ export default {
         if (descending) {
           sortBy = `-${sortBy}`
         }
-        this.getImages({
+        this.fetchImages({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
@@ -599,28 +594,26 @@ export default {
   },
   async asyncData({
     app: {
-      $api: { users, images },
+      $api: { students, images },
       $handleError
     },
     params: { id = '' }
   }) {
     try {
       const [
-        { user },
-        {
-          images: { rowCount, images: imagesData, ...filter }
-        }
+        { student },
+        { rowCount, images: imagesData, ...filter }
       ] = await Promise.all([
-        users.getOnce(id),
-        images.getAll({
+        students.fetch(id),
+        images.fetchPage({
           orderBy: '-created_at',
           limit: 9,
           offset: 0,
-          owner: id
+          student_id: id
         })
       ])
       return {
-        user,
+        student,
         images: imagesData,
         imagesFilter: filter,
         totalItems: rowCount
@@ -630,23 +623,25 @@ export default {
     }
   },
   mounted() {
-    this.init()
+    this.$nextTick(() => {
+      this.init()
+    })
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
     ...mapActions('face', ['getFaceDescriptors']),
     async init() {
-      await this.getUser()
+      await this.fetchStudent()
       await Promise.all([this.prefillData(), this.getCameras()])
       await this.initCamera(this.selectedCamera)
     },
     async prefillData() {
       try {
-        const { name, username, image } = this.user
+        const { name, identifier, image } = this.student
         const imageFile = await getFileFromUrl(image)
-        this.editedUser = {
+        this.editedStudent = {
           name,
-          username,
+          identifier,
           image: imageFile
         }
         this.avatarImage.url = image
@@ -662,19 +657,19 @@ export default {
         this.$handleError(error)
       }
     },
-    async getUser() {
+    async fetchStudent() {
       try {
         this.isLoading = true
         const { id } = this.$route.params
-        const { user } = await this.$api.users.getOnce(id)
-        this.user = user
+        const { student } = await this.$api.students.fetch(id)
+        this.student = student
       } catch (error) {
         this.$handleError(error)
       } finally {
         this.isLoading = false
       }
     },
-    async getImages(
+    async fetchImages(
       { orderBy, limit, offset } = {
         orderBy: '-created_at',
         limit: 9,
@@ -685,8 +680,15 @@ export default {
         this.isLoading = true
         const { id } = this.$route.params
         const {
-          images: { rowCount, images, ...filter }
-        } = await this.$api.images.getAll({ orderBy, limit, offset, owner: id })
+          rowCount,
+          images,
+          ...filter
+        } = await this.$api.images.fetchPage({
+          orderBy,
+          limit,
+          offset,
+          student_id: id
+        })
         this.images = images
         this.imagesFilter = filter
         this.totalItems = rowCount
@@ -737,9 +739,9 @@ export default {
             payload.append('images', file)
           })
           const { images } = await this.$api.images.create(payload, {
-            owner: id
+            student_id: id
           })
-          await this.getImages()
+          await this.fetchImages()
           return images
         }
       } catch (error) {
@@ -760,8 +762,10 @@ export default {
           has_descriptor: false
         }
         payload = toFormData(payload)
-        const { images } = await this.$api.images.create(payload, { owner: id })
-        await this.getImages()
+        const { images } = await this.$api.images.create(payload, {
+          student_id: id
+        })
+        await this.fetchImages()
         return images
       } catch (error) {
         this.$handleError(error)
@@ -777,7 +781,7 @@ export default {
     },
     async onRemoveImage() {
       await this.onSave({
-        ...this.editedUser,
+        ...this.editedStudent,
         image: ''
       })
       this.avatarImage = {
@@ -809,7 +813,7 @@ export default {
           await Promise.all(
             removingImages.map(id => this.$api.images.destroy(id))
           )
-          await this.getImages()
+          await this.fetchImages()
           await this.onCloseRemoving(true)
         }
       } catch (error) {
@@ -820,12 +824,12 @@ export default {
     },
     async onUseAsAvatar(path) {
       const payload = {
-        ...this.editedUser,
+        ...this.editedStudent,
         image: await getFileFromUrl(path)
       }
       await this.onSave(payload)
     },
-    async onSave(payload = this.editedUser) {
+    async onSave(payload = this.editedStudent) {
       try {
         const valid = await this.$validator.validate()
         if (valid) {
@@ -834,10 +838,10 @@ export default {
           const {
             params: { id }
           } = this.$route
-          const { user } = await this.$api.users.update(id, formData)
-          await this.getUser()
+          const { student } = await this.$api.students.update(id, formData)
+          await this.fetchStudent()
           await this.prefillData()
-          return user
+          return student
         } else {
           this.$notify({
             isError: true,

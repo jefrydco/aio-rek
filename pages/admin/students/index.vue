@@ -102,7 +102,7 @@ export default {
         if (descending) {
           sortBy = `-${sortBy}`
         }
-        this.getStudents({
+        this.fetchStudents({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
@@ -121,9 +121,7 @@ export default {
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
-      const {
-        students: { rowCount, students, ...filter }
-      } = await $api.students.getAll({
+      const { rowCount, students, ...filter } = await $api.students.fetchPage({
         orderBy: '-identifier',
         limit: 20,
         offset: 0
@@ -138,7 +136,7 @@ export default {
     }
   },
   methods: {
-    async getStudents(
+    async fetchStudents(
       { orderBy, limit, offset } = {
         orderBy: '-identifier',
         limit: 20,
@@ -148,8 +146,10 @@ export default {
       try {
         this.isLoading = true
         const {
-          students: { rowCount, students, ...filter }
-        } = await this.$api.students.getAll({ orderBy, limit, offset })
+          rowCount,
+          students,
+          ...filter
+        } = await this.$api.students.fetchPage({ orderBy, limit, offset })
         this.filter = filter
         this.totalItems = rowCount
         this.students = students

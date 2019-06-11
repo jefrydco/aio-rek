@@ -30,6 +30,8 @@ const {
 // } = require('./controller')
 const {
   login,
+  fetchAuth,
+  fetchProfile,
   create,
   fetchPage,
   fetch,
@@ -80,6 +82,21 @@ router.delete(
   jwtAuth.required,
   handleRole('admin'),
   destroy
+)
+
+router.get(
+  '/user/auth',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  fetchAuth
+)
+router.get(
+  '/user/profile',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  fetchProfile
 )
 
 // router.put(

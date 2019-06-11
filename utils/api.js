@@ -5,11 +5,11 @@ export default $http => resource => ({
     const queryString = qs.stringify(filter)
     return $http.$post(`${resource}?${queryString}`, attributes, options)
   },
-  getAll(filter, options) {
+  fetchPage(filter, options) {
     const queryString = qs.stringify(filter)
     return $http.$get(`${resource}?${queryString}`, options)
   },
-  getOnce(id, options) {
+  fetch(id, options) {
     return $http.$get(`${resource}/${id}`, options)
   },
   update(id, attributes, options) {

@@ -75,7 +75,7 @@ export const actions = {
         const img = await faceapi.fetchImage(path)
         const descriptor = await faceapi.computeFaceDescriptor(img)
         return {
-          image: id,
+          image_id: id,
           descriptor
         }
       })

@@ -50,10 +50,7 @@ class ImageController extends Controller {
   }
   update(req, res, next) {
     return errorCatcher(async (req, res) => {
-      const {
-        body: { has_descriptor = false },
-        file
-      } = this._getFormDataPayload(req)
+      const { body, file } = this._getFormDataPayload(req)
       const {
         query: { student_id }
       } = req
@@ -62,26 +59,29 @@ class ImageController extends Controller {
 
       const trx = this._getTrx(res)
 
-      if (!file) {
-        throw new Error(`Image field shouldn't be empty`)
-      }
-
-      const { path } = file
-
       const queryResult = await service.fetch({ id }, { trx })
 
-      let oldPath = queryResult.get('path')
-      if (oldPath) {
-        oldPath = `static/${oldPath}`
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath)
-        }
-      }
+      let payload = null
+      if (file) {
+        const { has_descriptor } = body
+        const { path } = file
 
-      const payload = {
-        path: path.replace('static', ''),
-        student_id,
-        has_descriptor: boolean(has_descriptor)
+        let oldPath = queryResult.get('path')
+        if (oldPath) {
+          oldPath = `static/${oldPath}`
+          if (fs.existsSync(oldPath)) {
+            fs.unlinkSync(oldPath)
+          }
+        }
+
+        payload = {
+          path: path.replace('static', ''),
+          student_id,
+          has_descriptor: boolean(has_descriptor)
+        }
+      } else {
+        const { image } = body
+        payload = { ...image }
       }
 
       const updated = await service.update(queryResult, payload, { trx })

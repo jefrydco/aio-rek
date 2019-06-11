@@ -52,25 +52,28 @@ class PresenceController extends Controller {
 
       const trx = this._getTrx(res)
 
-      if (!file) {
-        throw new Error(`Image field shouldn't be empty`)
-      }
-
-      const { path } = file
-
       const queryResult = await service.fetch({ id }, trx)
 
-      let oldPath = queryResult.get('image')
-      if (oldPath) {
-        oldPath = `static/${oldPath}`
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath)
-        }
-      }
+      let payload = null
+      if (file) {
+        payload = { ...body }
+        const { path } = file
 
-      const payload = {
-        image: path.replace('static', ''),
-        ...body
+        let oldPath = queryResult.get('image')
+        if (oldPath) {
+          oldPath = `static/${oldPath}`
+          if (fs.existsSync(oldPath)) {
+            fs.unlinkSync(oldPath)
+          }
+        }
+
+        payload = {
+          image: path.replace('static', ''),
+          ...body
+        }
+      } else {
+        const { presence } = body
+        payload = { ...presence }
       }
 
       const updated = await service.update(queryResult, payload, {

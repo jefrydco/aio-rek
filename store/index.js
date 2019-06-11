@@ -16,12 +16,9 @@ export const actions = {
       if (token) {
         $http.setToken(token, 'Bearer')
         try {
-          const [{ user }, { user: userProfile }] = await Promise.all([
-            $http.$get('user/auth'),
-            $http.$get('user/profile')
-          ])
+          const { user } = await $http.$get('user/auth')
 
-          commit(`user/${userTypes.SET_USER}`, { ...user, ...userProfile })
+          commit(`user/${userTypes.SET_USER}`, user)
         } catch ({ response }) {
           if (response.status === 403) {
             $notify({

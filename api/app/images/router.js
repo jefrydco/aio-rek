@@ -1,5 +1,6 @@
 'use strict'
 
+const bodyParser = require('body-parser')
 const router = require('express').Router()
 const {
   createTransaction,
@@ -33,6 +34,7 @@ router.get(
 )
 router.put(
   '/images/:id',
+  bodyParser.json(),
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),

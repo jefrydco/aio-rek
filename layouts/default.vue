@@ -32,12 +32,12 @@
           <template #activator="{ on }">
             <v-btn flat="" v-on="on">
               <app-avatar
-                :name="user.username"
+                :name="user.email"
                 :image="user.image"
                 size="36"
                 class="mr-3"
               />
-              <span>{{ user.username }}</span>
+              <span>{{ user.email }}</span>
               <v-icon right="">arrow_drop_down</v-icon>
             </v-btn>
           </template>
