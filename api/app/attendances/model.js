@@ -5,10 +5,10 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Attendance', {
     tableName: 'attendances',
-    schedule_id() {
+    schedule() {
       return this.belongsTo('Schedule', 'schedule_id')
     },
-    room_id() {
+    room() {
       return this.belongsTo('Room', 'room_id')
     },
     getValidators() {

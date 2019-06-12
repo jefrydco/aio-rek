@@ -471,11 +471,16 @@ import AppAvatar from '~/components/AppAvatar'
 import { types as cameraTypes } from '~/store/camera'
 
 export default {
-  validate({ params: { id = '' }, query, store }) {
+  validate({ params: { id = '' } }) {
     return uuidValidate(id, 4)
   },
   components: {
     AppAvatar
+  },
+  head() {
+    return {
+      title: `Edit Student - ${this.student.name}`
+    }
   },
   data() {
     return {
@@ -626,6 +631,9 @@ export default {
     this.$nextTick(() => {
       this.init()
     })
+  },
+  beforeDestroy() {
+    this.stopCamera()
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
@@ -834,11 +842,20 @@ export default {
         const valid = await this.$validator.validate()
         if (valid) {
           this.isLoading = true
-          const formData = toFormData(payload)
+
+          let payload = null
+          if (this.editedStudent.image) {
+            payload = toFormData(payload)
+          } else {
+            payload = {
+              student: this.editedStudent
+            }
+          }
+
           const {
             params: { id }
           } = this.$route
-          const { student } = await this.$api.students.update(id, formData)
+          const { student } = await this.$api.students.update(id, payload)
           await this.fetchStudent()
           await this.prefillData()
           return student

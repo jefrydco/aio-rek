@@ -5,7 +5,7 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Room', {
     tableName: 'rooms',
-    user_id() {
+    user() {
       return this.belongsTo('User', 'user_id')
     },
     getValidators() {

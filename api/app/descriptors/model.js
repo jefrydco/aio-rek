@@ -5,7 +5,7 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Descriptor', {
     tableName: 'descriptors',
-    image_id() {
+    image() {
       return this.belongsTo('Image', 'image_id')
     },
     getValidators() {

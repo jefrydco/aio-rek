@@ -37,6 +37,9 @@ module.exports = class Controller {
   _getParamsId({ params: { id } }) {
     return id
   }
+  _getRelated({ query: { withRelated } }) {
+    return withRelated
+  }
   create(req, res, next) {
     return errorCatcher(async (req, res) => {
       const payload = this._getPayload(req)
@@ -70,9 +73,10 @@ module.exports = class Controller {
     return errorCatcher(async (req, res) => {
       const service = this._getService(req)
       const id = this._getParamsId(req)
+      const withRelated = this._getRelated(req)
 
       const trx = this._getTrx(res)
-      const queryResult = await service.fetch({ id }, { trx })
+      const queryResult = await service.fetch({ id }, { trx }, withRelated)
       return res.json({
         [this.name]: service.toJSON(queryResult)
       })

@@ -28,7 +28,7 @@ const callback = (req, res, next) => async (
 
   let user
   try {
-    user = await users.fetch({ id: userId }, { transacting: trx })
+    user = await users.fetch({ id: userId }, { trx })
 
     req.user = user
     req.user.role = user.get('role')

@@ -40,8 +40,15 @@ module.exports = class Service {
 
     const model = this._getModel()
 
+    let { withRelated } = _filter
+    if (withRelated) {
+      withRelated = withRelated.split(',')
+    } else {
+      withRelated = []
+    }
+
     const whereClause = omit(
-      ['limit', 'offset', 'orderBy'],
+      ['limit', 'offset', 'orderBy', 'withRelated'],
       removeEmpty(_filter)
     )
 
@@ -51,15 +58,23 @@ module.exports = class Service {
       .fetchPage({
         limit: _filter.limit,
         offset: _filter.offset,
+        withRelated,
         transacting: trx
       })
     return queryResult
   }
-  async fetch(attributes, { trx } = {}) {
+  async fetch(attributes, { trx } = {}, withRelated) {
     const model = this._getModel(attributes)
+
+    if (withRelated) {
+      withRelated = withRelated.split(',')
+    } else {
+      withRelated = []
+    }
 
     const queryResult = await model.fetch({
       require: true,
+      withRelated,
       transacting: trx
     })
     return queryResult
@@ -88,10 +103,10 @@ module.exports = class Service {
       [camelCase(this._getPluralName())]: jsonArray
     }
   }
-  toJSON(model, additionalKey = []) {
-    const json = model.toJSON()
-    const deletedKey = [...additionalKey, ...this.defaultFilter]
-    deletedKey.forEach(key => delete json[key])
+  toJSON(model, additionalFilter = []) {
+    let json = model.toJSON()
+    const deletedKey = [...additionalFilter, ...this.defaultFilter]
+    json = omit(deletedKey, json)
     return json
   }
 }

@@ -24,7 +24,8 @@
               />
             </td>
             <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 body-2">{{ item.username }}</td>
+            <td class="py-1 body-2">{{ item.study_program.name }}</td>
+            <td class="py-1 body-2">{{ item.group.name }}</td>
             <td class="py-1 text-xs-center">
               <v-btn
                 color="primary"
@@ -47,9 +48,6 @@
 import AppAvatar from '~/components/AppAvatar'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
   components: {
     AppAvatar
   },
@@ -78,6 +76,8 @@ export default {
       headers: [
         { text: 'Image', value: 'image', sortable: false },
         { text: 'Name', value: 'name' },
+        { text: 'Study Program', value: 'study_program.name' },
+        { text: 'Group', value: 'group.name' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [
@@ -106,7 +106,8 @@ export default {
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * rowsPerPage,
+          withRelated: 'group,study_program'
         })
       },
       deep: true
@@ -124,7 +125,8 @@ export default {
       const { rowCount, students, ...filter } = await $api.students.fetchPage({
         orderBy: '-identifier',
         limit: 20,
-        offset: 0
+        offset: 0,
+        withRelated: 'group,study_program'
       })
       return {
         filter,
@@ -137,10 +139,11 @@ export default {
   },
   methods: {
     async fetchStudents(
-      { orderBy, limit, offset } = {
+      { orderBy, limit, offset, withRelated } = {
         orderBy: '-identifier',
         limit: 20,
-        offset: 0
+        offset: 0,
+        withRelated: 'group,study_program'
       }
     ) {
       try {
@@ -149,7 +152,12 @@ export default {
           rowCount,
           students,
           ...filter
-        } = await this.$api.students.fetchPage({ orderBy, limit, offset })
+        } = await this.$api.students.fetchPage({
+          orderBy,
+          limit,
+          offset,
+          withRelated
+        })
         this.filter = filter
         this.totalItems = rowCount
         this.students = students

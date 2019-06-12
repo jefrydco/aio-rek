@@ -72,8 +72,7 @@ class PresenceController extends Controller {
           ...body
         }
       } else {
-        const { presence } = body
-        payload = { ...presence }
+        payload = this._getPayload(req)
       }
 
       const updated = await service.update(queryResult, payload, {

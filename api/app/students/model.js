@@ -5,13 +5,13 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Student', {
     tableName: 'students',
-    user_id() {
+    user() {
       return this.belongsTo('User', 'user_id')
     },
-    study_program_id() {
+    study_program() {
       return this.belongsTo('StudyProgram', 'study_program_id')
     },
-    group_id() {
+    group() {
       return this.belongsTo('Group', 'group_id')
     },
     getValidators() {
