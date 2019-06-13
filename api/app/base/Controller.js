@@ -22,6 +22,7 @@ module.exports = class Controller {
     }
   }
   _getPayload({ body }) {
+    console.log(body)
     return body[this.name]
   }
   _getService({

@@ -23,6 +23,7 @@
                 text-class="caption"
               />
             </td>
+            <td class="py-1 body-2">{{ item.identifier }}</td>
             <td class="py-1 body-2">{{ item.name }}</td>
             <td class="py-1 body-2">{{ item.study_program.name }}</td>
             <td class="py-1 body-2">{{ item.group.name }}</td>
@@ -75,6 +76,7 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Image', value: 'image', sortable: false },
+        { text: 'Identifier', value: 'identifier' },
         { text: 'Name', value: 'name' },
         { text: 'Study Program', value: 'study_program.name' },
         { text: 'Group', value: 'group.name' },
@@ -90,7 +92,7 @@ export default {
         descending: false,
         page: 1,
         rowsPerPage: 20,
-        sortBy: 'username',
+        sortBy: 'identifier',
         totalItems: 20
       },
       totalItems: 0
@@ -99,6 +101,11 @@ export default {
   watch: {
     pagination: {
       handler({ descending, page, rowsPerPage, sortBy }) {
+        if (sortBy) {
+          if (sortBy.includes('.name')) {
+            sortBy = `${sortBy.replace('.name', '')}_id`
+          }
+        }
         if (descending) {
           sortBy = `-${sortBy}`
         }
@@ -123,7 +130,7 @@ export default {
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
       const { rowCount, students, ...filter } = await $api.students.fetchPage({
-        orderBy: '-identifier',
+        orderBy: 'identifier',
         limit: 20,
         offset: 0,
         withRelated: 'group,study_program'
@@ -138,14 +145,12 @@ export default {
     }
   },
   methods: {
-    async fetchStudents(
-      { orderBy, limit, offset, withRelated } = {
-        orderBy: '-identifier',
-        limit: 20,
-        offset: 0,
-        withRelated: 'group,study_program'
-      }
-    ) {
+    async fetchStudents({
+      orderBy = 'identifier',
+      limit = 20,
+      offset = 0,
+      withRelated = 'group,study_program'
+    }) {
       try {
         this.isLoading = true
         const {

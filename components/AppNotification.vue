@@ -1,6 +1,6 @@
 <template>
   <v-snackbar
-    :value="isError"
+    :value="message !== null"
     :color="kind"
     auto-height=""
     right=""

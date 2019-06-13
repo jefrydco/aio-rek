@@ -8,7 +8,7 @@ const { redis } = require('../../redis/connection')
 const options = {
   redis,
   keyPrefix: 'middleware',
-  points: 10
+  points: 50
 }
 
 const rateLimiter = new RateLimiterRedis(options)

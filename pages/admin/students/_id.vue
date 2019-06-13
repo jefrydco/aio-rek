@@ -289,9 +289,7 @@
                   color="error"
                   @click="isRemoving = true"
                 >
-                  Remove {{ removingImages.length }} image{{
-                    removingImages.length > 1 ? 's' : ''
-                  }}
+                  Remove {{ pluralize('image', removingImages.length, true) }}
                 </v-btn>
               </v-fade-transition>
             </v-toolbar>
@@ -413,9 +411,7 @@
                   </v-fade-transition>
                 </template>
                 <span>
-                  Remove {{ removingImages.length }} image{{
-                    removingImages.length > 1 ? 's' : ''
-                  }}
+                  Remove {{ pluralize('image', removingImages.length, true) }}
                 </span>
               </v-tooltip>
             </v-card-text>
@@ -427,9 +423,7 @@
           <v-card-text>
             <div class="body-2">
               Are you sure you want to remove
-              {{ removingImages.length }} image{{
-                removingImages.length > 1 ? 's' : ''
-              }}?
+              {{ pluralize('image', removingImages.length, true) }}?
             </div>
           </v-card-text>
           <v-card-actions>
@@ -462,6 +456,7 @@
 import { mapState, mapActions } from 'vuex'
 import uuidValidate from 'uuid-validate'
 import toFormData from 'json-form-data'
+import pluralize from 'pluralize'
 
 import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 import { fileReader, getFileFromUrl } from '~/utils/file'
@@ -552,7 +547,7 @@ export default {
       }
     },
     'avatarImage.file': async function(file) {
-      await this.onSave({
+      await this.onSave(null, {
         ...this.editedStudent,
         image: file
       })
@@ -562,7 +557,8 @@ export default {
     },
     async images(images, oldImages) {
       if (images.length > oldImages.length) {
-        images = images.filter(({ hasDescriptor }) => !hasDescriptor)
+        // eslint-disable-next-line
+        images = images.filter(({ has_descriptor }) => !has_descriptor)
 
         const descriptors = await this.getFaceDescriptors({ images })
         await Promise.all(
@@ -576,7 +572,7 @@ export default {
 
         await Promise.all(
           images.map(({ id }) =>
-            this.$api.images.update(id, { has_descriptor: true })
+            this.$api.images.update(id, { image: { has_descriptor: true } })
           )
         )
         await this.fetchImages()
@@ -638,6 +634,13 @@ export default {
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
     ...mapActions('face', ['getFaceDescriptors']),
+    pluralize(string, count = 0, inclusive = false) {
+      if (!string) {
+        return
+      }
+      string = string.toString()
+      return pluralize(string, count, inclusive)
+    },
     async init() {
       await this.fetchStudent()
       await Promise.all([this.prefillData(), this.getCameras()])
@@ -727,6 +730,8 @@ export default {
         }
       } catch (error) {
         this.$handleError(error)
+      } finally {
+        this.$refs.avatarImage.value = null
       }
     },
     onSelectImages() {
@@ -754,6 +759,8 @@ export default {
         }
       } catch (error) {
         this.$handleError(error)
+      } finally {
+        this.$refs.images.value = null
       }
     },
     async onTakePhoto() {
@@ -788,7 +795,7 @@ export default {
       canvasCtx.beginPath()
     },
     async onRemoveImage() {
-      await this.onSave({
+      await this.onSave(null, {
         ...this.editedStudent,
         image: ''
       })
@@ -823,6 +830,13 @@ export default {
           )
           await this.fetchImages()
           await this.onCloseRemoving(true)
+          await this.$notify({
+            message: `${pluralize(
+              'Photo',
+              removingImages.length,
+              true
+            )} ${pluralize('is', removingImages.length)} removed`
+          })
         }
       } catch (error) {
         this.$handleError(error)
@@ -835,20 +849,19 @@ export default {
         ...this.editedStudent,
         image: await getFileFromUrl(path)
       }
-      await this.onSave(payload)
+      await this.onSave(null, payload)
     },
-    async onSave(payload = this.editedStudent) {
+    async onSave(event, payload = this.editedStudent) {
       try {
         const valid = await this.$validator.validate()
         if (valid) {
           this.isLoading = true
 
-          let payload = null
-          if (this.editedStudent.image) {
+          if (payload.image) {
             payload = toFormData(payload)
           } else {
             payload = {
-              student: this.editedStudent
+              student: payload
             }
           }
 
@@ -858,6 +871,9 @@ export default {
           const { student } = await this.$api.students.update(id, payload)
           await this.fetchStudent()
           await this.prefillData()
+          await this.$notify({
+            message: 'Profile is updated'
+          })
           return student
         } else {
           this.$notify({

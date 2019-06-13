@@ -1,6 +1,6 @@
 <template>
   <v-avatar :color="getColor" :size="size">
-    <v-img v-if="image.length > 0" :src="image" :alt="name">
+    <v-img v-if="image" :src="image" :alt="name">
       <template #placeholder="">
         <v-layout fill-height="" align-center="" justify-center="" ma-0="">
           <v-progress-circular indeterminate="" color="grey lighten-5" />
@@ -25,9 +25,9 @@ export default {
       required: true
     },
     image: {
-      type: String,
-      default: '',
-      required: true
+      default: null,
+      required: true,
+      validator: prop => typeof prop === 'string' || prop === null
     },
     size: {
       type: [String, Number],

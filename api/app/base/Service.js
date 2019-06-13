@@ -36,7 +36,7 @@ module.exports = class Service {
   }
   async fetchPage(filter, { trx } = {}) {
     const defaultFilter = { limit: 20, offset: 0, orderBy: '-created_at' }
-    const _filter = { ...filter, ...defaultFilter }
+    const _filter = { ...defaultFilter, ...filter }
 
     const model = this._getModel()
 

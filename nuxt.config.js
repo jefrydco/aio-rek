@@ -36,7 +36,7 @@ module.exports = {
   },
 
   http: {
-    // proxy: true,
+    // proxy: true
     baseURL: 'http://localhost:3001/api'
   },
 

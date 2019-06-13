@@ -80,8 +80,7 @@ class ImageController extends Controller {
           has_descriptor: boolean(has_descriptor)
         }
       } else {
-        const { image } = body
-        payload = { ...image }
+        payload = this._getPayload(req)
       }
 
       const updated = await service.update(queryResult, payload, { trx })

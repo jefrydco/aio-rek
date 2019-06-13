@@ -45,11 +45,10 @@ class StudentController extends Controller {
 
       const trx = this._getTrx(res)
 
-      const queryResult = await service.fetch({ id }, trx)
+      const queryResult = await service.fetch({ id }, { trx })
 
       let payload = null
       if (file) {
-        payload = { ...body }
         const { path } = file
 
         let oldPath = queryResult.get('image')
@@ -61,12 +60,24 @@ class StudentController extends Controller {
         }
 
         payload = {
-          image: path.replace('static', ''),
-          ...body
+          ...body,
+          image: path.replace('static', '')
         }
       } else {
         payload = this._getPayload(req)
+
+        if (!payload.image) {
+          let oldPath = queryResult.get('image')
+          if (oldPath) {
+            oldPath = `static/${oldPath}`
+            if (fs.existsSync(oldPath)) {
+              fs.unlinkSync(oldPath)
+            }
+          }
+        }
       }
+
+      console.log(payload)
 
       const updated = await service.update(queryResult, payload, {
         trx
