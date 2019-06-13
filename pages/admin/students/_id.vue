@@ -564,15 +564,17 @@ export default {
         await Promise.all(
           // eslint-disable-next-line
           descriptors.map(({ image_id, descriptor }) =>
-            this.$api.descriptors.create({
-              descriptor: { image_id, descriptor }
+            this.$api.studentDescriptors.create({
+              studentDescriptor: { student_image_id: image_id, descriptor }
             })
           )
         )
 
         await Promise.all(
           images.map(({ id }) =>
-            this.$api.images.update(id, { image: { has_descriptor: true } })
+            this.$api.studentImages.update(id, {
+              studentImage: { has_descriptor: true }
+            })
           )
         )
         await this.fetchImages()
@@ -595,7 +597,7 @@ export default {
   },
   async asyncData({
     app: {
-      $api: { students, images },
+      $api: { students, studentImages },
       $handleError
     },
     params: { id = '' }
@@ -603,10 +605,10 @@ export default {
     try {
       const [
         { student },
-        { rowCount, images: imagesData, ...filter }
+        { rowCount, studentImages: studentImagesData, ...filter }
       ] = await Promise.all([
         students.fetch(id),
-        images.fetchPage({
+        studentImages.fetchPage({
           orderBy: '-created_at',
           limit: 9,
           offset: 0,
@@ -615,7 +617,7 @@ export default {
       ])
       return {
         student,
-        images: imagesData,
+        images: studentImagesData,
         imagesFilter: filter,
         totalItems: rowCount
       }
@@ -690,17 +692,18 @@ export default {
       try {
         this.isLoading = true
         const { id } = this.$route.params
+        // eslint-disable-next-line
         const {
           rowCount,
-          images,
+          studentImages,
           ...filter
-        } = await this.$api.images.fetchPage({
+        } = await this.$api.studentImages.fetchPage({
           orderBy,
           limit,
           offset,
           student_id: id
         })
-        this.images = images
+        this.images = studentImages
         this.imagesFilter = filter
         this.totalItems = rowCount
       } catch (error) {
@@ -751,7 +754,7 @@ export default {
           Array.from(files).forEach(file => {
             payload.append('images', file)
           })
-          const { images } = await this.$api.images.create(payload, {
+          const { images } = await this.$api.studentImages.create(payload, {
             student_id: id
           })
           await this.fetchImages()
@@ -777,7 +780,7 @@ export default {
           has_descriptor: false
         }
         payload = toFormData(payload)
-        const { images } = await this.$api.images.create(payload, {
+        const { images } = await this.$api.studentImages.create(payload, {
           student_id: id
         })
         await this.fetchImages()
@@ -826,7 +829,7 @@ export default {
         this.isLoading = true
         if (removingImages.length > 0) {
           await Promise.all(
-            removingImages.map(id => this.$api.images.destroy(id))
+            removingImages.map(id => this.$api.studentImages.destroy(id))
           )
           await this.fetchImages()
           await this.onCloseRemoving(true)

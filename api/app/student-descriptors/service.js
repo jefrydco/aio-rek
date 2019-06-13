@@ -2,13 +2,13 @@
 
 const Service = require('../base/Service')
 
-class DescriptorService extends Service {
+class StudentDescriptorService extends Service {
   constructor(app) {
-    super(DescriptorService.name, app)
+    super(StudentDescriptorService.name, app)
   }
 }
 
-module.exports = app => new DescriptorService(app)
+module.exports = app => new StudentDescriptorService(app)
 
 // 'use strict'
 

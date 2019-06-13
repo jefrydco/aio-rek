@@ -2,13 +2,13 @@
 
 const Controller = require('../base/Controller')
 
-class DescriptorController extends Controller {
+class StudentDescriptorController extends Controller {
   constructor() {
-    super(DescriptorController.name)
+    super(StudentDescriptorController.name)
   }
 }
 
-module.exports = new DescriptorController()
+module.exports = new StudentDescriptorController()
 
 // const errorCatcher = require('async-error-catcher').default
 

@@ -7,9 +7,9 @@ const pluralize = require('pluralize')
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
 
-class ImageController extends Controller {
+class StudentImageController extends Controller {
   constructor() {
-    super(ImageController.name)
+    super(StudentImageController.name)
   }
   create(req, res, next) {
     return errorCatcher(async (req, res) => {
@@ -111,7 +111,7 @@ class ImageController extends Controller {
   }
 }
 
-module.exports = new ImageController()
+module.exports = new StudentImageController()
 
 // exports.create = errorCatcher(async (req, res) => {
 //   const {

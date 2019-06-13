@@ -2,13 +2,13 @@
 
 const Service = require('../base/Service')
 
-class ImageService extends Service {
+class StudentImageService extends Service {
   constructor(app) {
-    super(ImageService.name, app)
+    super(StudentImageService.name, app)
   }
 }
 
-module.exports = app => new ImageService(app)
+module.exports = app => new StudentImageService(app)
 
 // module.exports = app => ({
 //   async create(attributes, { trx } = {}) {

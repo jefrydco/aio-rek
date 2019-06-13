@@ -11,38 +11,38 @@ const {
 const { create, fetchPage, fetch, update, destroy } = require('./controller')
 
 router.post(
-  '/images',
+  '/student-images',
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleImage('static/uploads/images/datasets').array('images'),
+  handleImage('static/uploads/images/datasets/students').array('images'),
   create
 )
 router.get(
-  '/images',
+  '/student-images',
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
   fetchPage
 )
 router.get(
-  '/images/:id',
+  '/student-images/:id',
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
   fetch
 )
 router.put(
-  '/images/:id',
+  '/student-images/:id',
   bodyParser.json(),
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleImage('static/uploads/images/datasets').single('image'),
+  handleImage('static/uploads/images/datasets/students').single('image'),
   update
 )
 router.delete(
-  '/images/:id',
+  '/student-images/:id',
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
@@ -64,7 +64,7 @@ module.exports = router
 // const { create, getAll, getOnce, update, destroy } = require('./controller')
 
 // router.post(
-//   '/images',
+//   '/student-images',
 //   createTransaction,
 //   jwtAuth.required,
 //   handleRole('admin'),
@@ -72,7 +72,7 @@ module.exports = router
 //   create
 // )
 // router.get(
-//   '/images',
+//   '/student-images',
 //   createTransaction,
 //   jwtAuth.required,
 //   handleRole([['admin'], ['room']]),
