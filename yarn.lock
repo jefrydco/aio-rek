@@ -2519,13 +2519,12 @@ body-parser@1.19.0, body-parser@^1.19.0:
     raw-body "2.4.0"
     type-is "~1.6.17"
 
-bookshelf@^0.14.2:
-  version "0.14.2"
-  resolved "https://registry.yarnpkg.com/bookshelf/-/bookshelf-0.14.2.tgz#4b50b47a1e3d0265a1bfc118fa2036ad6a7493f2"
-  integrity sha512-qKwThIbrkkyaubZR5Y+vXusregxr+dU4yACTRbBsy4sW+66UkpPnK62DB3VAN9tDklak1kcqti1FsvzHNV5w/Q==
+bookshelf@^0.15.1:
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/bookshelf/-/bookshelf-0.15.1.tgz#ca545ad8189a6a3be8b25661ad462dbf667222e3"
+  integrity sha512-o+N88s6A1YW2L47gqOmZgoyLD7xBikHexlPdilD/t4c4YG7Pd8RHdicxQAh07PzaGQtMOwMloSBQQoRQVC++cg==
   dependencies:
     bluebird "^3.4.3"
-    colorette "^1.0.7"
     create-error "~0.3.1"
     inflection "^1.5.1"
     lodash "^4.17.10"
@@ -3160,7 +3159,7 @@ color@^3.0.0:
     color-convert "^1.9.1"
     color-string "^1.5.2"
 
-colorette@1.0.8, colorette@^1.0.7:
+colorette@1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.0.8.tgz#421ff11c80b7414027ebed922396bc1833d1903c"
   integrity sha512-X6Ck90ReaF+EfKdVGB7vdIQ3dr651BbIrBwY5YBKg13fjH+940sTtp7/Pkx33C6ntYfQcRumOs/aUQhaRPpbTQ==
@@ -5842,7 +5841,7 @@ https-proxy-agent@^2.2.1:
     agent-base "^4.1.0"
     debug "^3.1.0"
 
-husky@^2.4.0:
+husky@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/husky/-/husky-2.4.1.tgz#dd00f9646f8693b93f7b3a12ba4be00be0eff7ab"
   integrity sha512-ZRwMWHr7QruR22dQ5l3rEGXQ7rAQYsJYqaeCd+NyOsIFczAtqaApZQP3P4HwLZjCtFbm3SUNYoKuoBXX3AYYfw==
@@ -7103,7 +7102,7 @@ kleur@^3.0.2:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-knex@^0.17.5:
+knex@^0.17.6:
   version "0.17.6"
   resolved "https://registry.yarnpkg.com/knex/-/knex-0.17.6.tgz#80220cf159cd52768d5b29118c70b18aaf5138fe"
   integrity sha512-4SKp8jaBxqlEoaveenmpfnHEv5Kzo6/vhIj8UhW1srGw/FKqARTr+7Fv8C1C1qeVHDjv0coQWuUzN5eermHUsw==
@@ -7213,7 +7212,7 @@ liftoff@3.1.0:
     rechoir "^0.6.2"
     resolve "^1.1.7"
 
-lint-staged@^8.2.0:
+lint-staged@^8.2.1:
   version "8.2.1"
   resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-8.2.1.tgz#752fcf222d9d28f323a3b80f1e668f3654ff221f"
   integrity sha512-n0tDGR/rTCgQNwXnUf/eWIpPNddGWxC32ANTNYsj2k02iZb7Cz5ox2tytwBu+2r0zDXMEMKw7Y9OD/qsav561A==
