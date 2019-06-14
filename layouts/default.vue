@@ -58,7 +58,7 @@
             <nuxt />
             <app-notification />
             <app-loading :value="isModelsLoading">
-              Loading the face recognition models
+              Loading face recognition models
             </app-loading>
           </v-flex>
         </v-layout>

@@ -3,121 +3,188 @@
     <v-flex xs12="">
       <v-layout row="" wrap="">
         <v-flex xs12="" md4="">
-          <v-card>
-            <v-toolbar card="">
-              <v-toolbar-title>
-                <h2 class="headline">{{ student.name }}</h2>
-              </v-toolbar-title>
-            </v-toolbar>
-            <v-card-text>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-text-field
-                    v-model="editedStudent.name"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('name')"
-                    :disabled="isLoading"
-                    label="Name"
-                    data-vv-name="name"
-                    data-vv-as="name"
-                    required=""
-                    clearable=""
-                    box=""
-                    autofocus=""
-                    data-vv-value-path="editedStudent.name"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-text-field
-                    v-model="editedStudent.identifier"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('identifier')"
-                    :disabled="isLoading"
-                    label="Identifier"
-                    data-vv-name="identifier"
-                    data-vv-as="identifier"
-                    required=""
-                    clearable=""
-                    box=""
-                    data-vv-value-path="editedStudent.identifier"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" class="text-xs-center">
-                  <v-hover>
-                    <template #default="{ hover }">
-                      <app-avatar
-                        :name="student.name"
-                        :image="avatarImage.url"
-                        :size="128"
-                        text-class="headline"
-                      >
-                        <v-fade-transition>
-                          <v-container
-                            v-if="hover"
-                            fluid=""
-                            fill-height=""
-                            style="background-color: rgba(0, 0, 0, .5)"
-                          >
-                            <v-layout
+          <form @submit.prevent="onSave">
+            <v-card>
+              <v-toolbar card="">
+                <v-toolbar-title>
+                  <h2 class="headline">{{ student.name }}</h2>
+                </v-toolbar-title>
+              </v-toolbar>
+              <v-card-text>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-text-field
+                      v-model="editedStudent.name"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('name')"
+                      :disabled="isLoading"
+                      label="Name"
+                      data-vv-name="name"
+                      data-vv-as="name"
+                      name="name"
+                      required=""
+                      clearable=""
+                      box=""
+                      autofocus=""
+                      data-vv-value-path="editedStudent.name"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-text-field
+                      v-model="editedStudent.identifier"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('identifier')"
+                      :disabled="isLoading"
+                      label="Identifier"
+                      data-vv-name="identifier"
+                      data-vv-as="identifier"
+                      name="identifier"
+                      required=""
+                      clearable=""
+                      box=""
+                      data-vv-value-path="editedStudent.identifier"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-autocomplete
+                      v-model="selectedDepartment"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('selectedDepartment')"
+                      :disabled="isLoading"
+                      :items="departments"
+                      item-value="id"
+                      item-text="name"
+                      label="Department"
+                      data-vv-name="selectedDepartment"
+                      data-vv-as="Department"
+                      required=""
+                      clearable=""
+                      box=""
+                      data-vv-value-path="selectedDepartment"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-autocomplete
+                      v-model="editedStudent.study_program_id"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('study_program_id')"
+                      :disabled="isLoading"
+                      :items="studyPrograms"
+                      item-value="id"
+                      item-text="name"
+                      label="Study Program"
+                      data-vv-name="study_program_id"
+                      data-vv-as="Study Program"
+                      name="study_program_id"
+                      required=""
+                      clearable=""
+                      box=""
+                      data-vv-value-path="editedStudent.study_program_id"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-autocomplete
+                      v-model="editedStudent.group_id"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('group_id')"
+                      :disabled="isLoading"
+                      :items="groups"
+                      item-value="id"
+                      item-text="name"
+                      label="Group"
+                      data-vv-name="group_id"
+                      data-vv-as="Group"
+                      name="group_id"
+                      required=""
+                      clearable=""
+                      box=""
+                      data-vv-value-path="editedStudent.group_id"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="" class="text-xs-center">
+                    <v-hover>
+                      <template #default="{ hover }">
+                        <app-avatar
+                          :name="student.name"
+                          :image="avatarImage.url"
+                          :size="128"
+                          text-class="headline"
+                        >
+                          <v-fade-transition>
+                            <v-container
+                              v-if="hover"
+                              fluid=""
                               fill-height=""
-                              align-center=""
-                              justify-center=""
+                              style="background-color: rgba(0, 0, 0, .5)"
                             >
-                              <v-btn
-                                :disabled="isLoading"
-                                :loading="isLoading"
-                                color="error"
-                                @click="onRemoveImage"
+                              <v-layout
+                                fill-height=""
+                                align-center=""
+                                justify-center=""
                               >
-                                Remove
-                              </v-btn>
-                            </v-layout>
-                          </v-container>
-                        </v-fade-transition>
-                      </app-avatar>
-                    </template>
-                  </v-hover>
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <input
-                    ref="avatarImage"
-                    style="display: none"
-                    type="file"
-                    name="image"
-                    accept="image/jpeg,image/jpg"
-                    @change="onAvatarImageSelected"
-                  />
-                  <v-btn
-                    :disabled="isLoading"
-                    :loading="isLoading"
-                    color="primary"
-                    @click="onSelectAvatarImage"
-                  >
-                    Select Image
-                  </v-btn>
-                  <span>{{ avatarImage.name }}</span>
-                </v-flex>
-              </v-layout>
-            </v-card-text>
-            <v-divider />
-            <v-card-actions>
-              <v-spacer />
-              <v-btn
-                :disabled="isLoading"
-                :loading="isLoading"
-                color="accent"
-                @click="onSave"
-              >
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+                                <v-btn
+                                  :disabled="isLoading"
+                                  :loading="isLoading"
+                                  color="error"
+                                  @click="onRemoveImage"
+                                >
+                                  Remove
+                                </v-btn>
+                              </v-layout>
+                            </v-container>
+                          </v-fade-transition>
+                        </app-avatar>
+                      </template>
+                    </v-hover>
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <input
+                      ref="avatarImage"
+                      style="display: none"
+                      type="file"
+                      name="image"
+                      accept="image/jpeg,image/jpg"
+                      @change="onAvatarImageSelected"
+                    />
+                    <v-btn
+                      :disabled="isLoading"
+                      :loading="isLoading"
+                      color="primary"
+                      @click="onSelectAvatarImage"
+                    >
+                      Select Image
+                    </v-btn>
+                    <span>{{ avatarImage.name }}</span>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+              <v-divider />
+              <v-card-actions>
+                <v-spacer />
+                <v-btn
+                  :disabled="isLoading"
+                  :loading="isLoading"
+                  color="accent"
+                  type="submit"
+                  @click="onSave"
+                >
+                  Save
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </form>
         </v-flex>
         <v-flex xs12="" md8="">
           <v-card>
@@ -457,6 +524,7 @@ import { mapState, mapActions } from 'vuex'
 import uuidValidate from 'uuid-validate'
 import toFormData from 'json-form-data'
 import pluralize from 'pluralize'
+import { cloneDeep } from 'lodash/fp'
 
 import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 import { fileReader, getFileFromUrl } from '~/utils/file'
@@ -480,15 +548,43 @@ export default {
   data() {
     return {
       isLoading: false,
+      departments: [],
+      studyPrograms: [],
+      groups: [],
+      selectedDepartment: null,
       student: {
-        name: '',
-        identifier: '',
-        image: ''
+        id: null,
+        name: null,
+        identifier: null,
+        image: null,
+        is_active: true,
+        user_id: null,
+        study_program_id: null,
+        group_id: null,
+        study_program: {
+          id: null,
+          created_at: null,
+          updated_at: null,
+          name: null,
+          department_id: null
+        }
       },
       editedStudent: {
-        name: '',
-        identifier: '',
-        image: ''
+        id: null,
+        name: null,
+        identifier: null,
+        image: null,
+        is_active: true,
+        user_id: null,
+        study_program_id: null,
+        group_id: null,
+        study_program: {
+          id: null,
+          created_at: null,
+          updated_at: null,
+          name: null,
+          department_id: null
+        }
       },
       avatarImage: {
         name: '',
@@ -552,6 +648,9 @@ export default {
         image: file
       })
     },
+    selectedDepartment(selectedDepartment) {
+      this.fetchStudyPrograms(selectedDepartment)
+    },
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
     },
@@ -597,7 +696,7 @@ export default {
   },
   async asyncData({
     app: {
-      $api: { students, studentImages },
+      $api: { students, studentImages, departments, studyPrograms, groups },
       $handleError
     },
     params: { id = '' }
@@ -607,7 +706,7 @@ export default {
         { student },
         { rowCount, studentImages: studentImagesData, ...filter }
       ] = await Promise.all([
-        students.fetch(id),
+        students.fetch(id, { withRelated: 'study_program' }),
         studentImages.fetchPage({
           orderBy: '-created_at',
           limit: 9,
@@ -615,8 +714,23 @@ export default {
           student_id: id
         })
       ])
+      const [
+        { departments: departmentsData },
+        { studyPrograms: studyProgramsData },
+        { groups: groupsData }
+      ] = await Promise.all([
+        departments.fetchPage(),
+        studyPrograms.fetchPage({
+          department_id: student.study_program.department_id
+        }),
+        groups.fetchPage()
+      ])
       return {
         student,
+        selectedDepartment: student.study_program.department_id,
+        departments: departmentsData,
+        studyPrograms: studyProgramsData,
+        groups: groupsData,
         images: studentImagesData,
         imagesFilter: filter,
         totalItems: rowCount
@@ -650,11 +764,10 @@ export default {
     },
     async prefillData() {
       try {
-        const { name, identifier, image } = this.student
+        const { image, ...restData } = this.student
         const imageFile = await getFileFromUrl(image)
         this.editedStudent = {
-          name,
-          identifier,
+          ...restData,
           image: imageFile
         }
         this.avatarImage.url = image
@@ -670,11 +783,49 @@ export default {
         this.$handleError(error)
       }
     },
+    async fetchDepartments() {
+      try {
+        this.isLoading = true
+        const { departments } = await this.$api.departments.fetchPage()
+        this.departments = departments
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    // eslint-disable-next-line
+    async fetchStudyPrograms(department_id) {
+      try {
+        this.isLoading = true
+        const { studyPrograms } = await this.$api.studyPrograms.fetchPage({
+          department_id
+        })
+        this.studyPrograms = studyPrograms
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchGroups() {
+      try {
+        this.isLoading = true
+        const { groups } = await this.$api.groups.fetchPage()
+        this.groups = groups
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
     async fetchStudent() {
       try {
         this.isLoading = true
         const { id } = this.$route.params
-        const { student } = await this.$api.students.fetch(id)
+        const { student } = await this.$api.students.fetch(id, {
+          withRelated: 'study_program'
+        })
         this.student = student
       } catch (error) {
         this.$handleError(error)
@@ -751,14 +902,22 @@ export default {
           const payload = new FormData()
           payload.append('has_descriptor', false)
           // Taken from: https://stackoverflow.com/a/40902462/7711812
-          Array.from(files).forEach(file => {
+          const filesArray = Array.from(files)
+          filesArray.forEach(file => {
             payload.append('images', file)
           })
-          const { images } = await this.$api.studentImages.create(payload, {
+          await this.$api.studentImages.create(payload, {
             student_id: id
           })
           await this.fetchImages()
-          return images
+          await this.$notify({
+            kind: 'success',
+            message: `${pluralize(
+              'Photo',
+              filesArray.length,
+              true
+            )} ${pluralize('is', filesArray.length)} uploaded successfully`
+          })
         }
       } catch (error) {
         this.$handleError(error)
@@ -780,11 +939,14 @@ export default {
           has_descriptor: false
         }
         payload = toFormData(payload)
-        const { images } = await this.$api.studentImages.create(payload, {
+        await this.$api.studentImages.create(payload, {
           student_id: id
         })
         await this.fetchImages()
-        return images
+        await this.$notify({
+          kind: 'success',
+          message: 'Photo is uploaded successfully'
+        })
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -838,7 +1000,7 @@ export default {
               'Photo',
               removingImages.length,
               true
-            )} ${pluralize('is', removingImages.length)} removed`
+            )} ${pluralize('is', removingImages.length)} removed successfully`
           })
         }
       } catch (error) {
@@ -854,11 +1016,14 @@ export default {
       }
       await this.onSave(null, payload)
     },
-    async onSave(event, payload = this.editedStudent) {
+    async onSave(event, _payload = this.editedStudent) {
       try {
         const valid = await this.$validator.validate()
         if (valid) {
           this.isLoading = true
+
+          let payload = cloneDeep(_payload)
+          delete payload.study_program
 
           if (payload.image) {
             payload = toFormData(payload)
@@ -871,11 +1036,14 @@ export default {
           const {
             params: { id }
           } = this.$route
-          const { student } = await this.$api.students.update(id, payload)
+          const { student } = await this.$api.students.update(id, payload, {
+            student_id: this.student.id
+          })
           await this.fetchStudent()
           await this.prefillData()
           await this.$notify({
-            message: 'Profile is updated'
+            kind: 'success',
+            message: 'Profile is updated successfully'
           })
           return student
         } else {

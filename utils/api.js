@@ -9,11 +9,13 @@ export default $http => resource => ({
     const queryString = qs.stringify(filter)
     return $http.$get(`${resource}?${queryString}`, options)
   },
-  fetch(id, options) {
-    return $http.$get(`${resource}/${id}`, options)
+  fetch(id, filter, options) {
+    const queryString = qs.stringify(filter)
+    return $http.$get(`${resource}/${id}?${queryString}`, options)
   },
-  update(id, attributes, options) {
-    return $http.$put(`${resource}/${id}`, attributes, options)
+  update(id, attributes, filter, options) {
+    const queryString = qs.stringify(filter)
+    return $http.$put(`${resource}/${id}?${queryString}`, attributes, options)
   },
   destroy(id, options) {
     return $http.delete(`${resource}/${id}`, options)

@@ -12,12 +12,16 @@ const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
       const {
         user,
         // eslint-disable-next-line
-        query: { student_id = '' }
+        query: { student_id, lecturer_id }
       } = req
       if (user.role !== 'admin') {
         return Boom.unauthorized()
       }
-      const uploadPath = path.join(location, student_id)
+      const uploadPath = path.join(
+        location,
+        // eslint-disable-next-line
+        student_id || lecturer_id || 'others'
+      )
 
       if (!fs.existsSync(uploadPath)) {
         fs.mkdirSync(uploadPath, { recursive: true })

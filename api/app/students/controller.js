@@ -1,6 +1,7 @@
 'use strict'
 
 const fs = require('fs')
+const boolean = require('boolean')
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
 
@@ -77,7 +78,7 @@ class StudentController extends Controller {
         }
       }
 
-      console.log(payload)
+      payload.is_active = boolean(payload.is_active)
 
       const updated = await service.update(queryResult, payload, {
         trx
