@@ -2,7 +2,7 @@
   <v-card>
     <v-toolbar card="">
       <v-toolbar-title>
-        <h2 class="headline">Students</h2>
+        <h2 class="headline">Lecturers</h2>
       </v-toolbar-title>
     </v-toolbar>
     <v-card-text>

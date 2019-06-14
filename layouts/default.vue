@@ -15,16 +15,45 @@
         </v-img>
       </v-toolbar-title>
       <v-toolbar-items class="hidden-xs-only ml-4">
-        <v-btn
-          v-for="(menu, i) in menus"
-          :key="`menu_sidebar_${i}`"
-          flat=""
-          nuxt=""
-          exact=""
-          :to="menu.to"
-        >
-          {{ menu.text }}
-        </v-btn>
+        <template v-for="(menu, i) in menus">
+          <v-menu
+            v-if="menu.subMenus"
+            :key="`menu_toolbar_${i}`"
+            offset-y=""
+            bottom=""
+          >
+            <template #activator="{ on }">
+              <v-btn flat="" v-on="on">
+                <span>{{ menu.text }}</span>
+                <v-icon dark>arrow_drop_down</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-tile
+                v-for="(menuSub, j) in menu.subMenus"
+                :key="`menu_toolbar_${i}_sub_${j}`"
+                ripple=""
+                nuxt=""
+                exact=""
+                :to="menuSub.to"
+              >
+                <v-list-tile-content>
+                  <v-list-tile-title>{{ menuSub.text }}</v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
+          <v-btn
+            v-else
+            :key="`menu_toolbar_${i}`"
+            flat=""
+            nuxt=""
+            exact=""
+            :to="menu.to"
+          >
+            {{ menu.text }}
+          </v-btn>
+        </template>
       </v-toolbar-items>
       <v-spacer />
       <v-toolbar-items>
@@ -99,7 +128,13 @@ export default {
       }
       return [
         { text: 'Home', to: { name: 'admin' } },
-        { text: 'Students', to: { name: 'admin-students' } }
+        {
+          text: 'Datasets',
+          subMenus: [
+            { text: 'Lecturers', to: { name: 'admin-lecturers' } },
+            { text: 'Students', to: { name: 'admin-students' } }
+          ]
+        }
       ]
     }
   },
