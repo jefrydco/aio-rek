@@ -132,6 +132,7 @@ export default {
           text: 'Datasets',
           subMenus: [
             { text: 'Departments', to: { name: 'admin-departments' } },
+            { text: 'Groups', to: { name: 'admin-groups' } },
             { text: 'Lecturers', to: { name: 'admin-lecturers' } },
             { text: 'Students', to: { name: 'admin-students' } }
           ]

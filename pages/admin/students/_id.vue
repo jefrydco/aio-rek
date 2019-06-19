@@ -1051,6 +1051,7 @@ export default {
           await Promise.al([
             this.fetchStudent(),
             this.prefillData(),
+            this.$validator.reset(),
             this.$notify({
               kind: 'success',
               message: 'Profile is updated successfully'
