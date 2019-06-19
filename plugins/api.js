@@ -10,6 +10,8 @@ export default ({ $http }, inject) => {
     attendances: createApi('attendances'),
     departments: createApi('departments'),
     groups: createApi('groups'),
+    lecturerDescriptors: createApi('lecturer-descriptors'),
+    lecturerImages: createApi('lecturer-images'),
     lecturers: createApi('lecturers'),
     presences: createApi('presences'),
     rooms: createApi('rooms'),

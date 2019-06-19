@@ -7,14 +7,14 @@
             <v-card>
               <v-toolbar card="">
                 <v-toolbar-title>
-                  <h2 class="headline">{{ student.name }}</h2>
+                  <h2 class="headline">{{ lecturer.name }}</h2>
                 </v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-layout row="" wrap="">
                   <v-flex xs12="">
                     <v-text-field
-                      v-model="editedStudent.name"
+                      v-model="editedLecturer.name"
                       v-validate="'required'"
                       :error-messages="errors.collect('name')"
                       :disabled="isLoading"
@@ -26,14 +26,14 @@
                       clearable=""
                       box=""
                       autofocus=""
-                      data-vv-value-path="editedStudent.name"
+                      data-vv-value-path="editedLecturer.name"
                     />
                   </v-flex>
                 </v-layout>
                 <v-layout row="" wrap="">
                   <v-flex xs12="">
                     <v-text-field
-                      v-model="editedStudent.identifier"
+                      v-model="editedLecturer.identifier"
                       v-validate="'required'"
                       :error-messages="errors.collect('identifier')"
                       :disabled="isLoading"
@@ -44,69 +44,7 @@
                       required=""
                       clearable=""
                       box=""
-                      data-vv-value-path="editedStudent.identifier"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-autocomplete
-                      v-model="selectedDepartment"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('selectedDepartment')"
-                      :disabled="isLoading"
-                      :items="departments"
-                      item-value="id"
-                      item-text="name"
-                      label="Department"
-                      data-vv-name="selectedDepartment"
-                      data-vv-as="Department"
-                      required=""
-                      clearable=""
-                      box=""
-                      data-vv-value-path="selectedDepartment"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-autocomplete
-                      v-model="editedStudent.study_program_id"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('study_program_id')"
-                      :disabled="isLoading"
-                      :items="studyPrograms"
-                      item-value="id"
-                      item-text="name"
-                      label="Study Program"
-                      data-vv-name="study_program_id"
-                      data-vv-as="Study Program"
-                      name="study_program_id"
-                      required=""
-                      clearable=""
-                      box=""
-                      data-vv-value-path="editedStudent.study_program_id"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-autocomplete
-                      v-model="editedStudent.group_id"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('group_id')"
-                      :disabled="isLoading"
-                      :items="groups"
-                      item-value="id"
-                      item-text="name"
-                      label="Group"
-                      data-vv-name="group_id"
-                      data-vv-as="Group"
-                      name="group_id"
-                      required=""
-                      clearable=""
-                      box=""
-                      data-vv-value-path="editedStudent.group_id"
+                      data-vv-value-path="editedLecturer.identifier"
                     />
                   </v-flex>
                 </v-layout>
@@ -115,7 +53,7 @@
                     <v-hover>
                       <template #default="{ hover }">
                         <app-avatar
-                          :name="student.name"
+                          :name="removeTitle(lecturer.name)"
                           :image="avatarImage.url"
                           :size="128"
                           text-class="headline"
@@ -541,52 +479,30 @@ export default {
   components: {
     AppAvatar
   },
+  mixins: [string],
   head() {
     return {
-      title: `Edit Student - ${this.student.name}`
+      title: `Edit Lecturer - ${this.lecturer.name}`
     }
   },
-  mixins: [string],
   data() {
     return {
       isLoading: false,
-      departments: [],
-      studyPrograms: [],
-      groups: [],
-      selectedDepartment: null,
-      student: {
+      lecturer: {
         id: null,
         name: null,
         identifier: null,
         image: null,
         is_active: true,
-        user_id: null,
-        study_program_id: null,
-        group_id: null,
-        study_program: {
-          id: null,
-          created_at: null,
-          updated_at: null,
-          name: null,
-          department_id: null
-        }
+        user_id: null
       },
-      editedStudent: {
+      editedLecturer: {
         id: null,
         name: null,
         identifier: null,
         image: null,
         is_active: true,
-        user_id: null,
-        study_program_id: null,
-        group_id: null,
-        study_program: {
-          id: null,
-          created_at: null,
-          updated_at: null,
-          name: null,
-          department_id: null
-        }
+        user_id: null
       },
       avatarImage: {
         name: '',
@@ -646,12 +562,9 @@ export default {
     },
     'avatarImage.file': async function(file) {
       await this.onSave(null, {
-        ...this.editedStudent,
+        ...this.editedLecturer,
         image: file
       })
-    },
-    selectedDepartment(selectedDepartment) {
-      this.fetchStudyPrograms(selectedDepartment)
     },
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
@@ -665,16 +578,16 @@ export default {
         await Promise.all(
           // eslint-disable-next-line
           descriptors.map(({ image_id, descriptor }) =>
-            this.$api.studentDescriptors.create({
-              studentDescriptor: { student_image_id: image_id, descriptor }
+            this.$api.lecturerDescriptors.create({
+              lecturerDescriptor: { lecturer_image_id: image_id, descriptor }
             })
           )
         )
 
         await Promise.all(
           images.map(({ id }) =>
-            this.$api.studentImages.update(id, {
-              studentImage: { has_descriptor: true }
+            this.$api.lecturerImages.update(id, {
+              lecturerImage: { has_descriptor: true }
             })
           )
         )
@@ -698,42 +611,27 @@ export default {
   },
   async asyncData({
     app: {
-      $api: { students, studentImages, departments, studyPrograms, groups },
+      $api: { lecturers, lecturerImages, departments, studyPrograms, groups },
       $handleError
     },
     params: { id = '' }
   }) {
     try {
       const [
-        { student },
-        { rowCount, studentImages: studentImagesData, ...filter }
+        { lecturer },
+        { rowCount, lecturerImages: lecturerImagesData, ...filter }
       ] = await Promise.all([
-        students.fetch(id, { withRelated: 'study_program' }),
-        studentImages.fetchPage({
+        lecturers.fetch(id),
+        lecturerImages.fetchPage({
           orderBy: '-created_at',
           limit: 9,
           offset: 0,
-          student_id: id
+          lecturer_id: id
         })
       ])
-      const [
-        { departments: departmentsData },
-        { studyPrograms: studyProgramsData },
-        { groups: groupsData }
-      ] = await Promise.all([
-        departments.fetchPage(),
-        studyPrograms.fetchPage({
-          department_id: student.study_program.department_id
-        }),
-        groups.fetchPage()
-      ])
       return {
-        student,
-        selectedDepartment: student.study_program.department_id,
-        departments: departmentsData,
-        studyPrograms: studyProgramsData,
-        groups: groupsData,
-        images: studentImagesData,
+        lecturer,
+        images: lecturerImagesData,
         imagesFilter: filter,
         totalItems: rowCount
       }
@@ -753,15 +651,15 @@ export default {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
     ...mapActions('face', ['getFaceDescriptors']),
     async init() {
-      await this.fetchStudent()
+      await this.fetchLecturer()
       await Promise.all([this.prefillData(), this.getCameras()])
       await this.initCamera(this.selectedCamera)
     },
     async prefillData() {
       try {
-        const { image, ...restData } = this.student
+        const { image, ...restData } = this.lecturer
         const imageFile = await getFileFromUrl(image)
-        this.editedStudent = {
+        this.editedLecturer = {
           ...restData,
           image: imageFile
         }
@@ -778,50 +676,12 @@ export default {
         this.$handleError(error)
       }
     },
-    async fetchDepartments() {
-      try {
-        this.isLoading = true
-        const { departments } = await this.$api.departments.fetchPage()
-        this.departments = departments
-      } catch (error) {
-        this.$handleError(error)
-      } finally {
-        this.isLoading = false
-      }
-    },
-    // eslint-disable-next-line
-    async fetchStudyPrograms(department_id) {
-      try {
-        this.isLoading = true
-        const { studyPrograms } = await this.$api.studyPrograms.fetchPage({
-          department_id
-        })
-        this.studyPrograms = studyPrograms
-      } catch (error) {
-        this.$handleError(error)
-      } finally {
-        this.isLoading = false
-      }
-    },
-    async fetchGroups() {
-      try {
-        this.isLoading = true
-        const { groups } = await this.$api.groups.fetchPage()
-        this.groups = groups
-      } catch (error) {
-        this.$handleError(error)
-      } finally {
-        this.isLoading = false
-      }
-    },
-    async fetchStudent() {
+    async fetchLecturer() {
       try {
         this.isLoading = true
         const { id } = this.$route.params
-        const { student } = await this.$api.students.fetch(id, {
-          withRelated: 'study_program'
-        })
-        this.student = student
+        const { lecturer } = await this.$api.lecturers.fetch(id)
+        this.lecturer = lecturer
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -841,15 +701,15 @@ export default {
         // eslint-disable-next-line
         const {
           rowCount,
-          studentImages,
+          lecturerImages,
           ...filter
-        } = await this.$api.studentImages.fetchPage({
+        } = await this.$api.lecturerImages.fetchPage({
           orderBy,
           limit,
           offset,
-          student_id: id
+          lecturer_id: id
         })
-        this.images = studentImages
+        this.images = lecturerImages
         this.imagesFilter = filter
         this.totalItems = rowCount
       } catch (error) {
@@ -901,8 +761,8 @@ export default {
           filesArray.forEach(file => {
             payload.append('images', file)
           })
-          await this.$api.studentImages.create(payload, {
-            student_id: id
+          await this.$api.lecturerImages.create(payload, {
+            lecturer_id: id
           })
           await this.fetchImages()
           await this.$notify({
@@ -934,8 +794,8 @@ export default {
           has_descriptor: false
         }
         payload = toFormData(payload)
-        await this.$api.studentImages.create(payload, {
-          student_id: id
+        await this.$api.lecturerImages.create(payload, {
+          lecturer_id: id
         })
         await this.fetchImages()
         await this.$notify({
@@ -956,7 +816,7 @@ export default {
     },
     async onRemoveImage() {
       await this.onSave(null, {
-        ...this.editedStudent,
+        ...this.editedLecturer,
         image: ''
       })
       this.avatarImage = {
@@ -986,7 +846,7 @@ export default {
         this.isLoading = true
         if (removingImages.length > 0) {
           await Promise.all(
-            removingImages.map(id => this.$api.studentImages.destroy(id))
+            removingImages.map(id => this.$api.lecturerImages.destroy(id))
           )
           await this.fetchImages()
           await this.onCloseRemoving(true)
@@ -1009,12 +869,12 @@ export default {
     },
     async onUseAsAvatar(path) {
       const payload = {
-        ...this.editedStudent,
+        ...this.editedLecturer,
         image: await getFileFromUrl(path)
       }
       await this.onSave(null, payload)
     },
-    async onSave(event, _payload = this.editedStudent) {
+    async onSave(event, _payload = this.editedLecturer) {
       try {
         const valid = await this.$validator.validate()
         if (valid) {
@@ -1027,23 +887,23 @@ export default {
             payload = toFormData(payload)
           } else {
             payload = {
-              student: payload
+              lecturer: payload
             }
           }
 
           const {
             params: { id }
           } = this.$route
-          const { student } = await this.$api.students.update(id, payload, {
-            student_id: this.student.id
+          const { lecturer } = await this.$api.lecturers.update(id, payload, {
+            lecturer_id: this.lecturer.id
           })
-          await this.fetchStudent()
+          await this.fetchLecturer()
           await this.prefillData()
           await this.$notify({
             kind: 'success',
             message: 'Profile is updated successfully'
           })
-          return student
+          return lecturer
         } else {
           this.$notify({
             isError: true,

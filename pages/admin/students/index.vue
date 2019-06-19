@@ -59,13 +59,6 @@ export default {
   },
   data() {
     return {
-      isPassword: true,
-      isPasswordAuto: true,
-      user: {
-        email: '',
-        password: '',
-        username: ''
-      },
       students: [],
       filter: {
         limit: 0,
@@ -118,13 +111,6 @@ export default {
         })
       },
       deep: true
-    },
-    'user.username': function(value) {
-      if (value) {
-        this.user.password = `${value}123`
-      } else {
-        this.user.password = null
-      }
     }
   },
   async asyncData({ app: { $api, $http, $handleError } }) {

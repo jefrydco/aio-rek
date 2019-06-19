@@ -29,7 +29,7 @@
     "url": "https://jefrydco.id"
   },
   "scripts": {
-    "api": "cross-env NODE_ENV=development nodemon api/start.js",
+    "api": "cross-env NODE_ENV=development nodemon api/start.js | pino-pretty",
     "coverage": "codecov",
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server nuxt.config.js",
     "generate": "nuxt generate",

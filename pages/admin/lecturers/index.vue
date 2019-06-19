@@ -8,7 +8,7 @@
     <v-card-text>
       <v-data-table
         :headers="headers"
-        :items="students"
+        :items="lecturers"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
         :total-items="totalItems"
@@ -18,21 +18,19 @@
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1">
               <app-avatar
-                :name="item.name"
+                :name="removeTitle(item.name)"
                 :image="item.image"
                 text-class="caption"
               />
             </td>
             <td class="py-1 body-2">{{ item.identifier }}</td>
             <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 body-2">{{ item.study_program.name }}</td>
-            <td class="py-1 body-2">{{ item.group.name }}</td>
             <td class="py-1 text-xs-center">
               <v-btn
                 color="primary"
                 nuxt=""
                 exact=""
-                :to="{ name: 'admin-students-id', params: { id: item.id } }"
+                :to="{ name: 'admin-lecturers-id', params: { id: item.id } }"
               >
                 Edit
               </v-btn>
@@ -47,6 +45,7 @@
 
 <script>
 import AppAvatar from '~/components/AppAvatar'
+import string from '~/mixins/string'
 
 export default {
   components: {
@@ -54,19 +53,13 @@ export default {
   },
   head() {
     return {
-      title: 'Students'
+      title: 'Lecturers'
     }
   },
+  mixins: [string],
   data() {
     return {
-      isPassword: true,
-      isPasswordAuto: true,
-      user: {
-        email: '',
-        password: '',
-        username: ''
-      },
-      students: [],
+      lecturers: [],
       filter: {
         limit: 0,
         offset: 0,
@@ -76,10 +69,8 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Image', value: 'image', sortable: false },
-        { text: 'Identifier', value: 'identifier' },
+        { text: 'Identifier', value: 'name' },
         { text: 'Name', value: 'name' },
-        { text: 'Study Program', value: 'study_program.name' },
-        { text: 'Group', value: 'group.name' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [
@@ -92,7 +83,7 @@ export default {
         descending: false,
         page: 1,
         rowsPerPage: 20,
-        sortBy: 'identifier',
+        sortBy: 'name',
         totalItems: 20
       },
       totalItems: 0
@@ -109,35 +100,28 @@ export default {
         if (descending) {
           sortBy = `-${sortBy}`
         }
-        this.fetchStudents({
+        this.fetchLecturers({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage,
-          withRelated: 'group,study_program'
+          offset: (page - 1) * rowsPerPage
         })
       },
       deep: true
-    },
-    'user.username': function(value) {
-      if (value) {
-        this.user.password = `${value}123`
-      } else {
-        this.user.password = null
-      }
     }
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
-      const { rowCount, students, ...filter } = await $api.students.fetchPage({
-        orderBy: 'identifier',
-        limit: 20,
-        offset: 0,
-        withRelated: 'group,study_program'
-      })
+      const { rowCount, lecturers, ...filter } = await $api.lecturers.fetchPage(
+        {
+          orderBy: 'name',
+          limit: 20,
+          offset: 0
+        }
+      )
       return {
         filter,
-        students,
+        lecturers,
         totalItems: rowCount
       }
     } catch ({ response }) {
@@ -145,27 +129,21 @@ export default {
     }
   },
   methods: {
-    async fetchStudents({
-      orderBy = 'identifier',
-      limit = 20,
-      offset = 0,
-      withRelated = 'group,study_program'
-    }) {
+    async fetchLecturers({ orderBy = 'name', limit = 20, offset = 0 }) {
       try {
         this.isLoading = true
         const {
           rowCount,
-          students,
+          lecturers,
           ...filter
-        } = await this.$api.students.fetchPage({
+        } = await this.$api.lecturers.fetchPage({
           orderBy,
           limit,
-          offset,
-          withRelated
+          offset
         })
         this.filter = filter
         this.totalItems = rowCount
-        this.students = students
+        this.lecturers = lecturers
       } catch ({ response }) {
         this.$handleError(response)
       } finally {

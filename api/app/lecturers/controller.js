@@ -1,6 +1,7 @@
 'use strict'
 
 const fs = require('fs')
+const boolean = require('boolean')
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
 
@@ -49,7 +50,6 @@ class LecturerController extends Controller {
 
       let payload = null
       if (file) {
-        payload = { ...body }
         const { path } = file
 
         let oldPath = queryResult.get('image')
@@ -66,7 +66,19 @@ class LecturerController extends Controller {
         }
       } else {
         payload = this._getPayload(req)
+
+        if (!payload.image) {
+          let oldPath = queryResult.get('image')
+          if (oldPath) {
+            oldPath = `static/${oldPath}`
+            if (fs.existsSync(oldPath)) {
+              fs.unlinkSync(oldPath)
+            }
+          }
+        }
       }
+
+      payload.is_active = boolean(payload.is_active)
 
       const updated = await service.update(queryResult, payload, {
         trx

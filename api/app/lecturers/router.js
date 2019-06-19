@@ -16,7 +16,7 @@ router.post(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleImage('static/uploads/images/profiles').single('image'),
+  handleImage('static/uploads/images/profiles/lecturers').single('image'),
   create
 )
 router.get(
@@ -39,7 +39,7 @@ router.put(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
-  handleImage('static/uploads/images/profiles').single('image'),
+  handleImage('static/uploads/images/profiles/lecturers').single('image'),
   update
 )
 router.delete(
