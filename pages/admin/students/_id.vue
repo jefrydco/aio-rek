@@ -3,7 +3,7 @@
     <v-flex xs12="">
       <v-layout row="" wrap="">
         <v-flex xs12="" md4="">
-          <form @submit.prevent="onSave">
+          <form @submit.prevent="onCreateOrEdit">
             <v-card>
               <v-toolbar card="">
                 <v-toolbar-title>
@@ -178,7 +178,7 @@
                   :loading="isLoading"
                   color="accent"
                   type="submit"
-                  @click="onSave"
+                  @click="onCreateOrEdit"
                 >
                   Save
                 </v-btn>
@@ -645,7 +645,7 @@ export default {
       }
     },
     'avatarImage.file': async function(file) {
-      await this.onSave(null, {
+      await this.onCreateOrEdit(null, {
         ...this.editedStudent,
         image: file
       })
@@ -904,15 +904,20 @@ export default {
           await this.$api.studentImages.create(payload, {
             student_id: id
           })
-          await this.fetchImages()
-          await this.$notify({
-            kind: 'success',
-            message: `${this.pluralize(
-              'Photo',
-              filesArray.length,
-              true
-            )} ${this.pluralize('is', filesArray.length)} uploaded successfully`
-          })
+          await Promise.all([
+            this.fetchImages(),
+            this.$notify({
+              kind: 'success',
+              message: `${this.pluralize(
+                'Photo',
+                filesArray.length,
+                true
+              )} ${this.pluralize(
+                'is',
+                filesArray.length
+              )} uploaded successfully`
+            })
+          ])
         }
       } catch (error) {
         this.$handleError(error)
@@ -937,11 +942,13 @@ export default {
         await this.$api.studentImages.create(payload, {
           student_id: id
         })
-        await this.fetchImages()
-        await this.$notify({
-          kind: 'success',
-          message: 'Photo is uploaded successfully'
-        })
+        await Promise.all([
+          this.fetchImages(),
+          this.$notify({
+            kind: 'success',
+            message: 'Photo is uploaded successfully'
+          })
+        ])
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -955,7 +962,7 @@ export default {
       canvasCtx.beginPath()
     },
     async onRemoveImage() {
-      await this.onSave(null, {
+      await this.onCreateOrEdit(null, {
         ...this.editedStudent,
         image: ''
       })
@@ -988,18 +995,21 @@ export default {
           await Promise.all(
             removingImages.map(id => this.$api.studentImages.destroy(id))
           )
-          await this.fetchImages()
-          await this.onCloseRemoving(true)
-          await this.$notify({
-            message: `${this.pluralize(
-              'Photo',
-              removingImages.length,
-              true
-            )} ${this.pluralize(
-              'is',
-              removingImages.length
-            )} removed successfully`
-          })
+          await Promise.all([
+            this.fetchImages(),
+            this.onCloseRemoving(true),
+            this.$notify({
+              kind: 'success',
+              message: `${this.pluralize(
+                'Photo',
+                removingImages.length,
+                true
+              )} ${this.pluralize(
+                'is',
+                removingImages.length
+              )} removed successfully`
+            })
+          ])
         }
       } catch (error) {
         this.$handleError(error)
@@ -1012,15 +1022,16 @@ export default {
         ...this.editedStudent,
         image: await getFileFromUrl(path)
       }
-      await this.onSave(null, payload)
+      await this.onCreateOrEdit(null, payload)
     },
-    async onSave(event, _payload = this.editedStudent) {
+    async onCreateOrEdit(event, _payload = this.editedStudent) {
       try {
         const valid = await this.$validator.validate()
         if (valid) {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
+          delete payload.id
           delete payload.study_program
 
           if (payload.image) {
@@ -1034,16 +1045,17 @@ export default {
           const {
             params: { id }
           } = this.$route
-          const { student } = await this.$api.students.update(id, payload, {
+          await this.$api.students.update(id, payload, {
             student_id: this.student.id
           })
-          await this.fetchStudent()
-          await this.prefillData()
-          await this.$notify({
-            kind: 'success',
-            message: 'Profile is updated successfully'
-          })
-          return student
+          await Promise.al([
+            this.fetchStudent(),
+            this.prefillData(),
+            this.$notify({
+              kind: 'success',
+              message: 'Profile is updated successfully'
+            })
+          ])
         } else {
           this.$notify({
             isError: true,

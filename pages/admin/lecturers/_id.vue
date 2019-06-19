@@ -3,7 +3,7 @@
     <v-flex xs12="">
       <v-layout row="" wrap="">
         <v-flex xs12="" md4="">
-          <form @submit.prevent="onSave">
+          <form @submit.prevent="onCreateOrEdit">
             <v-card>
               <v-toolbar card="">
                 <v-toolbar-title>
@@ -74,7 +74,7 @@
                                   :disabled="isLoading"
                                   :loading="isLoading"
                                   color="error"
-                                  @click="onRemoveImage"
+                                  @click="onRemoveAvatarImage"
                                 >
                                   Remove
                                 </v-btn>
@@ -116,7 +116,7 @@
                   :loading="isLoading"
                   color="accent"
                   type="submit"
-                  @click="onSave"
+                  @click="onCreateOrEdit"
                 >
                   Save
                 </v-btn>
@@ -561,7 +561,7 @@ export default {
       }
     },
     'avatarImage.file': async function(file) {
-      await this.onSave(null, {
+      await this.onCreateOrEdit(null, {
         ...this.editedLecturer,
         image: file
       })
@@ -764,15 +764,20 @@ export default {
           await this.$api.lecturerImages.create(payload, {
             lecturer_id: id
           })
-          await this.fetchImages()
-          await this.$notify({
-            kind: 'success',
-            message: `${this.pluralize(
-              'Photo',
-              filesArray.length,
-              true
-            )} ${this.pluralize('is', filesArray.length)} uploaded successfully`
-          })
+          await Promise.all([
+            this.fetchImages(),
+            this.$notify({
+              kind: 'success',
+              message: `${this.pluralize(
+                'Photo',
+                filesArray.length,
+                true
+              )} ${this.pluralize(
+                'is',
+                filesArray.length
+              )} uploaded successfully`
+            })
+          ])
         }
       } catch (error) {
         this.$handleError(error)
@@ -797,11 +802,13 @@ export default {
         await this.$api.lecturerImages.create(payload, {
           lecturer_id: id
         })
-        await this.fetchImages()
-        await this.$notify({
-          kind: 'success',
-          message: 'Photo is uploaded successfully'
-        })
+        await Promise.all([
+          this.fetchImages(),
+          this.$notify({
+            kind: 'success',
+            message: 'Photo is uploaded successfully'
+          })
+        ])
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -814,8 +821,8 @@ export default {
       canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height)
       canvasCtx.beginPath()
     },
-    async onRemoveImage() {
-      await this.onSave(null, {
+    async onRemoveAvatarImage() {
+      await this.onCreateOrEdit(null, {
         ...this.editedLecturer,
         image: ''
       })
@@ -848,18 +855,21 @@ export default {
           await Promise.all(
             removingImages.map(id => this.$api.lecturerImages.destroy(id))
           )
-          await this.fetchImages()
-          await this.onCloseRemoving(true)
-          await this.$notify({
-            message: `${this.pluralize(
-              'Photo',
-              removingImages.length,
-              true
-            )} ${this.pluralize(
-              'is',
-              removingImages.length
-            )} removed successfully`
-          })
+          await Promise.all([
+            this.fetchImages(),
+            this.onCloseRemoving(true),
+            this.$notify({
+              kind: 'success',
+              message: `${this.pluralize(
+                'Photo',
+                removingImages.length,
+                true
+              )} ${this.pluralize(
+                'is',
+                removingImages.length
+              )} removed successfully`
+            })
+          ])
         }
       } catch (error) {
         this.$handleError(error)
@@ -872,9 +882,9 @@ export default {
         ...this.editedLecturer,
         image: await getFileFromUrl(path)
       }
-      await this.onSave(null, payload)
+      await this.onCreateOrEdit(null, payload)
     },
-    async onSave(event, _payload = this.editedLecturer) {
+    async onCreateOrEdit(event, _payload = this.editedLecturer) {
       try {
         const valid = await this.$validator.validate()
         if (valid) {
@@ -894,16 +904,18 @@ export default {
           const {
             params: { id }
           } = this.$route
-          const { lecturer } = await this.$api.lecturers.update(id, payload, {
+          await this.$api.lecturers.update(id, payload, {
             lecturer_id: this.lecturer.id
           })
-          await this.fetchLecturer()
-          await this.prefillData()
-          await this.$notify({
-            kind: 'success',
-            message: 'Profile is updated successfully'
-          })
-          return lecturer
+          await Promise.all([
+            this.fetchLecturer(),
+            this.prefillData(),
+            this.$validator.reset(),
+            this.$notify({
+              kind: 'success',
+              message: 'Profile is updated successfully'
+            })
+          ])
         } else {
           this.$notify({
             isError: true,
