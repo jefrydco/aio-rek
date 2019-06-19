@@ -241,12 +241,12 @@ export default {
       {
         orderBy = 'name',
         limit = 20,
-        offset = 0,
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
         withRelated = 'department'
       } = {
         orderBy: 'name',
         limit: 20,
-        offset: 0,
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
         withRelated: 'department'
       }
     ) {

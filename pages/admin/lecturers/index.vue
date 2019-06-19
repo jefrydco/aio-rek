@@ -129,7 +129,17 @@ export default {
     }
   },
   methods: {
-    async fetchLecturers({ orderBy = 'name', limit = 20, offset = 0 }) {
+    async fetchLecturers(
+      {
+        orderBy = 'name',
+        limit = 20,
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+      } = {
+        orderBy: 'name',
+        limit: 20,
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
+      }
+    ) {
       try {
         this.isLoading = true
         const {

@@ -57,11 +57,13 @@ module.exports = class Service {
     )
 
     let finalFilter = {
+      limit: 1000,
       offset: _filter.offset,
       withRelated,
       transacting: trx
     }
 
+    // -1 means all data
     if (_filter.limit !== -1) {
       finalFilter = {
         ...finalFilter,

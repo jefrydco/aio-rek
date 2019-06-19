@@ -131,12 +131,19 @@ export default {
     }
   },
   methods: {
-    async fetchStudents({
-      orderBy = 'identifier',
-      limit = 20,
-      offset = 0,
-      withRelated = 'group,study_program'
-    }) {
+    async fetchStudents(
+      {
+        orderBy = 'identifier',
+        limit = 20,
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        withRelated = 'group,study_program'
+      } = {
+        orderBy: 'identifier',
+        limit: 20,
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        withRelated: 'group,study_program'
+      }
+    ) {
       try {
         this.isLoading = true
         const {

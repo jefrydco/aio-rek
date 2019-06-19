@@ -204,10 +204,15 @@ export default {
   },
   methods: {
     async fetchGroups(
-      { orderBy = 'name', limit = 20, offset = 0 } = {
+      {
+        orderBy = 'name',
+        limit = 20, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+      } = {
         orderBy: 'name',
         limit: 20,
-        offset: 0
+        // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }
     ) {
       try {
