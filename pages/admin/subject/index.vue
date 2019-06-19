@@ -2,17 +2,17 @@
   <v-card>
     <v-toolbar card="">
       <v-toolbar-title>
-        <h2 class="headline">Study Programs</h2>
+        <h2 class="headline">Subjects</h2>
       </v-toolbar-title>
       <v-spacer />
       <v-btn color="primary" @click="onTrigger">
-        Create Study Program
+        Create Subject
       </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-data-table
         :headers="headers"
-        :items="studyPrograms"
+        :items="subjects"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
         :total-items="totalItems"
@@ -20,8 +20,8 @@
       >
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
+            <td class="py-1 body-2">{{ item.identifier }}</td>
             <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 body-2">{{ item.department.name }}</td>
             <td class="py-1 text-xs-center">
               <v-btn color="primary" @click="onTrigger($event, item)">
                 Edit
@@ -44,7 +44,26 @@
             <v-layout row="" wrap="">
               <v-flex xs12="">
                 <v-text-field
-                  v-model="studyProgram.name"
+                  v-model="subject.identifier"
+                  v-validate="'required'"
+                  :error-messages="errors.collect('identifier')"
+                  :disabled="isLoading"
+                  label="Identifier"
+                  data-vv-name="identifier"
+                  data-vv-as="identifier"
+                  name="identifier"
+                  required=""
+                  clearable=""
+                  box=""
+                  autofocus=""
+                  data-vv-value-path="subject.identifier"
+                />
+              </v-flex>
+            </v-layout>
+            <v-layout row="" wrap="">
+              <v-flex xs12="">
+                <v-text-field
+                  v-model="subject.name"
                   v-validate="'required'"
                   :error-messages="errors.collect('name')"
                   :disabled="isLoading"
@@ -56,28 +75,7 @@
                   clearable=""
                   box=""
                   autofocus=""
-                  data-vv-value-path="studyProgram.name"
-                />
-              </v-flex>
-            </v-layout>
-            <v-layout row="" wrap="">
-              <v-flex xs12="">
-                <v-autocomplete
-                  v-model="studyProgram.department_id"
-                  v-validate="'required'"
-                  :error-messages="errors.collect('department_id')"
-                  :disabled="isLoading"
-                  :items="departments"
-                  item-value="id"
-                  item-text="name"
-                  label="Department"
-                  data-vv-name="department_id"
-                  data-vv-as="department"
-                  name="department_id"
-                  required=""
-                  clearable=""
-                  box=""
-                  data-vv-value-path="studyProgram.department_id"
+                  data-vv-value-path="subject.name"
                 />
               </v-flex>
             </v-layout>
@@ -108,7 +106,7 @@
         <v-card>
           <v-card-text>
             <div class="body-2">
-              Are you sure you want to remove {{ studyProgram.name }}?
+              Are you sure you want to remove {{ subject.name }}?
             </div>
           </v-card-text>
           <v-card-actions>
@@ -126,7 +124,7 @@
               :disabled="isLoading"
               color="error"
               flat=""
-              @click="onRemove(studyProgram)"
+              @click="onRemove(subject)"
             >
               Remove
             </v-btn>
@@ -143,26 +141,25 @@ import { cloneDeep } from 'lodash/fp'
 export default {
   head() {
     return {
-      title: 'Study Programs'
+      title: 'Subjects'
     }
   },
   data() {
     return {
-      departments: [],
       isCreatingOrEditingDialog: false,
       isEditing: false,
       isRemovingDialog: false,
       default: {
         id: null,
         name: null,
-        department_id: null
+        identifier: null
       },
-      studyProgram: {
+      subject: {
         id: null,
         name: null,
-        department_id: null
+        identifier: null
       },
-      studyPrograms: [],
+      subjects: [],
       filter: {
         limit: 0,
         offset: 0,
@@ -171,8 +168,8 @@ export default {
       },
       isLoading: false,
       headers: [
+        { text: 'Identifier', value: 'identifier' },
         { text: 'Name', value: 'name' },
-        { text: 'Department', value: 'department.name' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [
@@ -202,12 +199,11 @@ export default {
         if (descending) {
           sortBy = `-${sortBy}`
         }
-        this.fetchStudyPrograms({
+        this.fetchSubjects({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage,
-          withRelated: 'department'
+          offset: (page - 1) * rowsPerPage
         })
       },
       deep: true
@@ -215,56 +211,47 @@ export default {
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
-      const {
-        rowCount,
-        studyPrograms,
-        ...filter
-      } = await $api.studyPrograms.fetchPage({
+      const { rowCount, subjects, ...filter } = await $api.subjects.fetchPage({
         orderBy: 'name',
         limit: 20,
-        offset: 0,
-        withRelated: 'department'
+        offset: 0
       })
-      const { departments } = await $api.departments.fetchPage()
       return {
         filter,
-        studyPrograms,
-        totalItems: rowCount,
-        departments
+        subjects,
+        totalItems: rowCount
       }
     } catch ({ response }) {
       $handleError(response)
     }
   },
   methods: {
-    async fetchStudyPrograms(
+    async fetchSubjects(
       {
         orderBy = 'name',
         limit = 20,
-        offset = 0,
-        withRelated = 'department'
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
       } = {
         orderBy: 'name',
         limit: 20,
-        offset: 0,
-        withRelated: 'department'
+        // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }
     ) {
       try {
         this.isLoading = true
         const {
           rowCount,
-          studyPrograms,
+          subjects,
           ...filter
-        } = await this.$api.studyPrograms.fetchPage({
+        } = await this.$api.subjects.fetchPage({
           orderBy,
           limit,
-          offset,
-          withRelated
+          offset
         })
         this.filter = filter
         this.totalItems = rowCount
-        this.studyPrograms = studyPrograms
+        this.subjects = subjects
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -275,19 +262,19 @@ export default {
       this.isCreatingOrEditingDialog = true
       if (item) {
         this.isEditing = true
-        this.studyProgram = { ...item }
+        this.subject = { ...item }
       }
     },
     onClose() {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
       this.$validator.reset()
-      this.studyProgram = { ...this.default }
+      this.subject = { ...this.default }
     },
     async onCreateOrEdit(
       event,
-      { _payload = this.studyProgram, isEditing = false } = {
-        _payload: this.studyProgram,
+      { _payload = this.subject, isEditing = false } = {
+        _payload: this.subject,
         isEditing: false
       }
     ) {
@@ -298,10 +285,9 @@ export default {
 
           let payload = cloneDeep(_payload)
           delete payload.id
-          delete payload.department
 
           payload = {
-            studyProgram: payload
+            subject: payload
           }
 
           if (this.isEditing) {
@@ -309,17 +295,17 @@ export default {
               ...payload,
               updated_at: new Date().toISOString()
             }
-            await this.$api.studyPrograms.update(_payload.id, payload)
+            await this.$api.subjects.update(_payload.id, payload)
           } else {
-            await this.$api.studyPrograms.create(payload)
+            await this.$api.subjects.create(payload)
           }
 
           await Promise.all([
             this.onClose(),
-            this.fetchStudyPrograms(),
+            this.fetchSubjects(),
             this.$notify({
               kind: 'success',
-              message: 'Study Program is created successfully'
+              message: 'Subject is created successfully'
             })
           ])
         } else {
@@ -336,24 +322,24 @@ export default {
     },
     onTriggerRemoving(item) {
       this.isRemovingDialog = true
-      this.studyProgram = { ...item }
+      this.subject = { ...item }
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
       this.$validator.reset()
-      this.studyProgram = { ...this.default }
+      this.subject = { ...this.default }
     },
     async onRemove(item) {
       try {
         this.isLoading = true
 
-        await this.$api.studyPrograms.destroy(item.id)
+        await this.$api.subjects.destroy(item.id)
         await Promise.all([
-          this.fetchStudyPrograms(),
+          this.fetchSubjects(),
           this.onCloseRemoving(),
           this.$notify({
             kind: 'success',
-            message: 'Study Program is deleted successfully'
+            message: 'Subject is deleted successfully'
           })
         ])
       } catch (error) {

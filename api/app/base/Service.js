@@ -36,7 +36,11 @@ module.exports = class Service {
   }
   async fetchPage(filter, { trx } = {}) {
     const defaultFilter = { limit: 20, offset: 0, orderBy: '-created_at' }
-    const _filter = { ...defaultFilter, ...filter }
+    const _filter = {
+      ...defaultFilter,
+      ...filter,
+      limit: parseInt(filter.limit)
+    }
 
     const model = this._getModel()
 
@@ -52,15 +56,23 @@ module.exports = class Service {
       removeEmpty(_filter)
     )
 
+    let finalFilter = {
+      offset: _filter.offset,
+      withRelated,
+      transacting: trx
+    }
+
+    if (_filter.limit !== -1) {
+      finalFilter = {
+        ...finalFilter,
+        limit: _filter.limit
+      }
+    }
+
     const queryResult = await model
       .orderBy(_filter.orderBy)
       .where(whereClause)
-      .fetchPage({
-        limit: _filter.limit,
-        offset: _filter.offset,
-        withRelated,
-        transacting: trx
-      })
+      .fetchPage(finalFilter)
     return queryResult
   }
   async fetch(attributes, { trx } = {}, withRelated) {
