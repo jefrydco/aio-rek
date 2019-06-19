@@ -126,8 +126,8 @@ export default {
         students,
         totalItems: rowCount
       }
-    } catch ({ response }) {
-      $handleError(response)
+    } catch (error) {
+      $handleError(error)
     }
   },
   methods: {
@@ -152,8 +152,8 @@ export default {
         this.filter = filter
         this.totalItems = rowCount
         this.students = students
-      } catch ({ response }) {
-        this.$handleError(response)
+      } catch (error) {
+        this.$handleError(error)
       } finally {
         this.isLoading = false
       }

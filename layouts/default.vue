@@ -133,6 +133,7 @@ export default {
           subMenus: [
             { text: 'Departments', to: { name: 'admin-departments' } },
             { text: 'Groups', to: { name: 'admin-groups' } },
+            { text: 'Study Programs', to: { name: 'admin-study-programs' } },
             { text: 'Lecturers', to: { name: 'admin-lecturers' } },
             { text: 'Students', to: { name: 'admin-students' } }
           ]

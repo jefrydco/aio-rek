@@ -891,7 +891,11 @@ export default {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
-          delete payload.study_program
+
+          payload = {
+            ...payload,
+            updated_at: new Date().toISOString()
+          }
 
           if (payload.image) {
             payload = toFormData(payload)

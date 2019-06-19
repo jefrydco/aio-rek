@@ -228,8 +228,8 @@ export default {
         this.filter = filter
         this.totalItems = rowCount
         this.departments = departments
-      } catch ({ response }) {
-        this.$handleError(response)
+      } catch (error) {
+        this.$handleError(error)
       } finally {
         this.isLoading = false
       }
@@ -267,6 +267,10 @@ export default {
           }
 
           if (this.isEditing) {
+            payload = {
+              ...payload,
+              updated_at: new Date().toISOString()
+            }
             await this.$api.departments.update(_payload.id, payload)
           } else {
             await this.$api.departments.create(payload)

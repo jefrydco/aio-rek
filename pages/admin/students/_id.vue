@@ -61,6 +61,7 @@
                       label="Department"
                       data-vv-name="selectedDepartment"
                       data-vv-as="Department"
+                      name="selectedDepartment"
                       required=""
                       clearable=""
                       box=""
@@ -1033,6 +1034,11 @@ export default {
           let payload = cloneDeep(_payload)
           delete payload.id
           delete payload.study_program
+
+          payload = {
+            ...payload,
+            updated_at: new Date().toISOString()
+          }
 
           if (payload.image) {
             payload = toFormData(payload)
