@@ -267,7 +267,7 @@ export default {
           }
 
           if (this.isEditing) {
-            Object.assign(payload.subject, {
+            Object.assign(payload.department, {
               updated_at: new Date().toISOString()
             })
             await this.$api.departments.update(_payload.id, payload)

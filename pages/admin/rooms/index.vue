@@ -21,6 +21,35 @@
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">{{ item.name }}</td>
+            <td class="py-1 body-2">
+              <v-text-field
+                readonly=""
+                solo-inverted=""
+                label="Email"
+                append-outer-icon="file_copy"
+                flat=""
+                hide-details=""
+                :value="item.user.email"
+                @click:append-outer="onCopy('Email', item.user.email)"
+              />
+            </td>
+            <td class="py-1 body-2">
+              <v-text-field
+                readonly=""
+                solo-inverted=""
+                label="Password"
+                :type="item.user.isPassword ? 'password' : 'text'"
+                :append-icon="item.user.isPassword ? 'lock_open' : 'lock'"
+                append-outer-icon="file_copy"
+                flat=""
+                hide-details=""
+                :value="item.user.password"
+                @click:append="
+                  () => (item.user.isPassword = !item.user.isPassword)
+                "
+                @click:append-outer="onCopy('Password', item.user.password)"
+              />
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.in_use" color="error" text-color="white">
                 <v-avatar class="red darken-3">
@@ -72,6 +101,11 @@
                   data-vv-value-path="room.name"
                   hint="Name must be unique"
                 />
+              </v-flex>
+            </v-layout>
+            <v-layout row="" wrap="">
+              <v-flex xs12="">
+                <v-switch v-model="room.in_use" label="Is room in use?" />
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -131,6 +165,7 @@
 </template>
 
 <script>
+import copy from 'clipboard-copy'
 import { cloneDeep, kebabCase } from 'lodash/fp'
 
 export default {
@@ -164,7 +199,9 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Name', value: 'name' },
-        { text: 'In use?', value: 'group.is_active', align: 'center' },
+        { text: 'Email', value: 'user.email' },
+        { text: 'Password', sortable: false },
+        { text: 'In use?', value: 'is_active', align: 'center' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [25, 50, 75, 100],
@@ -204,11 +241,17 @@ export default {
       const { rowCount, rooms, ...filter } = await $api.rooms.fetchPage({
         orderBy: 'name',
         limit: 20,
-        offset: 0
+        offset: 0,
+        withRelated: 'user'
+      })
+      const _rooms = rooms.map(room => {
+        room.user.password = room.user.email.replace('@gmail.com', '123')
+        room.user.isPassword = true
+        return room
       })
       return {
         filter,
-        rooms,
+        rooms: _rooms,
         totalItems: rowCount
       }
     } catch ({ response }) {
@@ -233,11 +276,17 @@ export default {
         const { rowCount, rooms, ...filter } = await this.$api.rooms.fetchPage({
           orderBy,
           limit,
-          offset
+          offset,
+          withRelated: 'user'
+        })
+        const _rooms = rooms.map(room => {
+          room.user.password = room.user.email.replace('@gmail.com', '123')
+          room.user.isPassword = true
+          return room
         })
         this.filter = filter
         this.totalItems = rowCount
-        this.rooms = rooms
+        this.rooms = _rooms
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -277,7 +326,7 @@ export default {
           }
 
           if (this.isEditing) {
-            Object.assign(payload.subject, {
+            Object.assign(payload.room, {
               updated_at: new Date().toISOString()
             })
             await this.$api.rooms.update(_payload.id, payload)
@@ -342,6 +391,17 @@ export default {
         this.$handleError(error)
       } finally {
         this.isLoading = false
+      }
+    },
+    async onCopy(label, text) {
+      try {
+        await copy(text)
+        await this.$notify({
+          kind: 'success',
+          message: `${label} is copied successfully`
+        })
+      } catch (error) {
+        this.$handleError(error)
       }
     }
   }

@@ -49,6 +49,14 @@
                   </v-flex>
                 </v-layout>
                 <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-switch
+                      v-model="editedLecturer.is_active"
+                      label="Is lecturer active?"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
                   <v-flex xs12="" class="text-xs-center">
                     <v-hover>
                       <template #default="{ hover }">

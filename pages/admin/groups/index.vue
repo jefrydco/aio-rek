@@ -263,7 +263,7 @@ export default {
           }
 
           if (this.isEditing) {
-            Object.assign(payload.subject, {
+            Object.assign(payload.group, {
               updated_at: new Date().toISOString()
             })
             await this.$api.groups.update(_payload.id, payload)
