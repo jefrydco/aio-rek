@@ -2,17 +2,17 @@
   <v-card>
     <v-toolbar card="">
       <v-toolbar-title>
-        <h2 class="headline">Study Programs</h2>
+        <h2 class="headline">Groups</h2>
       </v-toolbar-title>
       <v-spacer />
       <v-btn color="primary" @click="onTrigger">
-        Create Study Program
+        Create Room
       </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-data-table
         :headers="headers"
-        :items="studyPrograms"
+        :items="rooms"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
         :total-items="totalItems"
@@ -21,7 +21,20 @@
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 body-2">{{ item.department.name }}</td>
+            <td class="py-1 body-2 text-xs-center">
+              <v-chip v-if="item.in_use" color="error" text-color="white">
+                <v-avatar class="red darken-3">
+                  <v-icon>check</v-icon>
+                </v-avatar>
+                In use
+              </v-chip>
+              <v-chip v-else="" color="info" text-color="white">
+                <v-avatar class="blue darken-3">
+                  <v-icon>check</v-icon>
+                </v-avatar>
+                Not in use
+              </v-chip>
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-btn color="primary" @click="onTrigger($event, item)">
                 Edit
@@ -44,7 +57,7 @@
             <v-layout row="" wrap="">
               <v-flex xs12="">
                 <v-text-field
-                  v-model="studyProgram.name"
+                  v-model="room.name"
                   v-validate="'required'"
                   :error-messages="errors.collect('name')"
                   :disabled="isLoading"
@@ -56,28 +69,8 @@
                   clearable=""
                   box=""
                   autofocus=""
-                  data-vv-value-path="studyProgram.name"
-                />
-              </v-flex>
-            </v-layout>
-            <v-layout row="" wrap="">
-              <v-flex xs12="">
-                <v-autocomplete
-                  v-model="studyProgram.department_id"
-                  v-validate="'required'"
-                  :error-messages="errors.collect('department_id')"
-                  :disabled="isLoading"
-                  :items="departments"
-                  item-value="id"
-                  item-text="name"
-                  label="Department"
-                  data-vv-name="department_id"
-                  data-vv-as="department"
-                  name="department_id"
-                  required=""
-                  clearable=""
-                  box=""
-                  data-vv-value-path="studyProgram.department_id"
+                  data-vv-value-path="room.name"
+                  hint="Name must be unique"
                 />
               </v-flex>
             </v-layout>
@@ -108,7 +101,7 @@
         <v-card>
           <v-card-text>
             <div class="body-2">
-              Are you sure you want to remove {{ studyProgram.name }}?
+              Are you sure you want to remove {{ room.name }}?
             </div>
           </v-card-text>
           <v-card-actions>
@@ -126,7 +119,7 @@
               :disabled="isLoading"
               color="error"
               flat=""
-              @click="onRemove(studyProgram)"
+              @click="onRemove(room)"
             >
               Remove
             </v-btn>
@@ -138,31 +131,30 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash/fp'
+import { cloneDeep, kebabCase } from 'lodash/fp'
 
 export default {
   head() {
     return {
-      title: 'Study Programs'
+      title: 'Groups'
     }
   },
   data() {
     return {
-      departments: [],
       isCreatingOrEditingDialog: false,
       isEditing: false,
       isRemovingDialog: false,
       default: {
         id: null,
         name: null,
-        department_id: null
+        in_use: false
       },
-      studyProgram: {
+      room: {
         id: null,
         name: null,
-        department_id: null
+        in_use: false
       },
-      studyPrograms: [],
+      rooms: [],
       filter: {
         limit: 0,
         offset: 0,
@@ -172,7 +164,7 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Name', value: 'name' },
-        { text: 'Department', value: 'department.name' },
+        { text: 'In use?', value: 'group.is_active', align: 'center' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [25, 50, 75, 100],
@@ -197,12 +189,11 @@ export default {
         if (descending) {
           sortBy = `-${sortBy}`
         }
-        this.fetchStudyPrograms({
+        this.fetchRooms({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage,
-          withRelated: 'department'
+          offset: (page - 1) * rowsPerPage
         })
       },
       deep: true
@@ -210,56 +201,43 @@ export default {
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
-      const {
-        rowCount,
-        studyPrograms,
-        ...filter
-      } = await $api.studyPrograms.fetchPage({
+      const { rowCount, rooms, ...filter } = await $api.rooms.fetchPage({
         orderBy: 'name',
         limit: 20,
-        offset: 0,
-        withRelated: 'department'
+        offset: 0
       })
-      const { departments } = await $api.departments.fetchPage()
       return {
         filter,
-        studyPrograms,
-        totalItems: rowCount,
-        departments
+        rooms,
+        totalItems: rowCount
       }
     } catch ({ response }) {
       $handleError(response)
     }
   },
   methods: {
-    async fetchStudyPrograms(
+    async fetchRooms(
       {
         orderBy = 'name',
-        limit = 20,
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated = 'department'
+        limit = 20, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
       } = {
         orderBy: 'name',
         limit: 20,
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated: 'department'
+        // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }
     ) {
       try {
         this.isLoading = true
-        const {
-          rowCount,
-          studyPrograms,
-          ...filter
-        } = await this.$api.studyPrograms.fetchPage({
+        const { rowCount, rooms, ...filter } = await this.$api.rooms.fetchPage({
           orderBy,
           limit,
-          offset,
-          withRelated
+          offset
         })
         this.filter = filter
         this.totalItems = rowCount
-        this.studyPrograms = studyPrograms
+        this.rooms = rooms
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -270,19 +248,19 @@ export default {
       this.isCreatingOrEditingDialog = true
       if (item) {
         this.isEditing = true
-        this.studyProgram = { ...item }
+        this.room = { ...item }
       }
     },
     onClose() {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
       this.$validator.reset()
-      this.studyProgram = { ...this.default }
+      this.room = { ...this.default }
     },
     async onCreateOrEdit(
       event,
-      { _payload = this.studyProgram, isEditing = false } = {
-        _payload: this.studyProgram,
+      { _payload = this.room, isEditing = false } = {
+        _payload: this.room,
         isEditing: false
       }
     ) {
@@ -293,30 +271,39 @@ export default {
 
           let payload = cloneDeep(_payload)
           delete payload.id
-          delete payload.department
 
           payload = {
-            studyProgram: payload
+            room: payload
           }
 
           if (this.isEditing) {
             Object.assign(payload.subject, {
               updated_at: new Date().toISOString()
             })
-            await this.$api.studyPrograms.update(_payload.id, payload)
+            await this.$api.rooms.update(_payload.id, payload)
             await this.$notify({
               kind: 'success',
-              message: 'Study Program is updated successfully'
+              message: 'Room is updated successfully'
             })
           } else {
-            await this.$api.studyPrograms.create(payload)
-            await this.$notify({
-              kind: 'success',
-              message: 'Study Program is created successfully'
+            const { user } = await this.$api.users.create({
+              user: {
+                email: `${kebabCase(payload.room.name)}@gmail.com`,
+                role: 'room',
+                password: `${kebabCase(payload.room.name)}123`
+              }
             })
+            if (user) {
+              payload.room.user_id = user.id
+              await this.$api.rooms.create(payload)
+              await this.$notify({
+                kind: 'success',
+                message: 'Room is created successfully'
+              })
+            }
           }
 
-          await Promise.all([this.onClose(), this.fetchStudyPrograms()])
+          await Promise.all([this.onClose(), this.fetchRooms()])
         } else {
           this.$notify({
             isError: true,
@@ -331,24 +318,24 @@ export default {
     },
     onTriggerRemoving(item) {
       this.isRemovingDialog = true
-      this.studyProgram = { ...item }
+      this.room = { ...item }
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
       this.$validator.reset()
-      this.studyProgram = { ...this.default }
+      this.room = { ...this.default }
     },
     async onRemove(item) {
       try {
         this.isLoading = true
 
-        await this.$api.studyPrograms.destroy(item.id)
+        await this.$api.rooms.destroy(item.id)
         await Promise.all([
-          this.fetchStudyPrograms(),
+          this.fetchRooms(),
           this.onCloseRemoving(),
           this.$notify({
             kind: 'success',
-            message: 'Study Program is deleted successfully'
+            message: 'Room is deleted successfully'
           })
         ])
       } catch (error) {

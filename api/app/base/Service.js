@@ -56,25 +56,15 @@ module.exports = class Service {
       removeEmpty(_filter)
     )
 
-    let finalFilter = {
-      limit: 1000,
-      offset: _filter.offset,
-      withRelated,
-      transacting: trx
-    }
-
-    // -1 means all data
-    if (_filter.limit !== -1) {
-      finalFilter = {
-        ...finalFilter,
-        limit: _filter.limit
-      }
-    }
-
     const queryResult = await model
       .orderBy(_filter.orderBy)
       .where(whereClause)
-      .fetchPage(finalFilter)
+      .fetchPage({
+        limit: _filter.limit,
+        offset: _filter.offset,
+        withRelated,
+        transacting: trx
+      })
     return queryResult
   }
   async fetch(attributes, { trx } = {}, withRelated) {

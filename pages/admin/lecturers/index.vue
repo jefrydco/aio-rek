@@ -25,7 +25,21 @@
             </td>
             <td class="py-1 body-2">{{ item.identifier }}</td>
             <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 text-xs-center">
+            <td class="py-1 body-2 text-xs-center">
+              <v-chip v-if="item.is_active" color="info" text-color="white">
+                <v-avatar class="info darken-3">
+                  <v-icon>check</v-icon>
+                </v-avatar>
+                Active
+              </v-chip>
+              <v-chip v-else="" color="error" text-color="white">
+                <v-avatar class="red darken-3">
+                  <v-icon>close</v-icon>
+                </v-avatar>
+                Inactive
+              </v-chip>
+            </td>
+            <td class="py-1 body-2 text-xs-center">
               <v-btn
                 color="primary"
                 nuxt=""
@@ -71,14 +85,10 @@ export default {
         { text: 'Image', value: 'image', sortable: false },
         { text: 'Identifier', value: 'name' },
         { text: 'Name', value: 'name' },
+        { text: 'Is Active?', value: 'group.is_active', align: 'center' },
         { text: 'Action', align: 'center', sortable: false }
       ],
-      rowsPerPageItems: [
-        20,
-        50,
-        75,
-        { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }
-      ],
+      rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
         descending: false,
         page: 1,

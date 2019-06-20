@@ -22,7 +22,7 @@
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">{{ item.identifier }}</td>
             <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 text-xs-center">
+            <td class="py-1 body-2 text-xs-center">
               <v-btn color="primary" @click="onTrigger($event, item)">
                 Edit
               </v-btn>
@@ -172,12 +172,7 @@ export default {
         { text: 'Name', value: 'name' },
         { text: 'Action', align: 'center', sortable: false }
       ],
-      rowsPerPageItems: [
-        20,
-        50,
-        75,
-        { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }
-      ],
+      rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
         descending: false,
         page: 1,
@@ -291,23 +286,23 @@ export default {
           }
 
           if (this.isEditing) {
-            payload = {
-              ...payload,
+            Object.assign(payload.subject, {
               updated_at: new Date().toISOString()
-            }
+            })
             await this.$api.subjects.update(_payload.id, payload)
+            await this.$notify({
+              kind: 'success',
+              message: 'Subject is updated successfully'
+            })
           } else {
             await this.$api.subjects.create(payload)
-          }
-
-          await Promise.all([
-            this.onClose(),
-            this.fetchSubjects(),
-            this.$notify({
+            await this.$notify({
               kind: 'success',
               message: 'Subject is created successfully'
             })
-          ])
+          }
+
+          await Promise.all([this.onClose(), this.fetchSubjects()])
         } else {
           this.$notify({
             isError: true,

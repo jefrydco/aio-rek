@@ -112,6 +112,14 @@
                   </v-flex>
                 </v-layout>
                 <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-switch
+                      v-model="editedStudent.is_active"
+                      label="Is student active?"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
                   <v-flex xs12="" class="text-xs-center">
                     <v-hover>
                       <template #default="{ hover }">
@@ -1054,8 +1062,8 @@ export default {
           await this.$api.students.update(id, payload, {
             student_id: this.student.id
           })
-          await Promise.al([
-            this.fetchStudent(),
+          await this.fetchStudent()
+          await Promise.all([
             this.prefillData(),
             this.$validator.reset(),
             this.$notify({

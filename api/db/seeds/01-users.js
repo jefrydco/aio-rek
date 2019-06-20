@@ -1,4 +1,5 @@
 const argon2 = require('argon2')
+const { kebabCase } = require('lodash/fp')
 const students = require('../fixtures/students.json')
 const lecturers = require('../fixtures/lecturers.json')
 const rooms = require('../fixtures/rooms.json')
@@ -33,20 +34,11 @@ exports.seed = async function(knex, Promise) {
     // eslint-disable-next-line
     rooms.map(async ({ user_id, name }, i) => ({
       id: user_id,
-      email: `${name
-        .replace(/[^\w\s]/gi, '')
-        .replace(' ', '')
-        .toLowerCase()}@gmail.com`,
+      email: `${kebabCase(name)}@gmail.com`,
       role: 'room',
-      hashed_password: await argon2.hash(
-        `${name
-          .replace(/[^\w\s]/gi, '')
-          .replace(' ', '')
-          .toLowerCase()}123`,
-        {
-          type: argon2.argon2id
-        }
-      )
+      hashed_password: await argon2.hash(`${kebabCase(name)}123`, {
+        type: argon2.argon2id
+      })
     }))
   )
   return qb.insert(

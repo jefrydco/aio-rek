@@ -911,8 +911,8 @@ export default {
           await this.$api.lecturers.update(id, payload, {
             lecturer_id: this.lecturer.id
           })
+          await this.fetchLecturer()
           await Promise.all([
-            this.fetchLecturer(),
             this.prefillData(),
             this.$validator.reset(),
             this.$notify({

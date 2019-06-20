@@ -131,12 +131,13 @@ export default {
         {
           text: 'Datasets',
           subMenus: [
+            { text: 'Students', to: { name: 'admin-students' } },
+            { text: 'Lecturers', to: { name: 'admin-lecturers' } },
+            { text: 'Rooms', to: { name: 'admin-rooms' } },
             { text: 'Departments', to: { name: 'admin-departments' } },
             { text: 'Groups', to: { name: 'admin-groups' } },
             { text: 'Study Programs', to: { name: 'admin-study-programs' } },
-            { text: 'Subjects', to: { name: 'admin-subject' } },
-            { text: 'Lecturers', to: { name: 'admin-lecturers' } },
-            { text: 'Students', to: { name: 'admin-students' } }
+            { text: 'Subjects', to: { name: 'admin-subjects' } }
           ]
         }
       ]
