@@ -61,6 +61,7 @@ module.exports = class Service {
         .orderBy(_filter.orderBy)
         .where(whereClause)
         .fetchAll({
+          withRelated,
           transacting: trx
         })
       return queryResult

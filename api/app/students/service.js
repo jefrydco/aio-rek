@@ -39,6 +39,7 @@ class StudentService extends Service {
         .orderBy(_filter.orderBy)
         .where(whereClause)
         .fetchAll({
+          withRelated,
           transacting: trx
         })
       return queryResult

@@ -1,0 +1,20 @@
+[
+  {
+      "id": "5172ac73-bb76-44eb-b016-14ad42497156",
+      "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/6b459bfa-b2d4-4ca4-917a-4941b2e0efcc.jpg",
+      "has_descriptor": true,
+      "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
+  },
+  {
+      "id": "f3a21376-43d9-4158-a9ff-33baec9c6fdb",
+      "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/30022e49-0f7e-451a-b71f-ae68abd5806c.jpg",
+      "has_descriptor": true,
+      "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
+  },
+  {
+      "id": "3905f042-467d-4cf4-8c88-a0b97d2a81b1",
+      "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/83fbb006-1ac6-4521-be17-46981813bbef.jpg",
+      "has_descriptor": true,
+      "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
+  }
+]
