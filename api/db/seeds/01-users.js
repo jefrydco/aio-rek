@@ -1,5 +1,5 @@
 const argon2 = require('argon2')
-const { kebabCase } = require('lodash/fp')
+const kebabCase = require('lodash/fp/kebabCase')
 const students = require('../fixtures/students.json')
 const lecturers = require('../fixtures/lecturers.json')
 const rooms = require('../fixtures/rooms.json')

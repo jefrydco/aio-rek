@@ -94,6 +94,7 @@
     "uuid": "^3.3.2",
     "uuid-validate": "^0.0.3",
     "vee-validate": "^2.2.10",
+    "vue-directive-long-press": "^1.1.0",
     "vuetify": "^1.5.14",
     "vuetify-loader": "^1.2.2"
   },

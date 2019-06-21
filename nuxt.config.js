@@ -56,7 +56,8 @@ module.exports = {
     '~plugins/vee-validate',
     '~plugins/api',
     '~plugins/notify',
-    '~plugins/handle-error'
+    '~plugins/handle-error',
+    '~plugins/vue-directive.client'
   ],
 
   // https://nuxtjs.org/api/configuration-css

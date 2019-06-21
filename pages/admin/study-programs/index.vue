@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash/fp'
+import cloneDeep from 'lodash/fp/cloneDeep'
 
 export default {
   head() {

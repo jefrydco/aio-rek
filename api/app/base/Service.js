@@ -1,7 +1,8 @@
 'use strict'
 
 const pluralize = require('pluralize')
-const { omit, camelCase } = require('lodash/fp')
+const omit = require('lodash/fp/omit')
+const camelCase = require('lodash/fp/camelCase')
 const { removeEmpty } = require('../../utils/objects')
 
 module.exports = class Service {

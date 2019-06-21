@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 import AppNotification from '~/components/AppNotification'
 import AppAvatar from '~/components/AppAvatar'
@@ -147,10 +147,8 @@ export default {
     this.init()
   },
   methods: {
-    ...mapActions('face', ['getModels']),
     init() {
       this.initToken()
-      this.getModels()
     },
     initToken() {
       const token = Cookie.get('t')

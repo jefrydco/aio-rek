@@ -10,12 +10,11 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <v-layout row="" wrap="">
+              <v-layout style="display: none" row="" wrap="">
                 <v-flex xs12="">
                   <video
                     id="live-video"
                     ref="liveVideo"
-                    style="display: none"
                     width="720"
                     height="540"
                     autoplay=""
@@ -29,6 +28,18 @@
                     ref="liveCanvas"
                     width="720"
                     height="540"
+                  />
+                </v-flex>
+              </v-layout>
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-select
+                    v-model="selectedCamera"
+                    :items="cameras"
+                    label="Select Camera"
+                    box=""
+                    item-value="deviceId"
+                    item-text="label"
                   />
                 </v-flex>
               </v-layout>
@@ -91,17 +102,26 @@
             <v-toolbar card="">
               <v-toolbar-title>
                 <h2 class="headline">
-                  Presences
+                  Start Lesson
                 </h2>
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <canvas
-                id="live-result"
-                ref="liveResult"
-                width="720"
-                height="540"
-              />
+              <v-layout row="" wrap="">
+                <v-flex xs12="" class="text-xs-center">
+                  <v-fade-transition mode="out-in">
+                    <div v-if="isLecturerDetected">
+                      <h3 class="display-1 mb-3">
+                        {{ detectedLecturer.name }}
+                      </h3>
+                      <v-btn large="" color="accent">Start</v-btn>
+                    </div>
+                    <h3 v-else="" class="headline">
+                      Point Your face at the camera
+                    </h3>
+                  </v-fade-transition>
+                </v-flex>
+              </v-layout>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -115,6 +135,7 @@ import prettyMs from 'pretty-ms'
 import { mapState, mapActions } from 'vuex'
 import { drawImage } from '~/utils/canvas'
 
+import { types as detectionTypes } from '~/store/detection'
 import { types as cameraTypes } from '~/store/camera'
 
 export default {
@@ -123,6 +144,7 @@ export default {
       isLoading: false,
       interval: null,
       lecturers: [],
+      students: [],
       fps: 9,
       realFps: 0,
       duration: 0,
@@ -137,12 +159,17 @@ export default {
         { text: 'Age & Gender', value: 'agegender', icon: 'cake' }
       ],
       selectedOptions: ['agegender', 'recognition', 'landmarks', 'detection'],
-      isDrawing: true,
-      detectedLecturer: null
+      isDrawing: true
     }
   },
   computed: {
     ...mapState('camera', ['cameras']),
+    ...mapState('detection', [
+      'isLecturerDetecting',
+      'isLecturerDetected',
+      'detectedLecturer'
+    ]),
+
     prettyDuration() {
       return prettyMs(this.duration, { separateMilliseconds: true })
     },
@@ -158,6 +185,11 @@ export default {
       }
     }
   },
+  watch: {
+    selectedCamera(selectedCamera) {
+      this.initCamera(selectedCamera)
+    }
+  },
   async asyncData({ app: { $api, $handleError } }) {
     try {
       const { lecturers } = await $api.lecturers.fetchPage({
@@ -171,12 +203,16 @@ export default {
       $handleError(error)
     }
   },
+  beforeMount() {
+    this.getModels()
+  },
   mounted() {
     this.init()
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
     ...mapActions('face', [
+      'getModels',
       'getFaceMatcher',
       'getFaceDetections',
       'getBestMatch',
@@ -193,8 +229,8 @@ export default {
         const videoEl = this.$refs.liveVideo
         const canvasEl = this.$refs.liveCanvas
         const canvasCtx = canvasEl.getContext('2d')
-        this.$refs.liveVideo.srcObject = videoStream
-        await this.initFaceDetection({
+        videoEl.srcObject = videoStream
+        await this.initLecturerFaceDetection({
           videoEl,
           canvasEl,
           canvasCtx,
@@ -207,7 +243,7 @@ export default {
     initFaceMatcher() {
       this.getFaceMatcher({ lecturers: this.lecturers })
     },
-    initFaceDetection({ videoEl, canvasEl, canvasCtx, datasets }) {
+    initLecturerFaceDetection({ videoEl, canvasEl, canvasCtx, datasets }) {
       if (this.interval) {
         clearInterval(this.interval)
       }
@@ -215,42 +251,59 @@ export default {
         try {
           const t0 = performance.now()
           drawImage(canvasCtx, videoEl, 0, 0, 720, 514, { isFlip: true })
-          const options = {
-            detectionsEnabled: this.selectedOptions.includes('detection'),
-            landmarksEnabled: this.selectedOptions.includes('landmarks'),
-            descriptorsEnabled: this.selectedOptions.includes('recognition'),
-            ageGenderEnabled: this.selectedOptions.includes('agegender')
-          }
-          const detections = await this.getFaceDetections({ canvasEl, options })
-          if (detections.length > 0) {
-            detections.forEach(async detection => {
-              detection.recognition = await this.getBestMatch({
-                descriptor: detection.descriptor,
-                options
-              })
-              detection.detected = datasets.find(
-                ({ id }) => id === detection.recognition.label
-              )
-              if (detection.detected) {
-                this.detectedLecturer = detection.detected
-                this.drawBestMatch({
-                  canvasEl,
-                  canvasCtx,
-                  detection,
+          this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
+          if (this.isLecturerDetecting) {
+            const options = {
+              detectionsEnabled: this.selectedOptions.includes('detection'),
+              landmarksEnabled: this.selectedOptions.includes('landmarks'),
+              descriptorsEnabled: this.selectedOptions.includes('recognition'),
+              ageGenderEnabled: this.selectedOptions.includes('agegender')
+            }
+            const detections = await this.getFaceDetections({
+              canvasEl,
+              options
+            })
+            if (detections.length > 0) {
+              detections.forEach(async detection => {
+                detection.recognition = await this.getBestMatch({
+                  descriptor: detection.descriptor,
                   options
                 })
-                clearInterval(this.interval)
-              }
-            })
-            const t1 = performance.now()
-            const diff = t1 - t0
-            this.duration = parseFloat(diff)
-            this.realFps = (1000 / diff).toFixed(2)
+                detection.detected = datasets.find(
+                  ({ id }) => id === detection.recognition.label
+                )
+                if (detection.detected) {
+                  this.drawBestMatch({
+                    canvasEl,
+                    canvasCtx,
+                    detection,
+                    options
+                  })
+                  this.$store.commit(
+                    `detection/${detectionTypes.LECTURER_DETECTED}`
+                  )
+                  this.$store.commit(
+                    `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
+                    detection.detected
+                  )
+                  this.clearFaceDetection()
+                }
+              })
+              const t1 = performance.now()
+              const diff = t1 - t0
+              this.duration = parseFloat(diff)
+              this.realFps = (1000 / diff).toFixed(2)
+            }
           }
         } catch (error) {
           console.error(error)
         }
       }, 1000 / this.fps)
+    },
+    clearFaceDetection() {
+      clearInterval(this.interval)
+      this.duration = 0
+      this.realFps = 0
     },
     async fetchLecturers() {
       try {

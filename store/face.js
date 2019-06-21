@@ -1,5 +1,5 @@
 import * as faceapi from 'face-api.js'
-import { capitalize } from 'lodash/fp'
+import capitalize from 'lodash/fp/capitalize'
 
 export const types = {
   LOADING: 'LOADING',

@@ -250,14 +250,23 @@
                       />
                     </v-flex>
                     <v-flex xs12="" md6="">
-                      <v-btn
-                        :disabled="isLoading"
-                        :loading="isLoading"
-                        color="accent"
-                        @click="onTakePhoto"
-                      >
-                        Take a Photo
-                      </v-btn>
+                      <v-tooltip bottom="">
+                        <template #activator="{ on }">
+                          <v-btn
+                            v-long-press="300"
+                            :disabled="isLoading"
+                            :loading="isLoading"
+                            color="accent"
+                            v-on="on"
+                            @click="onTakePhoto"
+                            @long-press-start="onTakePhotoLongPressedStart"
+                            @long-press-stop="onTakePhotoLongPressedStop"
+                          >
+                            Take a Photo
+                          </v-btn>
+                        </template>
+                        <span>Make a long click to start burst shot</span>
+                      </v-tooltip>
                       <v-btn
                         :disabled="isLoading"
                         :loading="isLoading"
@@ -380,6 +389,9 @@
                   Remove {{ pluralize('image', removingImages.length, true) }}
                 </v-btn>
               </v-fade-transition>
+              <v-btn color="accent" @click="onSelectAllImages">
+                {{ isAllImagesSelected ? 'Unselect All' : 'Select All' }}
+              </v-btn>
             </v-toolbar>
             <v-card-text>
               <v-container grid-list-xl="" fluid="">
@@ -544,7 +556,7 @@
 import { mapState, mapActions } from 'vuex'
 import uuidValidate from 'uuid-validate'
 import toFormData from 'json-form-data'
-import { cloneDeep } from 'lodash/fp'
+import cloneDeep from 'lodash/fp/cloneDeep'
 
 import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 import { fileReader, getFileFromUrl } from '~/utils/file'
@@ -630,7 +642,7 @@ export default {
         9,
         18,
         32,
-        { text: '$vuetify.dataIterator.rowsPerPageAll' }
+        { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }
       ],
       pagination: {
         descending: true,
@@ -642,7 +654,9 @@ export default {
       totalItems: 0,
 
       isRemoving: false,
-      removingImages: []
+      isAllImagesSelected: false,
+      removingImages: [],
+      longPressedInterval: null
     }
   },
   computed: {
@@ -773,6 +787,9 @@ export default {
       $handleError(error)
     }
   },
+  beforeMount() {
+    this.getModels()
+  },
   mounted() {
     this.$nextTick(() => {
       this.init()
@@ -783,7 +800,7 @@ export default {
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
-    ...mapActions('face', ['getFaceDescriptors']),
+    ...mapActions('face', ['getModels', 'getFaceDescriptors']),
     async init() {
       await this.fetchStudent()
       await Promise.all([this.prefillData(), this.getCameras()])
@@ -872,10 +889,14 @@ export default {
       }
     },
     async fetchImages(
-      { orderBy, limit, offset } = {
+      {
+        orderBy = '-created_at',
+        limit = this.pagination.rowsPerPage,
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+      } = {
         orderBy: '-created_at',
-        limit: 9,
-        offset: 0
+        limit: this.pagination.rowsPerPage,
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }
     ) {
       try {
@@ -975,7 +996,7 @@ export default {
         const video = this.$refs.liveVideo
         const canvas = this.$refs.liveCanvas
         const canvasCtx = canvas.getContext('2d')
-        drawImage(canvasCtx, video, 0, 0, 720, 540, 0, true, false)
+        drawImage(canvasCtx, video, 0, 0, 720, 540, { isFlip: true })
         const image = await getImageFromCanvas(canvas)
         let payload = {
           images: image,
@@ -997,6 +1018,14 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    onTakePhotoLongPressedStart() {
+      this.longPressedInterval = setInterval(() => {
+        this.onTakePhoto()
+      }, 500)
+    },
+    onTakePhotoLongPressedStop() {
+      clearInterval(this.longPressedInterval)
     },
     onResetPhoto() {
       const canvas = this.$refs.liveCanvas
@@ -1025,10 +1054,11 @@ export default {
         this.removingImages.push(id)
       }
     },
-    onCloseRemoving(isReset = false) {
+    onCloseRemoving(event, isReset = false) {
       this.isRemoving = false
       if (isReset) {
         this.removingImages = []
+        this.isAllImagesSelected = false
       }
     },
     async onRemoveTrainingImage(removingImages = []) {
@@ -1040,7 +1070,7 @@ export default {
           )
           await Promise.all([
             this.fetchImages(),
-            this.onCloseRemoving(true),
+            this.onCloseRemoving(null, true),
             this.$notify({
               kind: 'success',
               message: `${this.pluralize(
@@ -1066,6 +1096,14 @@ export default {
         image: await getFileFromUrl(path)
       }
       await this.onCreateOrEdit(null, payload)
+    },
+    onSelectAllImages() {
+      if (!this.isAllImagesSelected) {
+        this.removingImages.push(...this.studentImages.map(({ id }) => id))
+      } else {
+        this.removingImages = []
+      }
+      this.isAllImagesSelected = !this.isAllImagesSelected
     },
     async onCreateOrEdit(event, _payload = this.editedStudent) {
       try {

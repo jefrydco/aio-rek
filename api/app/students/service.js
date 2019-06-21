@@ -1,6 +1,6 @@
 'use strict'
 
-const { omit } = require('lodash/fp')
+const omit = require('lodash/fp/omit')
 const { removeEmpty } = require('../../utils/objects')
 const Service = require('../base/Service')
 

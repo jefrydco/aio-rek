@@ -1,7 +1,7 @@
 'use strict'
 
 const errorCatcher = require('async-error-catcher').default
-const { camelCase } = require('lodash/fp')
+const camelCase = require('lodash/fp/camelCase')
 const autoBind = require('auto-bind')
 const pluralize = require('pluralize')
 

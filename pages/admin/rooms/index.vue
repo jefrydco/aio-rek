@@ -166,7 +166,8 @@
 
 <script>
 import copy from 'clipboard-copy'
-import { cloneDeep, kebabCase } from 'lodash/fp'
+import cloneDeep from 'lodash/fp/cloneDeep'
+import kebabCase from 'lodash/fp/kebabCase'
 
 export default {
   head() {
