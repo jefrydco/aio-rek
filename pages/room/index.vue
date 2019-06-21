@@ -118,6 +118,7 @@ import { types as cameraTypes } from '~/store/camera'
 export default {
   data() {
     return {
+      isLoading: false,
       lecturerDescriptors: [],
       fps: 15,
       realFps: 0,
@@ -154,9 +155,7 @@ export default {
   },
   async asyncData({ app: { $api, $handleError } }) {
     try {
-      const { lecturerDescriptors } = await $api.lecturerDescriptors.fetchPage({
-        withRelated: 'lecturer_image'
-      })
+      const { lecturerDescriptors } = await $api.lecturerDescriptors.fetchPage()
       return {
         lecturerDescriptors
       }
@@ -169,9 +168,11 @@ export default {
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
+    ...mapActions('face', ['getFaceMatcher']),
     async init() {
       await this.getCameras()
       await this.initCamera(this.selectedCamera)
+      await this.initDescriptors()
     },
     async initCamera(deviceId) {
       try {
@@ -179,6 +180,22 @@ export default {
         this.$refs.liveVideo.srcObject = videoStream
       } catch (error) {
         this.$handleError(error)
+      }
+    },
+    initDescriptors() {
+      this.getFaceMatcher({ descriptors: this.lecturerDescriptors })
+    },
+    async fetchLecturerDescriptors() {
+      try {
+        this.isLoading = true
+        const {
+          lecturerDescriptors
+        } = await this.$api.lecturerDescriptors.fetchPage()
+        this.lecturerDescriptors = lecturerDescriptors
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
       }
     }
   }

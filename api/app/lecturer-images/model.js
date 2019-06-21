@@ -8,6 +8,9 @@ module.exports = bookshelf =>
     lecturer() {
       return this.belongsTo('Lecturer', 'lecturer_id')
     },
+    descriptor() {
+      return this.hasOne('LecturerDescriptor', 'lecturer_image_id')
+    },
     getValidators() {
       return {
         path: ['required', 'string'],

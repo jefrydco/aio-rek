@@ -5,6 +5,9 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Student', {
     tableName: 'students',
+    images() {
+      return this.hasMany('StudentImage', 'student_id')
+    },
     user() {
       return this.belongsTo('User', 'user_id')
     },

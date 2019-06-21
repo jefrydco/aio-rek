@@ -83,5 +83,13 @@ export const actions = {
     console.log(descriptors)
     return descriptors
   },
-  async getFaceMatcher({ commit, state }, { descriptors }) {}
+  getFaceMatcher({ commit, state }, { descriptors = [] }) {
+    // const labeledDescriptors = descriptors.map(_descriptor => {
+    //   const descArray = Object.values(_descriptor.descriptor).map(_desc =>
+    //     parseFloat(_desc)
+    //   )
+    //   const float32DescArray = new Float32Array(descArray)
+    // })
+    // console.log(labeledDescriptors)
+  }
 }
