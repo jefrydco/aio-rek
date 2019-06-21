@@ -123,7 +123,7 @@ export default {
       isLoading: false,
       interval: null,
       lecturers: [],
-      fps: 15,
+      fps: 9,
       realFps: 0,
       duration: 0,
       options: [
@@ -134,15 +134,17 @@ export default {
         },
         { text: 'Landmarks', value: 'landmarks', icon: 'face' },
         { text: 'Recognition', value: 'recognition', icon: 'how_to_reg' },
-        { text: 'Age', value: 'age', icon: 'cake' }
+        { text: 'Age & Gender', value: 'agegender', icon: 'cake' }
       ],
-      selectedOptions: ['age', 'recognition', 'landmarks', 'detection']
+      selectedOptions: ['agegender', 'recognition', 'landmarks', 'detection'],
+      isDrawing: true,
+      detectedLecturer: null
     }
   },
   computed: {
     ...mapState('camera', ['cameras']),
     prettyDuration() {
-      return prettyMs(this.duration)
+      return prettyMs(this.duration, { separateMilliseconds: true })
     },
     selectedCamera: {
       get() {
@@ -174,7 +176,12 @@ export default {
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
-    ...mapActions('face', ['getFaceMatcher', 'getFaceDetections', 'recognize']),
+    ...mapActions('face', [
+      'getFaceMatcher',
+      'getFaceDetections',
+      'getBestMatch',
+      'drawBestMatch'
+    ]),
     async init() {
       await this.getCameras()
       await this.initCamera(this.selectedCamera)
@@ -190,7 +197,8 @@ export default {
         await this.initFaceDetection({
           videoEl,
           canvasEl,
-          canvasCtx
+          canvasCtx,
+          datasets: this.lecturers
         })
       } catch (error) {
         this.$handleError(error)
@@ -199,7 +207,7 @@ export default {
     initFaceMatcher() {
       this.getFaceMatcher({ lecturers: this.lecturers })
     },
-    initFaceDetection({ videoEl, canvasEl, canvasCtx }) {
+    initFaceDetection({ videoEl, canvasEl, canvasCtx, datasets }) {
       if (this.interval) {
         clearInterval(this.interval)
       }
@@ -211,20 +219,34 @@ export default {
             detectionsEnabled: this.selectedOptions.includes('detection'),
             landmarksEnabled: this.selectedOptions.includes('landmarks'),
             descriptorsEnabled: this.selectedOptions.includes('recognition'),
-            ageEnabled: this.selectedOptions.includes('age')
+            ageGenderEnabled: this.selectedOptions.includes('agegender')
           }
           const detections = await this.getFaceDetections({ canvasEl, options })
           if (detections.length > 0) {
             detections.forEach(async detection => {
-              detection.recognition = await this.recognize({
+              detection.recognition = await this.getBestMatch({
                 descriptor: detection.descriptor,
                 options
               })
+              detection.detected = datasets.find(
+                ({ id }) => id === detection.recognition.label
+              )
+              if (detection.detected) {
+                this.detectedLecturer = detection.detected
+                this.drawBestMatch({
+                  canvasEl,
+                  canvasCtx,
+                  detection,
+                  options
+                })
+                clearInterval(this.interval)
+              }
             })
+            const t1 = performance.now()
+            const diff = t1 - t0
+            this.duration = parseFloat(diff)
+            this.realFps = (1000 / diff).toFixed(2)
           }
-          console.log(detections)
-          console.log(t0)
-          console.log(options)
         } catch (error) {
           console.error(error)
         }

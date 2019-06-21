@@ -1,4 +1,5 @@
 import * as faceapi from 'face-api.js'
+import { capitalize } from 'lodash/fp'
 
 export const types = {
   LOADING: 'LOADING',
@@ -17,10 +18,10 @@ export const state = () => ({
 
   detections: {
     scoreThreshold: 0.3,
-    inputSize: 608,
-    boxColor: '#00bcd4',
-    textColor: '#ff472',
-    lineWidth: 1,
+    inputSize: 704,
+    boxColor: '#ff5722',
+    textColor: '#ff5722',
+    lineWidth: 2,
     fontSize: 20,
     fontStyle: 'Roboto'
   },
@@ -32,7 +33,7 @@ export const state = () => ({
   landmarks: {
     drawLines: true,
     lineWidth: 1,
-    color: '#00bcd4'
+    color: '#ff5722'
   },
 
   descriptors: {
@@ -85,7 +86,7 @@ export const actions = {
   },
   getFaceMatcher({ commit, state }, { lecturers = [] }) {
     const labeledDescriptors = []
-    lecturers.forEach(({ name, images }) => {
+    lecturers.forEach(({ id, images }) => {
       if (images.length > 0) {
         const descriptors = images.map(({ descriptor: { descriptor } }) => {
           const desc = Object.values(descriptor).map(_descItem =>
@@ -94,14 +95,14 @@ export const actions = {
           return new Float32Array(desc)
         })
         labeledDescriptors.push(
-          new faceapi.LabeledFaceDescriptors(name, descriptors)
+          new faceapi.LabeledFaceDescriptors(id, descriptors)
         )
       }
     })
-    console.log(labeledDescriptors)
+    // console.log(labeledDescriptors)
     const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
     commit(types.SET_FACE_MATCHER, faceMatcher)
-    console.log(faceMatcher)
+    // console.log(faceMatcher)
     return faceMatcher
   },
   async getFaceDetections(
@@ -111,11 +112,11 @@ export const actions = {
       options: {
         descriptorsEnabled = true,
         landmarksEnabled = true,
-        ageEnabled = true
+        ageGenderEnabled = true
       } = {
         descriptorsEnabled: true,
         landmarksEnabled: true,
-        ageEnabled: true
+        ageGenderEnabled: true
       }
     }
   ) {
@@ -129,7 +130,7 @@ export const actions = {
     if (landmarksEnabled || descriptorsEnabled) {
       promise = promise.withFaceLandmarks()
     }
-    if (ageEnabled) {
+    if (ageGenderEnabled) {
       promise = promise.withAgeAndGender()
     }
     if (descriptorsEnabled) {
@@ -138,7 +139,7 @@ export const actions = {
     const detections = await promise
     return detections
   },
-  async recognize(
+  async getBestMatch(
     { commit, state },
     {
       descriptor,
@@ -149,10 +150,64 @@ export const actions = {
   ) {
     if (descriptorsEnabled) {
       const bestMatch = await state.faceMatcher.findBestMatch(descriptor)
-      // const bestMatch = await true
-      console.log(bestMatch)
       return bestMatch
     }
     return null
+  },
+  drawBestMatch(
+    { commit, state },
+    {
+      canvasEl,
+      canvasCtx,
+      detection,
+      options: {
+        detectionsEnabled = true,
+        descriptorsEnabled = true,
+        landmarksEnabled = true,
+        ageGenderEnabled = true
+      } = {
+        detectionsEnabled: true,
+        descriptorsEnabled: true,
+        landmarksEnabled: true,
+        ageGenderEnabled: true
+      }
+    }
+  ) {
+    const padText = 9 + state.detections.lineWidth
+
+    if (detectionsEnabled && detection.detection) {
+      const box = detection.detection.box
+      new faceapi.draw.DrawBox(box, {
+        lineWidth: state.detections.lineWidth,
+        boxColor: state.detections.boxColor
+      }).draw(canvasCtx)
+
+      let text = 'Unknown'
+      if (detection.detected) {
+        text = detection.detected.name
+      }
+      canvasCtx.fillStyle = state.detections.textColor
+      canvasCtx.font =
+        state.detections.fontSize + 'px ' + state.detections.fontStyle
+      canvasCtx.fillText(
+        text,
+        box.x + padText,
+        box.y + box.height + padText + state.detections.fontSize * 0.7
+      )
+    }
+    if (landmarksEnabled && detection.landmarks) {
+      new faceapi.draw.DrawFaceLandmarks(detection.landmarks, {
+        lineColor: state.detections.boxColor,
+        pointColor: state.detections.boxColor
+      }).draw(canvasEl)
+    }
+    if (ageGenderEnabled && detection.age && detection.gender) {
+      const box = detection.detection.box
+      canvasCtx.fillText(
+        `${capitalize(detection.gender)}, Age: ${Math.round(detection.age)}`,
+        box.x + padText,
+        box.y + box.height + 3 * padText + state.detections.fontSize * 0.7
+      )
+    }
   }
 }
