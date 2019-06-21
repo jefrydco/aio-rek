@@ -1,6 +1,18 @@
 <template>
   <v-layout row="" wrap="">
     <v-flex xs12="">
+      <v-layout row="" wrap="" justify-end="">
+        <v-flex xs12="" sm3="">
+          <v-autocomplete
+            v-model="selectedLecturer"
+            label="Lecturers"
+            item-text="name"
+            item-value="id"
+            :items="lecturers"
+            box=""
+          />
+        </v-flex>
+      </v-layout>
       <v-layout row="" wrap="">
         <v-flex xs12="" md4="">
           <form @submit.prevent="onCreateOrEdit">
@@ -309,7 +321,7 @@
             <v-card-text>
               <v-container grid-list-xl="" fluid="">
                 <v-data-iterator
-                  :items="images"
+                  :items="lecturerImages"
                   :rows-per-page-items="rowsPerPageItems"
                   :pagination.sync="pagination"
                   :total-items="totalItems"
@@ -495,6 +507,8 @@ export default {
   },
   data() {
     return {
+      selectedLecturer: null,
+      lecturers: [],
       isLoading: false,
       lecturer: {
         id: null,
@@ -519,8 +533,8 @@ export default {
       },
 
       currentTab: 'capture',
-      images: [],
-      imagesFilter: {
+      lecturerImages: [],
+      lecturerImagesFilter: {
         limit: 0,
         offset: 0,
         pageCount: 0,
@@ -577,7 +591,7 @@ export default {
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
     },
-    async images(images, oldImages) {
+    async lecturerImages(images, oldImages) {
       if (images.length > oldImages.length) {
         // eslint-disable-next-line
         images = images.filter(({ has_descriptor }) => !has_descriptor)
@@ -615,22 +629,24 @@ export default {
         })
       },
       deep: true
+    },
+    selectedLecturer(selectedLecturer) {
+      this.$router.push({
+        name: 'admin-lecturers-id',
+        params: { id: selectedLecturer }
+      })
     }
   },
-  async asyncData({
-    app: {
-      $api: { lecturers, lecturerImages, departments, studyPrograms, groups },
-      $handleError
-    },
-    params: { id = '' }
-  }) {
+  async asyncData({ app: { $api, $handleError }, params: { id = '' } }) {
     try {
       const [
+        { lecturers },
         { lecturer },
-        { rowCount, lecturerImages: lecturerImagesData, ...filter }
+        { rowCount, lecturerImages, ...filter }
       ] = await Promise.all([
-        lecturers.fetch(id),
-        lecturerImages.fetchPage({
+        $api.lecturers.fetchPage({ limit: -1 }),
+        $api.lecturers.fetch(id),
+        $api.lecturerImages.fetchPage({
           orderBy: '-created_at',
           limit: 9,
           offset: 0,
@@ -638,9 +654,11 @@ export default {
         })
       ])
       return {
+        selectedLecturer: id,
+        lecturers,
         lecturer,
-        images: lecturerImagesData,
-        imagesFilter: filter,
+        lecturerImages,
+        lecturerImagesFilter: filter,
         totalItems: rowCount
       }
     } catch (error) {
@@ -717,8 +735,8 @@ export default {
           offset,
           lecturer_id: id
         })
-        this.images = lecturerImages
-        this.imagesFilter = filter
+        this.lecturerImages = lecturerImages
+        this.lecturerImagesFilter = filter
         this.totalItems = rowCount
       } catch (error) {
         this.$handleError(error)

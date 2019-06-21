@@ -56,6 +56,16 @@ module.exports = class Service {
       removeEmpty(_filter)
     )
 
+    if (_filter.limit === -1) {
+      const queryResult = await model
+        .orderBy(_filter.orderBy)
+        .where(whereClause)
+        .fetchAll({
+          transacting: trx
+        })
+      return queryResult
+    }
+
     const queryResult = await model
       .orderBy(_filter.orderBy)
       .where(whereClause)

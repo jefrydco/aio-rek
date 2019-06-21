@@ -9,8 +9,12 @@ class StudentService extends Service {
     super(StudentService.name, app, ['user.hashed_password'])
   }
   async fetchPage(filter, { trx } = {}) {
-    const defaultFilter = { limit: 20, offset: 0, orderBy: '-created_at' }
-    const _filter = { ...defaultFilter, ...filter }
+    const defaultFilter = { limit: 20, offset: 0, orderBy: '-identifier' }
+    const _filter = {
+      ...defaultFilter,
+      ...filter,
+      limit: parseInt(filter.limit)
+    }
 
     const model = this._getModel()
 
@@ -28,6 +32,16 @@ class StudentService extends Service {
 
     if (_filter.orderBy.length === 0) {
       _filter.orderBy = 'identifier'
+    }
+
+    if (_filter.limit === -1) {
+      const queryResult = await model
+        .orderBy(_filter.orderBy)
+        .where(whereClause)
+        .fetchAll({
+          transacting: trx
+        })
+      return queryResult
     }
 
     const queryResult = await model

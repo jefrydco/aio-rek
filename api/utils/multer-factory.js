@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
-const { ulid } = require('ulid')
+const uuid = require('uuid/v4')
 
 const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
   const storage = multer.diskStorage({
@@ -16,7 +16,7 @@ const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
       cb(null, uploadPath)
     },
     filename(req, file, cb) {
-      cb(null, `${ulid()}.jpg`)
+      cb(null, `${uuid()}.jpg`)
     }
   })
   const fileFilter = (req, file, cb) => {

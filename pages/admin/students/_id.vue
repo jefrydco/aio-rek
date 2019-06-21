@@ -1,6 +1,18 @@
 <template>
   <v-layout row="" wrap="">
     <v-flex xs12="">
+      <v-layout row="" wrap="" justify-end="">
+        <v-flex xs12="" sm3="">
+          <v-autocomplete
+            v-model="selectedStudent"
+            label="Students"
+            item-text="name"
+            item-value="id"
+            :items="students"
+            box=""
+          />
+        </v-flex>
+      </v-layout>
       <v-layout row="" wrap="">
         <v-flex xs12="" md4="">
           <form @submit.prevent="onCreateOrEdit">
@@ -372,7 +384,7 @@
             <v-card-text>
               <v-container grid-list-xl="" fluid="">
                 <v-data-iterator
-                  :items="images"
+                  :items="studentImages"
                   :rows-per-page-items="rowsPerPageItems"
                   :pagination.sync="pagination"
                   :total-items="totalItems"
@@ -558,6 +570,8 @@ export default {
   mixins: [string],
   data() {
     return {
+      selectedStudent: null,
+      students: [],
       isLoading: false,
       departments: [],
       studyPrograms: [],
@@ -604,8 +618,8 @@ export default {
       },
 
       currentTab: 'capture',
-      images: [],
-      imagesFilter: {
+      studentImages: [],
+      studentImagesFilter: {
         limit: 0,
         offset: 0,
         pageCount: 0,
@@ -665,7 +679,7 @@ export default {
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
     },
-    async images(images, oldImages) {
+    async studentImages(images, oldImages) {
       if (images.length > oldImages.length) {
         // eslint-disable-next-line
         images = images.filter(({ has_descriptor }) => !has_descriptor)
@@ -703,22 +717,22 @@ export default {
         })
       },
       deep: true
+    },
+    selectedStudent(selectedStudent) {
+      this.$router.push({
+        name: 'admin-students-id',
+        params: { id: selectedStudent }
+      })
     }
   },
-  async asyncData({
-    app: {
-      $api: { students, studentImages, departments, studyPrograms, groups },
-      $handleError
-    },
-    params: { id = '' }
-  }) {
+  async asyncData({ app: { $api, $handleError }, params: { id = '' } }) {
     try {
       const [
         { student },
-        { rowCount, studentImages: studentImagesData, ...filter }
+        { rowCount, studentImages, ...filter }
       ] = await Promise.all([
-        students.fetch(id, { withRelated: 'study_program' }),
-        studentImages.fetchPage({
+        $api.students.fetch(id, { withRelated: 'study_program' }),
+        $api.studentImages.fetchPage({
           orderBy: '-created_at',
           limit: 9,
           offset: 0,
@@ -726,24 +740,33 @@ export default {
         })
       ])
       const [
-        { departments: departmentsData },
-        { studyPrograms: studyProgramsData },
-        { groups: groupsData }
+        { students },
+        { departments },
+        { studyPrograms },
+        { groups }
       ] = await Promise.all([
-        departments.fetchPage(),
-        studyPrograms.fetchPage({
+        $api.students.fetchPage({
+          orderBy: 'identifier',
+          study_program_id: student.study_program_id,
+          group_id: student.group_id,
+          limit: -1
+        }),
+        $api.departments.fetchPage(),
+        $api.studyPrograms.fetchPage({
           department_id: student.study_program.department_id
         }),
-        groups.fetchPage()
+        $api.groups.fetchPage()
       ])
       return {
+        selectedStudent: id,
+        students,
         student,
         selectedDepartment: student.study_program.department_id,
-        departments: departmentsData,
-        studyPrograms: studyProgramsData,
-        groups: groupsData,
-        images: studentImagesData,
-        imagesFilter: filter,
+        departments,
+        studyPrograms,
+        groups,
+        studentImages,
+        studentImagesFilter: filter,
         totalItems: rowCount
       }
     } catch (error) {
@@ -785,6 +808,17 @@ export default {
         this.$refs.liveVideo.srcObject = videoStream
       } catch (error) {
         this.$handleError(error)
+      }
+    },
+    async fetchStudents() {
+      try {
+        this.isLoading = true
+        const { students } = await this.$api.students.fetchPage()
+        this.students = students
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
       }
     },
     async fetchDepartments() {
@@ -858,8 +892,8 @@ export default {
           offset,
           student_id: id
         })
-        this.images = studentImages
-        this.imagesFilter = filter
+        this.studentImages = studentImages
+        this.studentImagesFilter = filter
         this.totalItems = rowCount
       } catch (error) {
         this.$handleError(error)

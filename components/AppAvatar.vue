@@ -20,9 +20,9 @@ import { isDark, getMaterialColor, getInitials } from '~/utils/color'
 export default {
   props: {
     name: {
-      type: String,
       default: '',
-      required: true
+      required: true,
+      validator: prop => typeof prop === 'string' || prop === null
     },
     image: {
       default: null,

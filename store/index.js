@@ -10,7 +10,14 @@ export const getters = {}
 export const mutations = {}
 
 export const actions = {
-  async nuxtServerInit({ commit }, { $http, $notify, req }) {
+  async nuxtServerInit(
+    { commit },
+    {
+      $http,
+      app: { $handleError },
+      req
+    }
+  ) {
     if (req.headers.cookie) {
       const { t: token } = cookieparser.parse(req.headers.cookie)
       if (token) {
@@ -19,13 +26,8 @@ export const actions = {
           const { user } = await $http.$get('user/auth')
 
           commit(`user/${userTypes.SET_USER}`, user)
-        } catch ({ response }) {
-          if (response.status === 403) {
-            $notify({
-              isError: true,
-              message: 'Please login to continue'
-            })
-          }
+        } catch (error) {
+          $handleError(error)
         }
       }
     }

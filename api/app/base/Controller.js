@@ -63,7 +63,6 @@ module.exports = class Controller {
       })
       const json = await service.toJSONArray({
         models,
-        orderBy: req.query.orderBy || '-created_at',
         pagination
       })
       return res.send(json)

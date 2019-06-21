@@ -88,14 +88,14 @@ router.get(
   '/user/auth',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetchAuth
 )
 router.get(
   '/user/profile',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetchProfile
 )
 

@@ -66,7 +66,7 @@
                 size="36"
                 class="mr-3"
               />
-              <span>{{ user.email }}</span>
+              <span class="hidden-xs-only">{{ user.email }}</span>
               <v-icon right="">arrow_drop_down</v-icon>
             </v-btn>
           </template>

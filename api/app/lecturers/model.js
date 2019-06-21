@@ -6,7 +6,7 @@ module.exports = bookshelf =>
   bookshelf.model('Lecturer', {
     tableName: 'lecturers',
     user() {
-      this.belongsTo('User', 'user_id')
+      return this.belongsTo('User', 'user_id')
     },
     getValidators() {
       return {
