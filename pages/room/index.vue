@@ -15,6 +15,7 @@
                   <video
                     id="live-video"
                     ref="liveVideo"
+                    style="display: none"
                     width="720"
                     height="540"
                     autoplay=""
@@ -112,6 +113,7 @@
 <script>
 import prettyMs from 'pretty-ms'
 import { mapState, mapActions } from 'vuex'
+import { drawImage } from '~/utils/canvas'
 
 import { types as cameraTypes } from '~/store/camera'
 
@@ -119,7 +121,8 @@ export default {
   data() {
     return {
       isLoading: false,
-      lecturerDescriptors: [],
+      interval: null,
+      lecturers: [],
       fps: 15,
       realFps: 0,
       duration: 0,
@@ -133,7 +136,7 @@ export default {
         { text: 'Recognition', value: 'recognition', icon: 'how_to_reg' },
         { text: 'Age', value: 'age', icon: 'cake' }
       ],
-      selectedOptions: []
+      selectedOptions: ['age', 'recognition', 'landmarks', 'detection']
     }
   },
   computed: {
@@ -155,9 +158,12 @@ export default {
   },
   async asyncData({ app: { $api, $handleError } }) {
     try {
-      const { lecturerDescriptors } = await $api.lecturerDescriptors.fetchPage()
+      const { lecturers } = await $api.lecturers.fetchPage({
+        limit: -1,
+        withRelated: 'images.descriptor'
+      })
       return {
-        lecturerDescriptors
+        lecturers
       }
     } catch (error) {
       $handleError(error)
@@ -168,30 +174,67 @@ export default {
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
-    ...mapActions('face', ['getFaceMatcher']),
+    ...mapActions('face', ['getFaceMatcher', 'getFaceDetections', 'recognize']),
     async init() {
       await this.getCameras()
       await this.initCamera(this.selectedCamera)
-      await this.initDescriptors()
+      await this.initFaceMatcher()
     },
     async initCamera(deviceId) {
       try {
         const videoStream = await this.startCamera(deviceId)
+        const videoEl = this.$refs.liveVideo
+        const canvasEl = this.$refs.liveCanvas
+        const canvasCtx = canvasEl.getContext('2d')
         this.$refs.liveVideo.srcObject = videoStream
+        await this.initFaceDetection({
+          videoEl,
+          canvasEl,
+          canvasCtx
+        })
       } catch (error) {
         this.$handleError(error)
       }
     },
-    initDescriptors() {
-      this.getFaceMatcher({ descriptors: this.lecturerDescriptors })
+    initFaceMatcher() {
+      this.getFaceMatcher({ lecturers: this.lecturers })
     },
-    async fetchLecturerDescriptors() {
+    initFaceDetection({ videoEl, canvasEl, canvasCtx }) {
+      if (this.interval) {
+        clearInterval(this.interval)
+      }
+      this.interval = setInterval(async () => {
+        try {
+          const t0 = performance.now()
+          drawImage(canvasCtx, videoEl, 0, 0, 720, 514, { isFlip: true })
+          const options = {
+            detectionsEnabled: this.selectedOptions.includes('detection'),
+            landmarksEnabled: this.selectedOptions.includes('landmarks'),
+            descriptorsEnabled: this.selectedOptions.includes('recognition'),
+            ageEnabled: this.selectedOptions.includes('age')
+          }
+          const detections = await this.getFaceDetections({ canvasEl, options })
+          if (detections.length > 0) {
+            detections.forEach(async detection => {
+              detection.recognition = await this.recognize({
+                descriptor: detection.descriptor,
+                options
+              })
+            })
+          }
+          console.log(detections)
+          console.log(t0)
+          console.log(options)
+        } catch (error) {
+          console.error(error)
+        }
+      }, 1000 / this.fps)
+    },
+    async fetchLecturers() {
       try {
         this.isLoading = true
-        const {
-          lecturerDescriptors
-        } = await this.$api.lecturerDescriptors.fetchPage()
-        this.lecturerDescriptors = lecturerDescriptors
+        const { lecturers } = await this.$api.lecturers.fetchPage()
+        this.lecturers = lecturers
       } catch (error) {
         this.$handleError(error)
       } finally {

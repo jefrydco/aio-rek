@@ -23,7 +23,7 @@ router.get(
   '/lecturers',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetchPage
 )
 router.get(

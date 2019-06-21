@@ -15,9 +15,9 @@ export const state = () => ({
 
   useTiny: false,
 
-  directions: {
+  detections: {
     scoreThreshold: 0.3,
-    inputSize: 720,
+    inputSize: 608,
     boxColor: '#00bcd4',
     textColor: '#ff472',
     lineWidth: 1,
@@ -61,9 +61,9 @@ export const actions = {
     if (!state.loading && !state.loaded) {
       commit(types.LOADING)
       await Promise.all([
+        faceapi.loadSsdMobilenetv1Model('/models'),
         faceapi.loadFaceRecognitionModel('/models'),
         faceapi.loadFaceLandmarkModel('/models'),
-        faceapi.loadFaceDetectionModel('/models'),
         faceapi.loadAgeGenderModel('/models')
       ])
       await commit(types.LOADED)
@@ -83,13 +83,76 @@ export const actions = {
     console.log(descriptors)
     return descriptors
   },
-  getFaceMatcher({ commit, state }, { descriptors = [] }) {
-    // const labeledDescriptors = descriptors.map(_descriptor => {
-    //   const descArray = Object.values(_descriptor.descriptor).map(_desc =>
-    //     parseFloat(_desc)
-    //   )
-    //   const float32DescArray = new Float32Array(descArray)
-    // })
-    // console.log(labeledDescriptors)
+  getFaceMatcher({ commit, state }, { lecturers = [] }) {
+    const labeledDescriptors = []
+    lecturers.forEach(({ name, images }) => {
+      if (images.length > 0) {
+        const descriptors = images.map(({ descriptor: { descriptor } }) => {
+          const desc = Object.values(descriptor).map(_descItem =>
+            parseFloat(_descItem)
+          )
+          return new Float32Array(desc)
+        })
+        labeledDescriptors.push(
+          new faceapi.LabeledFaceDescriptors(name, descriptors)
+        )
+      }
+    })
+    console.log(labeledDescriptors)
+    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
+    commit(types.SET_FACE_MATCHER, faceMatcher)
+    console.log(faceMatcher)
+    return faceMatcher
+  },
+  async getFaceDetections(
+    { commit, state },
+    {
+      canvasEl,
+      options: {
+        descriptorsEnabled = true,
+        landmarksEnabled = true,
+        ageEnabled = true
+      } = {
+        descriptorsEnabled: true,
+        landmarksEnabled: true,
+        ageEnabled: true
+      }
+    }
+  ) {
+    let promise = faceapi.detectAllFaces(
+      canvasEl,
+      new faceapi.SsdMobilenetv1Options({
+        scoreThreshold: state.detections.scoreThreshold,
+        inputSize: state.detections.inputSize
+      })
+    )
+    if (landmarksEnabled || descriptorsEnabled) {
+      promise = promise.withFaceLandmarks()
+    }
+    if (ageEnabled) {
+      promise = promise.withAgeAndGender()
+    }
+    if (descriptorsEnabled) {
+      promise = promise.withFaceDescriptors()
+    }
+    const detections = await promise
+    return detections
+  },
+  async recognize(
+    { commit, state },
+    {
+      descriptor,
+      options: { descriptorsEnabled = true } = {
+        descriptorsEnabled: true
+      }
+    }
+  ) {
+    if (descriptorsEnabled) {
+      const bestMatch = await state.faceMatcher.findBestMatch(descriptor)
+      // const bestMatch = await true
+      console.log(bestMatch)
+      return bestMatch
+    }
+    return null
   }
 }
