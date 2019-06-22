@@ -2057,10 +2057,10 @@ are-we-there-yet@~1.1.2:
     delegates "^1.0.0"
     readable-stream "^2.0.6"
 
-argon2@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/argon2/-/argon2-0.23.0.tgz#0b3cd77ed1501b2ebef23462d91cf114dfee5562"
-  integrity sha512-+CC/bLeHF3c1JmTgmeuVSCsNc/hk2yFPYdxvfX37G6VHgZAZ0gMezPI/qsYUy4YXGya8dGBUEu85itYtf8eIQQ==
+argon2@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/argon2/-/argon2-0.24.0.tgz#60a7d7e7ce2a0a3b93d4455446153546f01ca3aa"
+  integrity sha512-796movQU1LIW4egM+FH2mrgaTBtIhjEvuTx3sfw0W+Ijbk29IvKOh/i1IDAKCS9s6Y+2GdlPVU5q/gQZ3lyp5w==
   dependencies:
     "@phc/format" "^0.5.0"
     node-addon-api "^1.6.3"
@@ -2283,7 +2283,7 @@ babel-core@^7.0.0-bridge:
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-7.0.0-bridge.0.tgz#95a492ddd90f9b4e9a4a1da14eb335b87b634ece"
   integrity sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg==
 
-babel-eslint@^10.0.1:
+babel-eslint@^10.0.2:
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-10.0.2.tgz#182d5ac204579ff0881684b040560fdcc1558456"
   integrity sha512-UdsurWPtgiPgpJ06ryUnuaSXC2s0WoSZnQmEpbAH65XZSdwowgN5MvyP7e88nW07FYXv72erVtpBkxyDVKhH1Q==
@@ -4399,10 +4399,10 @@ eslint-plugin-import@^2.17.3:
     read-pkg-up "^2.0.0"
     resolve "^1.11.0"
 
-eslint-plugin-jest@^22.6.4:
-  version "22.7.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-22.7.0.tgz#a1d325bccb024b04f5354c56fe790baba54a454c"
-  integrity sha512-0U9nBd9V6+GKpM/KvRDcmMuPsewSsdM7NxCozgJkVAh8IrwHmQ0aw44/eYuVkhT8Fcdhsz0zYiyPtKg147eXMQ==
+eslint-plugin-jest@^22.7.1:
+  version "22.7.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-22.7.1.tgz#5dcdf8f7a285f98040378220d6beca581f0ab2a1"
+  integrity sha512-CrT3AzA738neimv8G8iK2HCkrCwHnAJeeo7k5TEHK86VMItKl6zdJT/tHBDImfnVVAYsVs4Y6BUdBZQCCgfiyw==
 
 eslint-plugin-node@^9.1.0:
   version "9.1.0"
@@ -8874,7 +8874,7 @@ pino-http@^4.0.0:
     pino "^5.0.0"
     pino-std-serializers "^2.4.0"
 
-pino-pretty@^3.1.0:
+pino-pretty@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-3.2.0.tgz#2196d3b62e419a303dc126cda63ef396d39d97e7"
   integrity sha512-0gdTD1CywMwskBA1ciSz4tu4ZvcPxbIBUCfE+lUlFlhl9Dsa2SHf2v7EYUYGtNtlHH9XRduT6WC76NzKpIwv3g==
@@ -11811,7 +11811,7 @@ vary@^1, vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vee-validate@^2.2.10:
+vee-validate@^2.2.11:
   version "2.2.11"
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-2.2.11.tgz#80b4e4b1354e6460b72b2a864a21a9298e2d71ce"
   integrity sha512-wQMhq1cPOk+eaE+iKVyoyEUp1mczpeSvL4V3sardi9+KMgDw853kCd6v0iajdH8uUSpj319BVdXkmDlx1qWFog==
@@ -11951,7 +11951,7 @@ vuetify-loader@^1.2.2:
   dependencies:
     loader-utils "^1.1.0"
 
-vuetify@^1.5.14:
+vuetify@^1.5.16:
   version "1.5.16"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-1.5.16.tgz#cc9d0199c389d64d15787ddc85ca47a28225eeee"
   integrity sha512-yBgOsfurKQkeS+l+rrTQZ2bFk0D9ezjHhkuVM5A/yVzcg62sY2nfYaq/H++uezBWC9WYFrp/5OmSocJQcWn9Qw==
