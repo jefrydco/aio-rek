@@ -41,8 +41,15 @@
                     item-value="deviceId"
                     item-text="label"
                   />
+                  <v-chip label="" color="accent" text-color="white">
+                    Real FPS: {{ realFps }}
+                  </v-chip>
+                  <v-chip label="" color="accent" text-color="white">
+                    Duration: {{ prettyDuration }}
+                  </v-chip>
                 </v-flex>
               </v-layout>
+
               <v-layout row="" wrap="">
                 <v-flex xs12="">
                   <v-slider
@@ -54,23 +61,14 @@
                     thumb-label="always"
                     ticks=""
                   />
-                  <v-chip label="" color="accent" text-color="white">
-                    Real FPS: {{ realFps }}
-                  </v-chip>
-                  <v-chip label="" color="accent" text-color="white">
-                    Duration: {{ prettyDuration }}
-                  </v-chip>
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
                   <v-item-group v-model="selectedOptions" multiple="">
                     <v-layout row="" wrap="">
                       <v-flex
                         v-for="(option, i) in options"
                         :key="`option_${i}`"
                         xs12=""
-                        md3=""
+                        md4=""
+                        lg3=""
                       >
                         <v-item :value="option.value">
                           <template #default="{ active, toggle }">
@@ -114,6 +112,39 @@
                       <h3 class="display-1 mb-3">
                         {{ detectedLecturer.name }}
                       </h3>
+                      <v-dialog v-model="isConfirming" width="350">
+                        <template #activator="{ on }">
+                          <v-btn large="" v-on="on">Cancel</v-btn>
+                        </template>
+                        <v-card>
+                          <v-card-text>
+                            <div class="body-2">
+                              To cancel the lesson, please keep your face away
+                              from the camera
+                            </div>
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-spacer />
+                            <v-btn
+                              :loading="isLoading"
+                              :disabled="isLoading"
+                              flat=""
+                              @click="isConfirming = false"
+                            >
+                              Cancel
+                            </v-btn>
+                            <v-btn
+                              :loading="isLoading"
+                              :disabled="isLoading"
+                              color="primary"
+                              flat=""
+                              @click="onUnderstand"
+                            >
+                              I Understand
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
                       <v-btn large="" color="accent">Start</v-btn>
                     </div>
                     <h3 v-else="" class="headline">
@@ -133,6 +164,10 @@
 <script>
 import prettyMs from 'pretty-ms'
 import { mapState, mapActions } from 'vuex'
+import {
+  setIntervalAsync,
+  clearIntervalAsync
+} from 'set-interval-async/dynamic'
 import { drawImage } from '~/utils/canvas'
 
 import { types as detectionTypes } from '~/store/detection'
@@ -141,11 +176,12 @@ import { types as cameraTypes } from '~/store/camera'
 export default {
   data() {
     return {
+      isConfirming: false,
       isLoading: false,
       interval: null,
       lecturers: [],
       students: [],
-      fps: 9,
+      fps: 60,
       realFps: 0,
       duration: 0,
       options: [
@@ -156,9 +192,16 @@ export default {
         },
         { text: 'Landmarks', value: 'landmarks', icon: 'face' },
         { text: 'Recognition', value: 'recognition', icon: 'how_to_reg' },
+        { text: 'Expression', value: 'expression', icon: 'insert_emoticon' },
         { text: 'Age & Gender', value: 'agegender', icon: 'cake' }
       ],
-      selectedOptions: ['agegender', 'recognition', 'landmarks', 'detection'],
+      selectedOptions: [
+        'detection',
+        'landmarks',
+        'recognition',
+        'expression',
+        'agegender'
+      ],
       isDrawing: true
     }
   },
@@ -203,11 +246,12 @@ export default {
       $handleError(error)
     }
   },
-  beforeMount() {
-    this.getModels()
+  async beforeMount() {
+    await this.getModels()
+    await this.initFaceMatcher()
   },
-  mounted() {
-    this.init()
+  async mounted() {
+    await this.init()
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
@@ -221,7 +265,6 @@ export default {
     async init() {
       await this.getCameras()
       await this.initCamera(this.selectedCamera)
-      await this.initFaceMatcher()
     },
     async initCamera(deviceId) {
       try {
@@ -230,6 +273,7 @@ export default {
         const canvasEl = this.$refs.liveCanvas
         const canvasCtx = canvasEl.getContext('2d')
         videoEl.srcObject = videoStream
+        this.onResetPhoto()
         await this.initLecturerFaceDetection({
           videoEl,
           canvasEl,
@@ -240,35 +284,50 @@ export default {
         this.$handleError(error)
       }
     },
+    onResetPhoto() {
+      const canvas = this.$refs.liveCanvas
+      const canvasCtx = canvas.getContext('2d')
+      canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height)
+      canvasCtx.beginPath()
+    },
     initFaceMatcher() {
       this.getFaceMatcher({ lecturers: this.lecturers })
     },
-    initLecturerFaceDetection({ videoEl, canvasEl, canvasCtx, datasets }) {
+    async initLecturerFaceDetection({
+      videoEl,
+      canvasEl,
+      canvasCtx,
+      datasets
+    }) {
       if (this.interval) {
-        clearInterval(this.interval)
+        await clearIntervalAsync(this.interval)
       }
-      this.interval = setInterval(async () => {
+      this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
+      this.interval = setIntervalAsync(async () => {
         try {
           const t0 = performance.now()
           drawImage(canvasCtx, videoEl, 0, 0, 720, 514, { isFlip: true })
-          this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
           if (this.isLecturerDetecting) {
             const options = {
-              detectionsEnabled: this.selectedOptions.includes('detection'),
-              landmarksEnabled: this.selectedOptions.includes('landmarks'),
-              descriptorsEnabled: this.selectedOptions.includes('recognition'),
-              ageGenderEnabled: this.selectedOptions.includes('agegender')
+              isDetectionEnabled: this.selectedOptions.includes('detection'),
+              isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
+              isRecognitionEnabled: this.selectedOptions.includes(
+                'recognition'
+              ),
+              isExpressionEnabled: this.selectedOptions.includes('expression'),
+              isAgeGenderEnabled: this.selectedOptions.includes('agegender')
             }
-            const detections = await this.getFaceDetections({
+            const detection = await this.getFaceDetections({
               canvasEl,
               options
             })
-            if (detections.length > 0) {
-              detections.forEach(async detection => {
-                detection.recognition = await this.getBestMatch({
-                  descriptor: detection.descriptor,
-                  options
-                })
+            if (detection) {
+              detection.recognition = await this.getBestMatch({
+                descriptor: detection.descriptor,
+                options
+              })
+              await (() => {
+                console.log(new Date().toISOString(), detection)
                 detection.detected = datasets.find(
                   ({ id }) => id === detection.recognition.label
                 )
@@ -288,7 +347,7 @@ export default {
                   )
                   this.clearFaceDetection()
                 }
-              })
+              })()
               const t1 = performance.now()
               const diff = t1 - t0
               this.duration = parseFloat(diff)
@@ -300,10 +359,12 @@ export default {
         }
       }, 1000 / this.fps)
     },
-    clearFaceDetection() {
-      clearInterval(this.interval)
-      this.duration = 0
-      this.realFps = 0
+    async clearFaceDetection() {
+      await clearIntervalAsync(this.interval)
+      await (() => {
+        this.duration = 0
+        this.realFps = 0
+      })()
     },
     async fetchLecturers() {
       try {
@@ -315,6 +376,10 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    onUnderstand() {
+      this.isConfirming = false
+      this.init()
     }
   }
 }

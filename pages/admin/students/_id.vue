@@ -254,8 +254,6 @@
                         <template #activator="{ on }">
                           <v-btn
                             v-long-press="300"
-                            :disabled="isLoading"
-                            :loading="isLoading"
                             color="accent"
                             v-on="on"
                             @click="onTakePhoto"
@@ -639,24 +637,25 @@ export default {
         withDescriptor: 0
       },
       rowsPerPageItems: [
-        9,
-        18,
-        32,
+        12,
+        24,
+        36,
         { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }
       ],
       pagination: {
         descending: true,
         page: 1,
-        rowsPerPage: 9,
+        rowsPerPage: 12,
         sortBy: 'created_at',
-        totalItems: 9
+        totalItems: 12
       },
       totalItems: 0,
 
       isRemoving: false,
       isAllImagesSelected: false,
       removingImages: [],
-      longPressedInterval: null
+      longPressedInterval: null,
+      isLongPressed: false
     }
   },
   computed: {
@@ -693,31 +692,6 @@ export default {
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
     },
-    async studentImages(images, oldImages) {
-      if (images.length > oldImages.length) {
-        // eslint-disable-next-line
-        images = images.filter(({ has_descriptor }) => !has_descriptor)
-
-        const descriptors = await this.getFaceDescriptors({ images })
-        await Promise.all(
-          // eslint-disable-next-line
-          descriptors.map(({ image_id, descriptor }) =>
-            this.$api.studentDescriptors.create({
-              studentDescriptor: { student_image_id: image_id, descriptor }
-            })
-          )
-        )
-
-        await Promise.all(
-          images.map(({ id }) =>
-            this.$api.studentImages.update(id, {
-              studentImage: { has_descriptor: true }
-            })
-          )
-        )
-        await this.fetchImages()
-      }
-    },
     pagination: {
       handler({ descending, page, rowsPerPage, sortBy }) {
         if (descending) {
@@ -748,7 +722,7 @@ export default {
         $api.students.fetch(id, { withRelated: 'study_program' }),
         $api.studentImages.fetchPage({
           orderBy: '-created_at',
-          limit: 9,
+          limit: 12,
           offset: 0,
           student_id: id
         })
@@ -950,6 +924,15 @@ export default {
     onSelectImages() {
       this.$refs.images.click()
     },
+    async computeImageDescriptors(image) {
+      const descriptor = await this.getFaceDescriptors({ image })
+      await this.$api.studentDescriptors.create({
+        studentDescriptor: { student_image_id: image.id, descriptor }
+      })
+      await this.$api.studentImages.update(image.id, {
+        studentImage: { has_descriptor: true }
+      })
+    },
     async onImagesSelected(event) {
       try {
         const {
@@ -965,9 +948,15 @@ export default {
           filesArray.forEach(file => {
             payload.append('images', file)
           })
-          await this.$api.studentImages.create(payload, {
-            student_id: id
-          })
+          const { studentImages } = await this.$api.studentImages.create(
+            payload,
+            {
+              student_id: id
+            }
+          )
+          await Promise.all(
+            studentImages.map(image => this.computeImageDescriptors(image))
+          )
           await Promise.all([
             this.fetchImages(),
             this.$notify({
@@ -979,7 +968,7 @@ export default {
               )} ${this.pluralize(
                 'is',
                 filesArray.length
-              )} uploaded successfully`
+              )} uploaded and trained successfully`
             })
           ])
         }
@@ -1003,14 +992,18 @@ export default {
           has_descriptor: false
         }
         payload = toFormData(payload)
-        await this.$api.studentImages.create(payload, {
-          student_id: id
-        })
+        const { studentImages } = await this.$api.studentImages.create(
+          payload,
+          {
+            student_id: id
+          }
+        )
+        await this.computeImageDescriptors(studentImages[0])
         await Promise.all([
           this.fetchImages(),
           this.$notify({
             kind: 'success',
-            message: 'Photo is uploaded successfully'
+            message: 'Photo is uploaded and trained successfully'
           })
         ])
       } catch (error) {
@@ -1018,14 +1011,6 @@ export default {
       } finally {
         this.isLoading = false
       }
-    },
-    onTakePhotoLongPressedStart() {
-      this.longPressedInterval = setInterval(() => {
-        this.onTakePhoto()
-      }, 500)
-    },
-    onTakePhotoLongPressedStop() {
-      clearInterval(this.longPressedInterval)
     },
     onResetPhoto() {
       const canvas = this.$refs.liveCanvas
