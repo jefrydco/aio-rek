@@ -9,6 +9,7 @@ export default ({ $http }, inject) => {
   const apiList = {
     attendances: createApi('attendances'),
     departments: createApi('departments'),
+    majors: createApi('majors'),
     groups: createApi('groups'),
     lecturerDescriptors: createApi('lecturer-descriptors'),
     lecturerImages: createApi('lecturer-images'),

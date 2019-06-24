@@ -105,6 +105,27 @@
                 <v-layout row="" wrap="">
                   <v-flex xs12="">
                     <v-autocomplete
+                      v-model="editedStudent.major_id"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('major_id')"
+                      :disabled="isLoading"
+                      :items="majors"
+                      item-value="id"
+                      item-text="name"
+                      label="Major"
+                      data-vv-name="major_id"
+                      data-vv-as="major"
+                      name="major_id"
+                      required=""
+                      clearable=""
+                      box=""
+                      data-vv-value-path="editedStudent.major_id"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-autocomplete
                       v-model="editedStudent.group_id"
                       v-validate="'required'"
                       :error-messages="errors.collect('group_id')"
@@ -552,6 +573,10 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import {
+  setIntervalAsync,
+  clearIntervalAsync
+} from 'set-interval-async/dynamic'
 import uuidValidate from 'uuid-validate'
 import toFormData from 'json-form-data'
 import cloneDeep from 'lodash/fp/cloneDeep'
@@ -584,6 +609,7 @@ export default {
       students: [],
       isLoading: false,
       departments: [],
+      majors: [],
       studyPrograms: [],
       groups: [],
       selectedDepartment: null,
@@ -595,13 +621,27 @@ export default {
         is_active: true,
         user_id: null,
         study_program_id: null,
+        major_id: null,
         group_id: null,
         study_program: {
           id: null,
           created_at: null,
           updated_at: null,
+          name: null
+        },
+        major: {
+          id: null,
+          created_at: null,
+          updated_at: null,
           name: null,
+          study_program_id: null,
           department_id: null
+        },
+        group: {
+          id: null,
+          created_at: null,
+          updated_at: null,
+          name: null
         }
       },
       editedStudent: {
@@ -612,13 +652,27 @@ export default {
         is_active: true,
         user_id: null,
         study_program_id: null,
+        major_id: null,
         group_id: null,
         study_program: {
           id: null,
           created_at: null,
           updated_at: null,
+          name: null
+        },
+        major: {
+          id: null,
+          created_at: null,
+          updated_at: null,
           name: null,
+          study_program_id: null,
           department_id: null
+        },
+        group: {
+          id: null,
+          created_at: null,
+          updated_at: null,
+          name: null
         }
       },
       avatarImage: {
@@ -719,7 +773,7 @@ export default {
         { student },
         { rowCount, studentImages, ...filter }
       ] = await Promise.all([
-        $api.students.fetch(id, { withRelated: 'study_program' }),
+        $api.students.fetch(id, { withRelated: 'study_program,major,group' }),
         $api.studentImages.fetchPage({
           orderBy: '-created_at',
           limit: 12,
@@ -731,17 +785,20 @@ export default {
         { students },
         { departments },
         { studyPrograms },
+        { majors },
         { groups }
       ] = await Promise.all([
         $api.students.fetchPage({
           orderBy: 'identifier',
           study_program_id: student.study_program_id,
+          major_id: student.major_id,
           group_id: student.group_id,
           limit: -1
         }),
         $api.departments.fetchPage(),
-        $api.studyPrograms.fetchPage({
-          department_id: student.study_program.department_id
+        $api.studyPrograms.fetchPage(),
+        $api.majors.fetchPage({
+          department_id: student.major.department_id
         }),
         $api.groups.fetchPage()
       ])
@@ -749,8 +806,9 @@ export default {
         selectedStudent: id,
         students,
         student,
-        selectedDepartment: student.study_program.department_id,
+        selectedDepartment: student.major.department_id,
         departments,
+        majors,
         studyPrograms,
         groups,
         studentImages,
@@ -783,11 +841,18 @@ export default {
     async prefillData() {
       try {
         const { image, ...restData } = this.student
+        delete restData.id
+        delete restData.study_program
+        delete restData.major
+        delete restData.group
+
         const imageFile = await getFileFromUrl(image)
+
         this.editedStudent = {
           ...restData,
           image: imageFile
         }
+
         this.avatarImage.url = image
       } catch (error) {
         this.$handleError(error)
@@ -817,6 +882,17 @@ export default {
         this.isLoading = true
         const { departments } = await this.$api.departments.fetchPage()
         this.departments = departments
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchMajors() {
+      try {
+        this.isLoading = true
+        const { majors } = await this.$api.majors.fetchPage()
+        this.majors = majors
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -853,7 +929,7 @@ export default {
         this.isLoading = true
         const { id } = this.$route.params
         const { student } = await this.$api.students.fetch(id, {
-          withRelated: 'study_program'
+          withRelated: 'study_program,major,group'
         })
         this.student = student
       } catch (error) {
@@ -1012,6 +1088,18 @@ export default {
         this.isLoading = false
       }
     },
+    onTakePhotoLongPressedStart() {
+      this.isLongPressed = true
+      this.longPressedInterval = setIntervalAsync(async () => {
+        await this.onTakePhoto()
+      }, 300)
+    },
+    async onTakePhotoLongPressedStop() {
+      if (this.longPressedInterval !== null) {
+        this.isLongPressed = false
+        await clearIntervalAsync(this.longPressedInterval)
+      }
+    },
     onResetPhoto() {
       const canvas = this.$refs.liveCanvas
       const canvasCtx = canvas.getContext('2d')
@@ -1097,8 +1185,6 @@ export default {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
-          delete payload.id
-          delete payload.study_program
 
           payload = {
             ...payload,

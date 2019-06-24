@@ -26,6 +26,11 @@ exports.up = function(knex, Promise) {
       .references('rooms.id')
       .onDelete('SET NULL')
     table
+      .uuid('major_id')
+      .notNullable()
+      .references('majors.id')
+      .onDelete('SET NULL')
+    table
       .uuid('study_program_id')
       .notNullable()
       .references('study_programs.id')

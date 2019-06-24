@@ -93,7 +93,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              color="error"
+              color="primary"
               flat=""
               @click="onCreateOrEdit"
             >

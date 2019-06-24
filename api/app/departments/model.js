@@ -5,6 +5,9 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Department', {
     tableName: 'departments',
+    majors() {
+      return this.hasMany('Major', 'department_id')
+    },
     getValidators() {
       return {
         name: ['required', 'string']

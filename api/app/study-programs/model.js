@@ -5,13 +5,12 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('StudyProgram', {
     tableName: 'study_programs',
-    department() {
-      return this.belongsTo('Department', 'department_id')
+    majors() {
+      return this.hasMany('Major', 'study_program_id')
     },
     getValidators() {
       return {
-        name: ['required', 'string'],
-        department_id: ['required', 'uuid']
+        name: ['required', 'string']
       }
     },
     initialize() {

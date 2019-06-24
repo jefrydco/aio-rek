@@ -3,32 +3,19 @@
 const Checkit = require('checkit')
 
 module.exports = bookshelf =>
-  bookshelf.model('Student', {
-    tableName: 'students',
-    images() {
-      return this.hasMany('StudentImage', 'student_id')
-    },
-    user() {
-      return this.belongsTo('User', 'user_id')
-    },
-    major() {
-      return this.belongsTo('Major', 'major_id')
-    },
-    study_program() {
+  bookshelf.model('Major', {
+    tableName: 'majors',
+    studyProgram() {
       return this.belongsTo('StudyProgram', 'study_program_id')
     },
-    group() {
-      return this.belongsTo('Group', 'group_id')
+    department() {
+      return this.belongsTo('Department', 'department_id')
     },
     getValidators() {
       return {
         name: ['required', 'string'],
-        identifier: ['required', 'string'],
-        image: ['string'],
-        is_active: ['boolean'],
-        user_id: ['required', 'uuid'],
         study_program_id: ['required', 'uuid'],
-        group_id: ['required', 'uuid']
+        department_id: ['required', 'uuid']
       }
     },
     initialize() {

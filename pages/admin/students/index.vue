@@ -26,6 +26,7 @@
             <td class="py-1 body-2">{{ item.identifier }}</td>
             <td class="py-1 body-2">{{ item.name }}</td>
             <td class="py-1 body-2">{{ item.study_program.name }}</td>
+            <td class="py-1 body-2">{{ item.major.name }}</td>
             <td class="py-1 body-2">{{ item.group.name }}</td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
@@ -79,6 +80,7 @@ export default {
         image: null,
         is_active: true,
         user_id: null,
+        major_id: null,
         study_program_id: null,
         group_id: null
       },
@@ -88,6 +90,7 @@ export default {
         image: null,
         is_active: true,
         user_id: null,
+        major_id: null,
         study_program_id: null,
         group_id: null
       },
@@ -104,6 +107,7 @@ export default {
         { text: 'Identifier', value: 'identifier' },
         { text: 'Name', value: 'name' },
         { text: 'Study Program', value: 'study_program.name' },
+        { text: 'Major', value: 'major.name' },
         { text: 'Group', value: 'group.name' },
         { text: 'Is Active?', value: 'group.is_active', align: 'center' },
         { text: 'Action', align: 'center', sortable: false }
@@ -135,7 +139,7 @@ export default {
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
           offset: (page - 1) * rowsPerPage,
-          withRelated: 'group,study_program'
+          withRelated: 'study_program,major,group'
         })
       },
       deep: true
@@ -147,7 +151,7 @@ export default {
         orderBy: 'identifier',
         limit: 20,
         offset: 0,
-        withRelated: 'group,study_program'
+        withRelated: 'study_program,major,group'
       })
       return {
         filter,
@@ -164,12 +168,12 @@ export default {
         orderBy = 'identifier',
         limit = 20,
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated = 'group,study_program'
+        withRelated = 'study_program,major,group'
       } = {
         orderBy: 'identifier',
         limit: 20,
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated: 'group,study_program'
+        withRelated: 'study_program,major,group'
       }
     ) {
       try {

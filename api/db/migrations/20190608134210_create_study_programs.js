@@ -9,11 +9,6 @@ exports.up = function(knex, Promise) {
       .string('name')
       .unique()
       .notNullable()
-    table
-      .uuid('department_id')
-      .notNullable()
-      .references('departments.id')
-      .onDelete('SET NULL')
   })
 }
 

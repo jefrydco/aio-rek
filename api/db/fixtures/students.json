@@ -6,7 +6,8 @@
       "image": "/uploads/images/profiles/students/b454a7bc-7595-422b-80e3-df9b46951125/d4c8647f-5832-43ff-9c84-8a60aaea31ee.jpg",
       "is_active": true,
       "user_id": "aae2923a-8452-4eb7-b58a-c3c5be0eaab3",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -16,7 +17,8 @@
       "image": "/uploads/images/profiles/students/295c6bb8-8a25-4aca-93ee-3aed2a78c3d0/174beb9c-f322-411b-9410-1447fa76791b.jpg",
       "is_active": true,
       "user_id": "272a884d-4e51-4ce0-812d-428589590156",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -26,7 +28,8 @@
       "image": "/uploads/images/profiles/students/b2462cc1-7418-4b8c-b273-1ac4f000cccd/7b243284-5361-4951-bbbf-1ff2631c2c86.jpg",
       "is_active": true,
       "user_id": "8227ff0b-9211-4a78-983d-9b34bf7725a1",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -36,7 +39,8 @@
       "image": "/uploads/images/profiles/students/c29628e4-e37c-4351-8005-1ba6ca6bc1df/52519e68-363a-42f7-a915-d8b6b6c8fcd8.jpg",
       "is_active": true,
       "user_id": "2f67903d-a2f8-4a47-828b-8ded3a40233b",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -46,7 +50,8 @@
       "image": "/uploads/images/profiles/students/891e6657-ffc6-4fc8-a031-cd066879a92f/d6fd755b-494a-4a01-8c5f-3df9488286f8.jpg",
       "is_active": true,
       "user_id": "39f10fe7-3d37-4ff3-9153-0e71035552e4",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -56,7 +61,8 @@
       "image": "/uploads/images/profiles/students/4eab33f5-fd73-4fb8-bd01-68887cb9df85/7c6f3c1e-4087-47bb-a7fe-a0274ad5cfc0.jpg",
       "is_active": true,
       "user_id": "58de3aa8-89d1-49bc-95d6-bf60a5dce966",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -66,7 +72,8 @@
       "image": "/uploads/images/profiles/students/bfcb5046-05ba-4e7f-b58c-a653b4f9b16d/5c18b744-e8d7-46e8-9f29-a91c5156bd17.jpg",
       "is_active": true,
       "user_id": "18852af7-30ee-4a39-9a71-ce4f52eb0738",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -76,7 +83,8 @@
       "image": "/uploads/images/profiles/students/b0017427-bfb9-460e-870c-9204445dc3ed/1c99ee86-ba86-4d5f-af33-dfedf2136916.jpg",
       "is_active": true,
       "user_id": "936b84a4-bc59-468b-8df5-a749afdbc816",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -86,7 +94,8 @@
       "image": "",
       "is_active": true,
       "user_id": "3290d206-b9b6-43ac-bb04-2189010c1965",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -96,7 +105,8 @@
       "image": "/uploads/images/profiles/students/1c762595-49d3-47d9-8a76-9d673545a412/def8b266-dbf7-4a97-ac93-abd8dc856ed8.jpg",
       "is_active": true,
       "user_id": "502c50f8-178b-481c-baf1-8f88e35418c1",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -106,7 +116,8 @@
       "image": "/uploads/images/profiles/students/1b0559ce-fadd-4067-9a93-19a4e94a0827/67f85a6b-c34c-4155-9a0a-4302c38f3fb4.jpg",
       "is_active": true,
       "user_id": "9d2c7da1-dd02-4df3-ac36-cfe699560ad2",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -116,7 +127,8 @@
       "image": "/uploads/images/profiles/students/37d826cd-0987-460e-bcbc-30f64b350a7a/4aa1b514-652a-4c6e-9cde-3810c9a8dce9.jpg",
       "is_active": true,
       "user_id": "2a8d7915-fda2-43ec-bc68-e6bd12cb9596",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -126,7 +138,8 @@
       "image": "/uploads/images/profiles/students/251ce95e-7bf4-4666-936b-bde36c43dbc9/73a05e74-f676-41de-948a-aaf43dc36941.jpg",
       "is_active": true,
       "user_id": "791fa970-51a9-46f5-8673-e41721bbd254",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -136,7 +149,8 @@
       "image": "/uploads/images/profiles/students/660ea598-7ebc-4940-b9b5-f531240e1d6c/ad03a94a-9561-4816-a222-255c691040c9.jpg",
       "is_active": true,
       "user_id": "34c8ec1b-bf52-4f1f-a754-8b8dc39e2ab7",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -146,7 +160,8 @@
       "image": "/uploads/images/profiles/students/85e7905c-510a-436c-aebd-2a13d1b6f94f/cfeb68f5-e9fc-49b1-ab35-a94ea70dbfc1.jpg",
       "is_active": true,
       "user_id": "07aa5a4d-f8c6-49b8-940d-f4102886a21e",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -156,7 +171,8 @@
       "image": "/uploads/images/profiles/students/1e248c83-2005-4665-b15a-344f36a0c343/4bb99bf5-a971-480d-b59d-5f9275914939.jpg",
       "is_active": true,
       "user_id": "67b2abd8-7359-4966-9cfc-503defd4818e",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -166,7 +182,8 @@
       "image": "/uploads/images/profiles/students/0ebd95a3-1974-412d-b8e4-35c4ddd68afd/468c5b73-827d-456e-8972-fec690a6937b.jpg",
       "is_active": true,
       "user_id": "235bcbc3-2b3f-420d-b8d7-001525194d5c",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -176,7 +193,8 @@
       "image": "",
       "is_active": true,
       "user_id": "c3f5b7ac-dccd-4f3a-b6da-8fbe7a76bc22",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -186,7 +204,8 @@
       "image": "/uploads/images/profiles/students/690157a4-a0a4-49e1-9c12-168a290f7924/26492c78-e808-4e81-9cc7-fc79b2da636c.jpg",
       "is_active": true,
       "user_id": "2c75385f-7bfb-4be7-b8f4-3996a75236b6",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -196,7 +215,8 @@
       "image": "/uploads/images/profiles/students/3b7de842-7693-48e0-8cd8-78351ac6fc8b/cd21a3e5-8b03-44a1-9e24-ff809d4a29db.jpg",
       "is_active": true,
       "user_id": "efe03f8b-47db-43e5-98dd-f9edecfe61fb",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -206,7 +226,8 @@
       "image": "/uploads/images/profiles/students/f8d7602f-cd06-4797-a9b6-cfbc048aae02/6ef25dc0-5013-44a3-836b-8bd1db9eb519.jpg",
       "is_active": true,
       "user_id": "fd1a6409-1167-4019-979c-f9a87731f729",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -216,7 +237,8 @@
       "image": "/uploads/images/profiles/students/036a4fd6-2562-4824-b5ff-7cfd8c41b8e6/f695edef-60ce-4d3a-8dd1-a0b012ac2cd8.jpg",
       "is_active": true,
       "user_id": "2cde2e99-6cb1-4a71-a386-1394bcb2b244",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -226,7 +248,8 @@
       "image": "/uploads/images/profiles/students/2b171d9a-bcd2-456d-94e6-36ca9b3b13e1/6e2a222a-dfd7-4952-99a4-1f40b656391c.jpg",
       "is_active": true,
       "user_id": "a09bf754-6d6a-4ced-8580-1b3889a4f58c",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -236,7 +259,8 @@
       "image": "/uploads/images/profiles/students/c7ca4c24-a634-4850-87d5-6e46b819242e/25cc77eb-e6cc-4fd4-8c15-57b688eaccb7.jpg",
       "is_active": true,
       "user_id": "ee85c9a3-2f85-44c5-9542-0e54f615462e",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   },
   {
@@ -246,7 +270,8 @@
       "image": "/uploads/images/profiles/students/73eb19cf-4dff-4cd3-82d8-29ede6802afe/ed3b6b5b-ee61-4e13-85ad-4970449ccf38.jpg",
       "is_active": true,
       "user_id": "f17d23d9-21c1-42a6-a4ba-f9b234c4e317",
-      "study_program_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "major_id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+      "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
       "group_id": "17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46"
   }
 ]

@@ -6,13 +6,13 @@
       </v-toolbar-title>
       <v-spacer />
       <v-btn color="primary" @click="onTrigger">
-        Create Study Program
+        Create Major
       </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-data-table
         :headers="headers"
-        :items="studyPrograms"
+        :items="majors"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
         :total-items="totalItems"
@@ -21,6 +21,7 @@
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">{{ item.name }}</td>
+            <td class="py-1 body-2">{{ item.department.name }}</td>
             <td class="py-1 body-2 text-xs-center">
               <v-btn color="primary" @click="onTrigger($event, item)">
                 Edit
@@ -43,7 +44,7 @@
             <v-layout row="" wrap="">
               <v-flex xs12="">
                 <v-text-field
-                  v-model="studyProgram.name"
+                  v-model="major.name"
                   v-validate="'required'"
                   :error-messages="errors.collect('name')"
                   :disabled="isLoading"
@@ -55,7 +56,28 @@
                   clearable=""
                   box=""
                   autofocus=""
-                  data-vv-value-path="studyProgram.name"
+                  data-vv-value-path="major.name"
+                />
+              </v-flex>
+            </v-layout>
+            <v-layout row="" wrap="">
+              <v-flex xs12="">
+                <v-autocomplete
+                  v-model="major.department_id"
+                  v-validate="'required'"
+                  :error-messages="errors.collect('department_id')"
+                  :disabled="isLoading"
+                  :items="departments"
+                  item-value="id"
+                  item-text="name"
+                  label="Department"
+                  data-vv-name="department_id"
+                  data-vv-as="department"
+                  name="department_id"
+                  required=""
+                  clearable=""
+                  box=""
+                  data-vv-value-path="major.department_id"
                 />
               </v-flex>
             </v-layout>
@@ -86,7 +108,7 @@
         <v-card>
           <v-card-text>
             <div class="body-2">
-              Are you sure you want to remove {{ studyProgram.name }}?
+              Are you sure you want to remove {{ major.name }}?
             </div>
           </v-card-text>
           <v-card-actions>
@@ -104,7 +126,7 @@
               :disabled="isLoading"
               color="error"
               flat=""
-              @click="onRemove(studyProgram)"
+              @click="onRemove(major)"
             >
               Remove
             </v-btn>
@@ -126,18 +148,21 @@ export default {
   },
   data() {
     return {
+      departments: [],
       isCreatingOrEditingDialog: false,
       isEditing: false,
       isRemovingDialog: false,
       default: {
         id: null,
-        name: null
+        name: null,
+        department_id: null
       },
-      studyProgram: {
+      major: {
         id: null,
-        name: null
+        name: null,
+        department_id: null
       },
-      studyPrograms: [],
+      majors: [],
       filter: {
         limit: 0,
         offset: 0,
@@ -147,6 +172,7 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Name', value: 'name' },
+        { text: 'Department', value: 'department.name' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [25, 50, 75, 100],
@@ -175,7 +201,8 @@ export default {
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * rowsPerPage,
+          withRelated: 'department'
         })
       },
       deep: true
@@ -183,19 +210,18 @@ export default {
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
-      const {
-        rowCount,
-        studyPrograms,
-        ...filter
-      } = await $api.studyPrograms.fetchPage({
+      const { rowCount, majors, ...filter } = await $api.majors.fetchPage({
         orderBy: 'name',
         limit: 20,
-        offset: 0
+        offset: 0,
+        withRelated: 'department'
       })
+      const { departments } = await $api.departments.fetchPage()
       return {
         filter,
-        studyPrograms,
-        totalItems: rowCount
+        majors,
+        totalItems: rowCount,
+        departments
       }
     } catch ({ response }) {
       $handleError(response)
@@ -205,29 +231,31 @@ export default {
     async fetchStudyPrograms(
       {
         orderBy = 'name',
-        limit = 20, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+        limit = 20,
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        withRelated = 'department'
       } = {
         orderBy: 'name',
         limit: 20,
-        // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        withRelated: 'department'
       }
     ) {
       try {
         this.isLoading = true
         const {
           rowCount,
-          studyPrograms,
+          majors,
           ...filter
-        } = await this.$api.studyPrograms.fetchPage({
+        } = await this.$api.majors.fetchPage({
           orderBy,
           limit,
-          offset
+          offset,
+          withRelated
         })
         this.filter = filter
         this.totalItems = rowCount
-        this.studyPrograms = studyPrograms
+        this.majors = majors
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -238,19 +266,19 @@ export default {
       this.isCreatingOrEditingDialog = true
       if (item) {
         this.isEditing = true
-        this.studyProgram = { ...item }
+        this.major = { ...item }
       }
     },
     onClose() {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
       this.$validator.reset()
-      this.studyProgram = { ...this.default }
+      this.major = { ...this.default }
     },
     async onCreateOrEdit(
       event,
-      { _payload = this.studyProgram, isEditing = false } = {
-        _payload: this.studyProgram,
+      { _payload = this.major, isEditing = false } = {
+        _payload: this.major,
         isEditing: false
       }
     ) {
@@ -261,25 +289,26 @@ export default {
 
           let payload = cloneDeep(_payload)
           delete payload.id
+          delete payload.department
 
           payload = {
-            studyProgram: payload
+            major: payload
           }
 
           if (this.isEditing) {
-            Object.assign(payload.studyProgram, {
+            Object.assign(payload.major, {
               updated_at: new Date().toISOString()
             })
-            await this.$api.studyPrograms.update(_payload.id, payload)
-            this.$notify({
-              kind: 'success',
-              message: 'Study Program is updated successfully'
-            })
-          } else {
-            await this.$api.studyPrograms.create(payload)
+            await this.$api.majors.update(_payload.id, payload)
             await this.$notify({
               kind: 'success',
-              message: 'Study Program is created successfully'
+              message: 'Major is updated successfully'
+            })
+          } else {
+            await this.$api.majors.create(payload)
+            await this.$notify({
+              kind: 'success',
+              message: 'Major is created successfully'
             })
           }
 
@@ -298,24 +327,24 @@ export default {
     },
     onTriggerRemoving(item) {
       this.isRemovingDialog = true
-      this.studyProgram = { ...item }
+      this.major = { ...item }
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
       this.$validator.reset()
-      this.studyProgram = { ...this.default }
+      this.major = { ...this.default }
     },
     async onRemove(item) {
       try {
         this.isLoading = true
 
-        await this.$api.studyPrograms.destroy(item.id)
+        await this.$api.majors.destroy(item.id)
         await Promise.all([
           this.fetchStudyPrograms(),
           this.onCloseRemoving(),
           this.$notify({
             kind: 'success',
-            message: 'Study Program is deleted successfully'
+            message: 'Major is deleted successfully'
           })
         ])
       } catch (error) {

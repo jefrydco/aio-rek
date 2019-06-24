@@ -17,6 +17,9 @@ module.exports = bookshelf =>
     study_program() {
       return this.belongsTo('StudyProgram', 'study_program_id')
     },
+    major() {
+      return this.belongsTo('Major', 'major_id')
+    },
     group() {
       return this.belongsTo('Group', 'group_id')
     },
@@ -29,6 +32,7 @@ module.exports = bookshelf =>
         lecturer_id: ['required', 'uuid'],
         room_id: ['required', 'uuid'],
         study_program_id: ['required', 'uuid'],
+        major_id: ['required', 'uuid'],
         group_id: ['required', 'uuid']
       }
     },

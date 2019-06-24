@@ -134,10 +134,11 @@ export default {
             { text: 'Students', to: { name: 'admin-students' } },
             { text: 'Lecturers', to: { name: 'admin-lecturers' } },
             { text: 'Rooms', to: { name: 'admin-rooms' } },
+            { text: 'Subjects', to: { name: 'admin-subjects' } },
             { text: 'Departments', to: { name: 'admin-departments' } },
-            { text: 'Groups', to: { name: 'admin-groups' } },
             { text: 'Study Programs', to: { name: 'admin-study-programs' } },
-            { text: 'Subjects', to: { name: 'admin-subjects' } }
+            { text: 'Majors', to: { name: 'admin-majors' } },
+            { text: 'Groups', to: { name: 'admin-groups' } }
           ]
         }
       ]

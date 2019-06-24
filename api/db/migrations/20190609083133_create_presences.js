@@ -7,6 +7,7 @@ exports.up = function(knex, Promise) {
     table.timestamps(true, true)
     table.string('image').notNullable()
     table.boolean('is_late').defaultTo(false)
+    table.enum('status', ['alpha', 'sick', 'present']).defaultTo('alpha')
     table
       .uuid('student_id')
       .notNullable()

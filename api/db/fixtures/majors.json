@@ -1,0 +1,104 @@
+[
+  {
+    "id": "7d9c2141-52dd-411e-8799-b36bfccd0ab2",
+    "name": "Teknik Elektro",
+    "study_program_id": "214778ef-b48e-40d9-bdea-0fc8c703b274",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "c2a52b8d-daec-41de-8413-bf5406222d95",
+    "name": "Teknik Informatika & Komputer",
+    "study_program_id": "214778ef-b48e-40d9-bdea-0fc8c703b274",
+    "department_id": "f015862b-3012-49f1-8086-84e4dc64f6d8"
+  },
+  {
+    "id": "49bf282d-0aaf-4a94-9e0a-800d544c1748",
+    "name": "Teknik Informatika",
+    "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
+    "department_id": "f015862b-3012-49f1-8086-84e4dc64f6d8"
+  },
+  {
+    "id": "41c4710d-36e2-4f62-976a-beb55759f141",
+    "name": "Teknik Informatika",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "f015862b-3012-49f1-8086-84e4dc64f6d8"
+  },
+  {
+    "id": "d2dc6b60-5d67-4397-9eab-357b9f378d16",
+    "name": "Teknik Komputer",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "f015862b-3012-49f1-8086-84e4dc64f6d8"
+  },
+  {
+    "id": "5bc158f3-64fb-468f-bf91-675fe187fd3e",
+    "name": "Teknik Elektronika",
+    "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "394a6d8c-4a3d-4fc3-9551-b090a9dfceda",
+    "name": "Teknik Elektronika",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "b4ae2773-59f2-4de8-bb2a-b072c9f743a2",
+    "name": "Teknik Elektron Industri",
+    "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "e4825bc4-fec7-4b1b-9a4e-6d822f5754ea",
+    "name": "Teknik Elektro Industri",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "b1a67133-fd0c-4636-9cd7-38da50d6fa99",
+    "name": "Teknik Telekomunikasi",
+    "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "1c09426c-d565-4495-9d3a-a12e8d1f6bb5",
+    "name": "Teknik Telekomunikasi",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "3150957c-ae2e-42d2-91e1-0ce9da7bbc72",
+    "name": "Teknik Elektro Industri - PLN",
+    "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "aea59c55-4759-434b-952a-73a8c0762181",
+    "name": "Teknik Elektronika - GMF",
+    "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
+    "department_id": "5ecee506-1831-48fe-8669-986dd411b295"
+  },
+  {
+    "id": "d78156ee-5683-401d-8697-3a5884aaec9d",
+    "name": "Teknik Mekatronika",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "82b1d2ac-a95e-4f49-8bce-5aed198a15a6"
+  },
+  {
+    "id": "eb43c2db-b86b-47b9-aeb1-129aa836ace1",
+    "name": "Sistem Pembangkit Energi",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "82b1d2ac-a95e-4f49-8bce-5aed198a15a6"
+  },
+  {
+    "id": "575e1fa6-e676-4953-94f6-ab9cadc8e90b",
+    "name": "Teknologi Multimedia Broadcasting",
+    "study_program_id": "2bd55595-0bbb-4c3d-b44c-a9349b515c83",
+    "department_id": "430f2e26-f0fe-413b-b347-283483fe7e7d"
+  },
+  {
+    "id": "d82c3402-1419-4236-ae70-ae10209caee5",
+    "name": "Teknologi Game",
+    "study_program_id": "967a5246-d0b6-4ece-91c5-44b83ed94a8f",
+    "department_id": "430f2e26-f0fe-413b-b347-283483fe7e7d"
+  }
+]
