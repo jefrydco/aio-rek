@@ -138,7 +138,8 @@ export default {
             { text: 'Departments', to: { name: 'admin-departments' } },
             { text: 'Study Programs', to: { name: 'admin-study-programs' } },
             { text: 'Majors', to: { name: 'admin-majors' } },
-            { text: 'Groups', to: { name: 'admin-groups' } }
+            { text: 'Groups', to: { name: 'admin-groups' } },
+            { text: 'Schedules', to: { name: 'admin-schedules' } }
           ]
         }
       ]

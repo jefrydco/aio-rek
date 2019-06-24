@@ -28,6 +28,7 @@ module.exports = bookshelf =>
         day: ['required', 'string'],
         start_time: ['required'],
         end_time: ['required'],
+        grade: ['required', 'string'],
         subject_id: ['required', 'uuid'],
         lecturer_id: ['required', 'uuid'],
         room_id: ['required', 'uuid'],

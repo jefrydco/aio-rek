@@ -40,48 +40,60 @@
         @input="onClose"
       >
         <v-card>
+          <v-toolbar color="primary" dark="" card="">
+            <v-toolbar-title>
+              <h3 class="title">{{ isEditing ? 'Edit' : 'Create' }} Major</h3>
+            </v-toolbar-title>
+            <v-spacer />
+            <v-btn icon="" @click="onClose">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-toolbar>
           <v-card-text>
-            <v-layout row="" wrap="">
-              <v-flex xs12="">
-                <v-text-field
-                  v-model="major.name"
-                  v-validate="'required'"
-                  :error-messages="errors.collect('name')"
-                  :disabled="isLoading"
-                  label="Name"
-                  data-vv-name="name"
-                  data-vv-as="name"
-                  name="name"
-                  required=""
-                  clearable=""
-                  box=""
-                  autofocus=""
-                  data-vv-value-path="major.name"
-                />
-              </v-flex>
-            </v-layout>
-            <v-layout row="" wrap="">
-              <v-flex xs12="">
-                <v-autocomplete
-                  v-model="major.department_id"
-                  v-validate="'required'"
-                  :error-messages="errors.collect('department_id')"
-                  :disabled="isLoading"
-                  :items="departments"
-                  item-value="id"
-                  item-text="name"
-                  label="Department"
-                  data-vv-name="department_id"
-                  data-vv-as="department"
-                  name="department_id"
-                  required=""
-                  clearable=""
-                  box=""
-                  data-vv-value-path="major.department_id"
-                />
-              </v-flex>
-            </v-layout>
+            <v-container class="pa-0" fluid="" grid-list-xl="">
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-text-field
+                    v-model="major.name"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('name')"
+                    :disabled="isLoading"
+                    label="Name"
+                    data-vv-name="name"
+                    data-vv-as="name"
+                    name="name"
+                    required=""
+                    clearable=""
+                    box=""
+                    autofocus=""
+                    data-vv-value-path="major.name"
+                  />
+                </v-flex>
+              </v-layout>
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-autocomplete
+                    v-model="major.department_id"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('department_id')"
+                    :disabled="isLoading"
+                    :items="departments"
+                    item-value="id"
+                    item-text="name"
+                    label="Department"
+                    data-vv-name="department_id"
+                    data-vv-as="department"
+                    name="department_id"
+                    required=""
+                    clearable=""
+                    box=""
+                    data-vv-value-path="major.department_id"
+                  />
+                </v-flex>
+              </v-layout>
+            </v-container>
           </v-card-text>
+          <v-divider />
           <v-card-actions>
             <v-spacer />
             <v-btn
@@ -106,11 +118,23 @@
       </v-dialog>
       <v-dialog v-model="isRemovingDialog" width="350" @input="onCloseRemoving">
         <v-card>
+          <v-toolbar color="primary" dark="" card="">
+            <v-toolbar-title>
+              <h3 class="title">
+                Delete Confirmation
+              </h3>
+            </v-toolbar-title>
+            <v-spacer />
+            <v-btn icon="" @click="onCloseRemoving">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-toolbar>
           <v-card-text>
             <div class="body-2">
               Are you sure you want to remove {{ major.name }}?
             </div>
           </v-card-text>
+          <v-divider />
           <v-card-actions>
             <v-spacer />
             <v-btn

@@ -39,27 +39,39 @@
         @input="onClose"
       >
         <v-card>
+          <v-toolbar color="primary" dark="" card="">
+            <v-toolbar-title>
+              <h3 class="title">{{ isEditing ? 'Edit' : 'Create' }} Group</h3>
+            </v-toolbar-title>
+            <v-spacer />
+            <v-btn icon="" @click="onClose">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-toolbar>
           <v-card-text>
-            <v-layout row="" wrap="">
-              <v-flex xs12="">
-                <v-text-field
-                  v-model="group.name"
-                  v-validate="'required'"
-                  :error-messages="errors.collect('name')"
-                  :disabled="isLoading"
-                  label="Name"
-                  data-vv-name="name"
-                  data-vv-as="name"
-                  name="name"
-                  required=""
-                  clearable=""
-                  box=""
-                  autofocus=""
-                  data-vv-value-path="group.name"
-                />
-              </v-flex>
-            </v-layout>
+            <v-container class="pa-0" fluid="" grid-list-xl="">
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-text-field
+                    v-model="group.name"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('name')"
+                    :disabled="isLoading"
+                    label="Name"
+                    data-vv-name="name"
+                    data-vv-as="name"
+                    name="name"
+                    required=""
+                    clearable=""
+                    box=""
+                    autofocus=""
+                    data-vv-value-path="group.name"
+                  />
+                </v-flex>
+              </v-layout>
+            </v-container>
           </v-card-text>
+          <v-divider />
           <v-card-actions>
             <v-spacer />
             <v-btn
@@ -84,11 +96,23 @@
       </v-dialog>
       <v-dialog v-model="isRemovingDialog" width="350" @input="onCloseRemoving">
         <v-card>
+          <v-toolbar color="primary" dark="" card="">
+            <v-toolbar-title>
+              <h3 class="title">
+                Delete Confirmation
+              </h3>
+            </v-toolbar-title>
+            <v-spacer />
+            <v-btn icon="" @click="onCloseRemoving">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-toolbar>
           <v-card-text>
             <div class="body-2">
               Are you sure you want to remove {{ group.name }}?
             </div>
           </v-card-text>
+          <v-divider />
           <v-card-actions>
             <v-spacer />
             <v-btn

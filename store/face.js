@@ -90,21 +90,28 @@ export const actions = {
       image: { path }
     }
   ) {
-    const img = await faceapi.fetchImage(path)
-    const { descriptor } = await faceapi
-      .detectSingleFace(
-        img,
-        new faceapi.TinyFaceDetectorOptions({
-          scoreThreshold: state.scoreThreshold,
-          inputSize: state.inputSize
-        })
-      )
-      .withFaceLandmarks()
-      .withFaceExpressions()
-      .withAgeAndGender()
-      .withFaceDescriptor()
-    console.log(descriptor)
-    return descriptor
+    try {
+      const img = await faceapi.fetchImage(path)
+      const { descriptor } = await faceapi
+        .detectSingleFace(
+          img,
+          new faceapi.TinyFaceDetectorOptions({
+            scoreThreshold: state.scoreThreshold,
+            inputSize: state.inputSize
+          })
+        )
+        .withFaceLandmarks()
+        .withFaceExpressions()
+        .withAgeAndGender()
+        .withFaceDescriptor()
+      if (descriptor) {
+        console.log(descriptor)
+        return descriptor
+      }
+      return false
+    } catch (error) {
+      console.log(error)
+    }
   },
   getFaceMatcher({ commit, state }, { lecturers = [] }) {
     const labeledDescriptors = []

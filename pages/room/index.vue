@@ -145,6 +145,30 @@
                           </v-card-actions>
                         </v-card>
                       </v-dialog>
+
+                      <v-layout row="" wrap="">
+                        <v-flex xs12="">
+                          <v-autocomplete
+                            v-model="selectedDepartment"
+                            v-validate="'required'"
+                            :error-messages="
+                              errors.collect('selectedDepartment')
+                            "
+                            :disabled="isLoading"
+                            :items="departments"
+                            item-value="id"
+                            item-text="name"
+                            label="Department"
+                            data-vv-name="selectedDepartment"
+                            data-vv-as="department"
+                            name="selectedDepartment"
+                            required=""
+                            clearable=""
+                            box=""
+                            data-vv-value-path="selectedDepartment"
+                          />
+                        </v-flex>
+                      </v-layout>
                       <v-btn large="" color="accent">Start</v-btn>
                     </div>
                     <h3 v-else="" class="headline">

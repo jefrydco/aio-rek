@@ -741,7 +741,7 @@ export default {
       })
     },
     selectedDepartment(selectedDepartment) {
-      this.fetchStudyPrograms(selectedDepartment)
+      this.fetchMajors(selectedDepartment)
     },
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
@@ -795,12 +795,13 @@ export default {
           group_id: student.group_id,
           limit: -1
         }),
-        $api.departments.fetchPage(),
-        $api.studyPrograms.fetchPage(),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.studyPrograms.fetchPage({ limit: -1 }),
         $api.majors.fetchPage({
-          department_id: student.major.department_id
+          department_id: student.major.department_id,
+          limit: -1
         }),
-        $api.groups.fetchPage()
+        $api.groups.fetchPage({ limit: -1 })
       ])
       return {
         selectedStudent: id,
@@ -888,11 +889,11 @@ export default {
         this.isLoading = false
       }
     },
-    async fetchMajors() {
+    async fetchStudyPrograms() {
       try {
         this.isLoading = true
-        const { majors } = await this.$api.majors.fetchPage()
-        this.majors = majors
+        const { studyPrograms } = await this.$api.studyPrograms.fetchPage()
+        this.studyPrograms = studyPrograms
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -900,13 +901,13 @@ export default {
       }
     },
     // eslint-disable-next-line
-    async fetchStudyPrograms(department_id) {
+    async fetchMajors(department_id) {
       try {
         this.isLoading = true
-        const { studyPrograms } = await this.$api.studyPrograms.fetchPage({
+        const { majors } = await this.$api.majors.fetchPage({
           department_id
         })
-        this.studyPrograms = studyPrograms
+        this.majors = majors
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -1002,12 +1003,14 @@ export default {
     },
     async computeImageDescriptors(image) {
       const descriptor = await this.getFaceDescriptors({ image })
-      await this.$api.studentDescriptors.create({
-        studentDescriptor: { student_image_id: image.id, descriptor }
-      })
-      await this.$api.studentImages.update(image.id, {
-        studentImage: { has_descriptor: true }
-      })
+      if (descriptor) {
+        await this.$api.studentDescriptors.create({
+          studentDescriptor: { student_image_id: image.id, descriptor }
+        })
+        await this.$api.studentImages.update(image.id, {
+          studentImage: { has_descriptor: true }
+        })
+      }
     },
     async onImagesSelected(event) {
       try {

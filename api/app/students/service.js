@@ -9,7 +9,7 @@ class StudentService extends Service {
     super(StudentService.name, app, ['user.hashed_password'])
   }
   async fetchPage(filter, { trx } = {}) {
-    const defaultFilter = { limit: 20, offset: 0, orderBy: '-identifier' }
+    const defaultFilter = { limit: 20, offset: 0, orderBy: 'identifier' }
     const _filter = {
       ...defaultFilter,
       ...filter,

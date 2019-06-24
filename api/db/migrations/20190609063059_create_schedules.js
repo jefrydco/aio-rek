@@ -11,6 +11,10 @@ exports.up = function(knex, Promise) {
     table.time('start_time').notNullable()
     table.time('end_time').notNullable()
     table
+      .enum('grade', ['1', '2', '3', '4'])
+      .notNullable()
+      .defaultTo('1')
+    table
       .uuid('subject_id')
       .notNullable()
       .references('subjects.id')
@@ -26,14 +30,14 @@ exports.up = function(knex, Promise) {
       .references('rooms.id')
       .onDelete('SET NULL')
     table
-      .uuid('major_id')
-      .notNullable()
-      .references('majors.id')
-      .onDelete('SET NULL')
-    table
       .uuid('study_program_id')
       .notNullable()
       .references('study_programs.id')
+      .onDelete('SET NULL')
+    table
+      .uuid('major_id')
+      .notNullable()
+      .references('majors.id')
       .onDelete('SET NULL')
     table
       .uuid('group_id')

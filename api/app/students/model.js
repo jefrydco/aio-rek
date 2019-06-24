@@ -26,6 +26,7 @@ module.exports = bookshelf =>
         identifier: ['required', 'string'],
         image: ['string'],
         is_active: ['boolean'],
+        grade: ['required', 'string'],
         user_id: ['required', 'uuid'],
         study_program_id: ['required', 'uuid'],
         group_id: ['required', 'uuid']

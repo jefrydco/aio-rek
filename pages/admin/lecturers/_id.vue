@@ -774,12 +774,14 @@ export default {
     },
     async computeImageDescriptors(image) {
       const descriptor = await this.getFaceDescriptors({ image })
-      await this.$api.lecturerDescriptors.create({
-        lecturerDescriptor: { lecturer_image_id: image.id, descriptor }
-      })
-      await this.$api.lecturerImages.update(image.id, {
-        lecturerImage: { has_descriptor: true }
-      })
+      if (descriptor) {
+        await this.$api.lecturerDescriptors.create({
+          lecturerDescriptor: { lecturer_image_id: image.id, descriptor }
+        })
+        await this.$api.lecturerImages.update(image.id, {
+          lecturerImage: { has_descriptor: true }
+        })
+      }
     },
     async onImagesSelected(event) {
       try {

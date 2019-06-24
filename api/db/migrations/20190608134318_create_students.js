@@ -13,19 +13,23 @@ exports.up = function(knex, Promise) {
     table.string('image').defaultTo('')
     table.boolean('is_active').defaultTo(true)
     table
+      .enum('grade', ['1', '2', '3', '4'])
+      .notNullable()
+      .defaultTo('1')
+    table
       .uuid('user_id')
       .notNullable()
       .references('users.id')
       .onDelete('CASCADE')
     table
-      .uuid('major_id')
-      .notNullable()
-      .references('majors.id')
-      .onDelete('SET NULL')
-    table
       .uuid('study_program_id')
       .notNullable()
       .references('study_programs.id')
+      .onDelete('SET NULL')
+    table
+      .uuid('major_id')
+      .notNullable()
+      .references('majors.id')
       .onDelete('SET NULL')
     table
       .uuid('group_id')
