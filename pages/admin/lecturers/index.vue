@@ -92,9 +92,9 @@ export default {
       pagination: {
         descending: false,
         page: 1,
-        rowsPerPage: 20,
+        rowsPerPage: 25,
         sortBy: 'name',
-        totalItems: 20
+        totalItems: 25
       },
       totalItems: 0
     }
@@ -125,7 +125,7 @@ export default {
       const { rowCount, lecturers, ...filter } = await $api.lecturers.fetchPage(
         {
           orderBy: 'name',
-          limit: 20,
+          limit: 25,
           offset: 0
         }
       )
@@ -142,11 +142,11 @@ export default {
     async fetchLecturers(
       {
         orderBy = 'name',
-        limit = 20,
+        limit = 25,
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
       } = {
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }
     ) {

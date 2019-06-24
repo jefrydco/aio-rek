@@ -179,9 +179,9 @@ export default {
       pagination: {
         descending: false,
         page: 1,
-        rowsPerPage: 20,
+        rowsPerPage: 25,
         sortBy: 'name',
-        totalItems: 20
+        totalItems: 25
       },
       totalItems: 0
     }
@@ -212,7 +212,7 @@ export default {
     try {
       const { rowCount, majors, ...filter } = await $api.majors.fetchPage({
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         offset: 0,
         withRelated: 'department'
       })
@@ -231,12 +231,12 @@ export default {
     async fetchStudyPrograms(
       {
         orderBy = 'name',
-        limit = 20,
+        limit = 25,
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
         withRelated = 'department'
       } = {
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
         withRelated: 'department'
       }

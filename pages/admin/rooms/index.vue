@@ -209,9 +209,9 @@ export default {
       pagination: {
         descending: false,
         page: 1,
-        rowsPerPage: 20,
+        rowsPerPage: 25,
         sortBy: 'name',
-        totalItems: 20
+        totalItems: 25
       },
       totalItems: 0
     }
@@ -241,7 +241,7 @@ export default {
     try {
       const { rowCount, rooms, ...filter } = await $api.rooms.fetchPage({
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         offset: 0,
         withRelated: 'user'
       })
@@ -263,11 +263,11 @@ export default {
     async fetchRooms(
       {
         orderBy = 'name',
-        limit = 20, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        limit = 25, // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
       } = {
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }

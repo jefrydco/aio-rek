@@ -153,9 +153,9 @@ export default {
       pagination: {
         descending: false,
         page: 1,
-        rowsPerPage: 20,
+        rowsPerPage: 25,
         sortBy: 'name',
-        totalItems: 20
+        totalItems: 25
       },
       totalItems: 0
     }
@@ -189,7 +189,7 @@ export default {
         ...filter
       } = await $api.departments.fetchPage({
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         offset: 0
       })
       return {
@@ -205,11 +205,11 @@ export default {
     async fetchDepartments(
       {
         orderBy = 'name',
-        limit = 20, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        limit = 25, // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
       } = {
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }

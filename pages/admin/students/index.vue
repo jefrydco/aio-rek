@@ -116,9 +116,9 @@ export default {
       pagination: {
         descending: false,
         page: 1,
-        rowsPerPage: 20,
+        rowsPerPage: 25,
         sortBy: 'identifier',
-        totalItems: 20
+        totalItems: 25
       },
       totalItems: 0
     }
@@ -149,7 +149,7 @@ export default {
     try {
       const { rowCount, students, ...filter } = await $api.students.fetchPage({
         orderBy: 'identifier',
-        limit: 20,
+        limit: 25,
         offset: 0,
         withRelated: 'study_program,major,group'
       })
@@ -166,12 +166,12 @@ export default {
     async fetchStudents(
       {
         orderBy = 'identifier',
-        limit = 20,
+        limit = 25,
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
         withRelated = 'study_program,major,group'
       } = {
         orderBy: 'identifier',
-        limit: 20,
+        limit: 25,
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
         withRelated: 'study_program,major,group'
       }

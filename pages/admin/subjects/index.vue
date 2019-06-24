@@ -176,9 +176,9 @@ export default {
       pagination: {
         descending: false,
         page: 1,
-        rowsPerPage: 20,
+        rowsPerPage: 25,
         sortBy: 'name',
-        totalItems: 20
+        totalItems: 25
       },
       totalItems: 0
     }
@@ -208,7 +208,7 @@ export default {
     try {
       const { rowCount, subjects, ...filter } = await $api.subjects.fetchPage({
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         offset: 0
       })
       return {
@@ -224,11 +224,11 @@ export default {
     async fetchSubjects(
       {
         orderBy = 'name',
-        limit = 20,
+        limit = 25,
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
       } = {
         orderBy: 'name',
-        limit: 20,
+        limit: 25,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
       }
