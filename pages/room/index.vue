@@ -10,88 +10,90 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <v-layout style="display: none" row="" wrap="">
-                <v-flex xs12="">
-                  <video
-                    id="live-video"
-                    ref="liveVideo"
-                    width="720"
-                    height="540"
-                    autoplay=""
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <canvas
-                    id="live-canvas"
-                    ref="liveCanvas"
-                    width="720"
-                    height="540"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-select
-                    v-model="selectedCamera"
-                    :items="cameras"
-                    label="Select Camera"
-                    box=""
-                    item-value="deviceId"
-                    item-text="label"
-                  />
-                  <v-chip label="" color="accent" text-color="white">
-                    Real FPS: {{ realFps }}
-                  </v-chip>
-                  <v-chip label="" color="accent" text-color="white">
-                    Duration: {{ prettyDuration }}
-                  </v-chip>
-                </v-flex>
-              </v-layout>
+              <v-container class="pa-0" fluid="" grid-list-xl="">
+                <v-layout style="display: none" row="" wrap="">
+                  <v-flex xs12="">
+                    <video
+                      id="live-video"
+                      ref="liveVideo"
+                      width="720"
+                      height="540"
+                      autoplay=""
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <canvas
+                      id="live-canvas"
+                      ref="liveCanvas"
+                      width="720"
+                      height="540"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-select
+                      v-model="selectedCamera"
+                      :items="cameras"
+                      label="Select Camera"
+                      box=""
+                      item-value="deviceId"
+                      item-text="label"
+                    />
+                    <v-chip label="" color="accent" text-color="white">
+                      Real FPS: {{ realFps }}
+                    </v-chip>
+                    <v-chip label="" color="accent" text-color="white">
+                      Duration: {{ prettyDuration }}
+                    </v-chip>
+                  </v-flex>
+                </v-layout>
 
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-slider
-                    v-model="fps"
-                    :max="60"
-                    :min="1"
-                    :step="1"
-                    label="FPS"
-                    thumb-label="always"
-                    ticks=""
-                  />
-                  <v-item-group v-model="selectedOptions" multiple="">
-                    <v-layout row="" wrap="">
-                      <v-flex
-                        v-for="(option, i) in options"
-                        :key="`option_${i}`"
-                        xs12=""
-                        md4=""
-                        lg3=""
-                      >
-                        <v-item :value="option.value">
-                          <template #default="{ active, toggle }">
-                            <v-card
-                              :color="active ? 'primary' : ''"
-                              dark=""
-                              ripple=""
-                              @click="toggle"
-                            >
-                              <v-card-text class="text-xs-center">
-                                <v-icon>{{ option.icon }}</v-icon>
-                                <h3 class="subheading">
-                                  {{ option.text }}
-                                </h3>
-                              </v-card-text>
-                            </v-card>
-                          </template>
-                        </v-item>
-                      </v-flex>
-                    </v-layout>
-                  </v-item-group>
-                </v-flex>
-              </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-slider
+                      v-model="fps"
+                      :max="60"
+                      :min="1"
+                      :step="1"
+                      label="FPS"
+                      thumb-label="always"
+                      ticks=""
+                    />
+                    <v-item-group v-model="selectedOptions" multiple="">
+                      <v-layout row="" wrap="">
+                        <v-flex
+                          v-for="(option, i) in options"
+                          :key="`option_${i}`"
+                          xs12=""
+                          md4=""
+                          lg3=""
+                        >
+                          <v-item :value="option.value">
+                            <template #default="{ active, toggle }">
+                              <v-card
+                                :color="active ? 'primary' : ''"
+                                dark=""
+                                ripple=""
+                                @click="toggle"
+                              >
+                                <v-card-text class="text-xs-center">
+                                  <v-icon>{{ option.icon }}</v-icon>
+                                  <h3 class="subheading">
+                                    {{ option.text }}
+                                  </h3>
+                                </v-card-text>
+                              </v-card>
+                            </template>
+                          </v-item>
+                        </v-flex>
+                      </v-layout>
+                    </v-item-group>
+                  </v-flex>
+                </v-layout>
+              </v-container>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -105,78 +107,174 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" class="text-xs-center">
-                  <v-fade-transition mode="out-in">
-                    <div v-if="isLecturerDetected">
-                      <h3 class="display-1 mb-3">
-                        {{ detectedLecturer.name }}
-                      </h3>
-                      <v-dialog v-model="isConfirming" width="350">
-                        <template #activator="{ on }">
-                          <v-btn large="" v-on="on">Cancel</v-btn>
-                        </template>
-                        <v-card>
-                          <v-card-text>
-                            <div class="body-2">
-                              To cancel the lesson, please keep your face away
-                              from the camera
-                            </div>
-                          </v-card-text>
-                          <v-card-actions>
-                            <v-spacer />
-                            <v-btn
-                              :loading="isLoading"
-                              :disabled="isLoading"
-                              flat=""
-                              @click="isConfirming = false"
-                            >
-                              Cancel
-                            </v-btn>
-                            <v-btn
-                              :loading="isLoading"
-                              :disabled="isLoading"
-                              color="primary"
-                              flat=""
-                              @click="onUnderstand"
-                            >
-                              I Understand
-                            </v-btn>
-                          </v-card-actions>
-                        </v-card>
-                      </v-dialog>
+              <v-container class="pa-0" fluid="" grid-list-xl="">
+                <v-layout v-if="isLecturerDetected" row="" wrap="">
+                  <v-flex xs12="">
+                    <v-layout row="" wrap="">
+                      <v-flex xs12="" sm3="">
+                        <app-avatar
+                          :name="removeTitle(detectedLecturer.name)"
+                          :image="detectedLecturer.image"
+                          :size="128"
+                          text-class="caption"
+                        />
+                      </v-flex>
+                      <v-flex xs12="" sm9="">
+                        <h3 class="display-1 mb-3">
+                          {{ detectedLecturer.name }}
+                        </h3>
+                        <v-dialog v-model="isConfirming" width="350">
+                          <template #activator="{ on }">
+                            <v-btn large="" v-on="on">Cancel</v-btn>
+                          </template>
+                          <v-card>
+                            <v-card-text>
+                              <div class="body-2">
+                                To cancel the lesson, please keep your face away
+                                from the camera
+                              </div>
+                            </v-card-text>
+                            <v-card-actions>
+                              <v-spacer />
+                              <v-btn
+                                :loading="isLoading"
+                                :disabled="isLoading"
+                                flat=""
+                                @click="isConfirming = false"
+                              >
+                                Cancel
+                              </v-btn>
+                              <v-btn
+                                :loading="isLoading"
+                                :disabled="isLoading"
+                                color="primary"
+                                flat=""
+                                @click="onUnderstand"
+                              >
+                                I Understand
+                              </v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
 
-                      <v-layout row="" wrap="">
-                        <v-flex xs12="">
-                          <v-autocomplete
-                            v-model="selectedDepartment"
-                            v-validate="'required'"
-                            :error-messages="
-                              errors.collect('selectedDepartment')
-                            "
-                            :disabled="isLoading"
-                            :items="departments"
-                            item-value="id"
-                            item-text="name"
-                            label="Department"
-                            data-vv-name="selectedDepartment"
-                            data-vv-as="department"
-                            name="selectedDepartment"
-                            required=""
-                            clearable=""
-                            box=""
-                            data-vv-value-path="selectedDepartment"
-                          />
-                        </v-flex>
-                      </v-layout>
-                      <v-btn large="" color="accent">Start</v-btn>
-                    </div>
-                    <h3 v-else="" class="headline">
-                      Point Your face at the camera
+                        <v-btn large="" color="primary" @click="onCustom">
+                          Custom
+                        </v-btn>
+                        <v-dialog
+                          v-model="isChoosingSchedule"
+                          width="700"
+                          scrollable=""
+                        >
+                          <template #activator="{ on }">
+                            <v-btn large="" color="accent" v-on="on">
+                              Start
+                            </v-btn>
+                          </template>
+                          <v-card>
+                            <v-toolbar card="" color="primary" dark="">
+                              <v-toolbar-title>Choose Schedule</v-toolbar-title>
+                              <v-spacer />
+                              <v-btn
+                                icon=""
+                                @click="isChoosingSchedule = false"
+                              >
+                                <v-icon>close</v-icon>
+                              </v-btn>
+                            </v-toolbar>
+                            <v-card-text>
+                              <v-container
+                                class="pa-0"
+                                fluid=""
+                                grid-list-xl=""
+                              >
+                                <v-data-iterator
+                                  :items="schedules"
+                                  :rows-per-page-items="rowsPerPageItems"
+                                  :pagination.sync="pagination"
+                                  :total-items="totalItems"
+                                  :loading="isLoading"
+                                  content-tag="v-layout"
+                                  row=""
+                                  wrap=""
+                                >
+                                  <template #item="{ item }">
+                                    <v-fade-transition>
+                                      <v-flex xs12="" sm6="">
+                                        <v-card ripple="">
+                                          <v-card-text>
+                                            <v-layout row="" wrap="">
+                                              <v-flex xs12="">
+                                                <h4>Subject</h4>
+                                                <h5 class="subheading">
+                                                  {{ item.subject.name }}
+                                                </h5>
+                                              </v-flex>
+                                            </v-layout>
+                                            <v-layout row="" wrap="">
+                                              <v-flex xs12="">
+                                                <h4>Grade</h4>
+                                                <h5 class="subheading">
+                                                  {{ item.grade }}
+                                                </h5>
+                                              </v-flex>
+                                            </v-layout>
+                                            <v-layout row="" wrap="">
+                                              <v-flex xs12="">
+                                                <h4>Study Program</h4>
+                                                <h5 class="subheading">
+                                                  {{ item.study_program.name }}
+                                                </h5>
+                                              </v-flex>
+                                            </v-layout>
+                                            <v-layout row="" wrap="">
+                                              <v-flex xs12="">
+                                                <h4>Major</h4>
+                                                <h5 class="subheading">
+                                                  {{ item.major.name }}
+                                                </h5>
+                                              </v-flex>
+                                            </v-layout>
+                                            <v-layout row="" wrap="">
+                                              <v-flex xs12="">
+                                                <h4>Group</h4>
+                                                <h5 class="subheading">
+                                                  {{ item.group.name }}
+                                                </h5>
+                                              </v-flex>
+                                            </v-layout>
+                                          </v-card-text>
+                                        </v-card>
+                                      </v-flex>
+                                    </v-fade-transition>
+                                  </template>
+                                </v-data-iterator>
+                              </v-container>
+                            </v-card-text>
+                            <v-divider />
+                            <v-card-actions>
+                              <v-spacer />
+                              <v-btn
+                                large=""
+                                @click="isChoosingSchedule = false"
+                              >
+                                Cancel
+                              </v-btn>
+                              <v-btn color="accent" large="">Start</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </v-flex>
+                    </v-layout>
+                  </v-flex>
+                </v-layout>
+                <v-layout v-else="" row="" wrap="">
+                  <v-flex xs12="" class="text-xs-center">
+                    <h3 class="headline">
+                      Point Your face at the camera to start the lesson
                     </h3>
-                  </v-fade-transition>
-                </v-flex>
-              </v-layout>
+                  </v-flex>
+                </v-layout>
+              </v-container>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -196,15 +294,38 @@ import { drawImage } from '~/utils/canvas'
 
 import { types as detectionTypes } from '~/store/detection'
 import { types as cameraTypes } from '~/store/camera'
+import string from '~/mixins/string'
+
+import AppAvatar from '~/components/AppAvatar'
 
 export default {
+  components: {
+    AppAvatar
+  },
+  mixins: [string],
   data() {
     return {
+      isChoosingSchedule: false,
       isConfirming: false,
       isLoading: false,
       interval: null,
       lecturers: [],
       students: [],
+      schedules: [],
+      rowsPerPageItems: [
+        12,
+        24,
+        36,
+        { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }
+      ],
+      pagination: {
+        descending: true,
+        page: 1,
+        rowsPerPage: 12,
+        sortBy: 'created_at',
+        totalItems: 12
+      },
+      totalItems: 0,
       fps: 60,
       realFps: 0,
       duration: 0,
@@ -230,6 +351,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('user', ['user']),
     ...mapState('camera', ['cameras']),
     ...mapState('detection', [
       'isLecturerDetecting',
@@ -370,6 +492,7 @@ export default {
                     detection.detected
                   )
                   this.clearFaceDetection()
+                  this.fetchSchedules({ lecturer_id: detection.detected.id })
                 }
               })()
               const t1 = performance.now()
@@ -385,10 +508,14 @@ export default {
     },
     async clearFaceDetection() {
       await clearIntervalAsync(this.interval)
-      await (() => {
-        this.duration = 0
-        this.realFps = 0
-      })()
+    },
+    onUnderstand() {
+      this.isConfirming = false
+      this.init()
+    },
+    onCustom() {},
+    onTriggerStart() {
+      this.isChoosingSchedule = true
     },
     async fetchLecturers() {
       try {
@@ -401,9 +528,69 @@ export default {
         this.isLoading = false
       }
     },
-    onUnderstand() {
-      this.isConfirming = false
-      this.init()
+    // eslint-disable-next-line
+    async fetchSchedules({ lecturer_id, room_id }) {
+      try {
+        this.isLoading = true
+        const { schedules } = await this.$api.schedules.fetchPage({
+          withRelated: 'subject,lecturer,room,study_program,major,group',
+          lecturer_id,
+          room_id
+        })
+        this.schedules = schedules
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchDepartments() {
+      try {
+        this.isLoading = true
+        const { departments } = await this.$api.departments.fetchPage()
+        this.departments = departments
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchStudyPrograms() {
+      try {
+        this.isLoading = true
+        const { studyPrograms } = await this.$api.studyPrograms.fetchPage()
+        this.studyPrograms = studyPrograms
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    // eslint-disable-next-line
+    async fetchMajors({ study_program_id, department_id }) {
+      try {
+        this.isLoading = true
+        const { majors } = await this.$api.majors.fetchPage({
+          study_program_id,
+          department_id
+        })
+        this.majors = majors
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchGroups() {
+      try {
+        this.isLoading = true
+        const { groups } = await this.$api.groups.fetchPage()
+        this.groups = groups
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
     }
   }
 }

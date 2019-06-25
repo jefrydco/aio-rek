@@ -14,7 +14,7 @@ export const actions = {
     { commit },
     {
       $http,
-      app: { $handleError },
+      app: { $api, $handleError },
       req
     }
   ) {
@@ -23,9 +23,35 @@ export const actions = {
       if (token) {
         $http.setToken(token, 'Bearer')
         try {
-          const { user } = await $http.$get('user/auth')
+          const { user } = await $http.$get('user/profile')
 
-          commit(`user/${userTypes.SET_USER}`, user)
+          let profile
+          if (user.role !== 'admin') {
+            if (user.role === 'room') {
+              profile = await $api.rooms
+                .fetchPage({ user_id: user.id })
+                .then(({ rooms }) => rooms[0])
+            }
+            if (user.role === 'student') {
+              profile = await $api.students
+                .fetchPage({ user_id: user.id })
+                .then(({ students }) => students[0])
+            }
+            if (user.role === 'lecturer') {
+              profile = await $api.lecturers
+                .fetchPage({ user_id: user.id })
+                .then(({ rooms }) => rooms[0])
+            }
+          }
+          let payload = { ...user }
+          if (profile) {
+            payload = {
+              ...user,
+              profile
+            }
+          }
+
+          commit(`user/${userTypes.SET_USER}`, payload)
         } catch (error) {
           $handleError(error)
         }

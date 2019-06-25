@@ -159,7 +159,7 @@
                     box=""
                     autofocus=""
                     data-vv-value-path="schedule.start_time"
-                    mask="time-with-seconds"
+                    mask="time"
                   />
                 </v-flex>
                 <v-flex xs12="" sm6="">
@@ -177,7 +177,7 @@
                     box=""
                     autofocus=""
                     data-vv-value-path="schedule.end_time"
-                    mask="time-with-seconds"
+                    mask="time"
                   />
                 </v-flex>
               </v-layout>

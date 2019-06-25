@@ -17,7 +17,7 @@ router.get(
   '/schedules',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetchPage
 )
 router.get(

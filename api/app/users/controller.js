@@ -27,7 +27,7 @@ class UserController extends Controller {
     return errorCatcher((req, res) => {
       const { user } = req
       const service = this._getService(res)
-      return res.json({ [this.name]: service.toJSON(user, ['id']) })
+      return res.json({ [this.name]: service.toJSON(user) })
     })(req, res, next)
   }
 }

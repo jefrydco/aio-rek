@@ -2,8 +2,8 @@
   {
     "id": "3bdf1f32-8765-425e-a1ac-af3550574c24",
     "day": "monday",
-    "start_time": "08:00:00",
-    "end_time": "11:00:00",
+    "start_time": "08:00",
+    "end_time": "11:00",
     "grade": "3",
     "subject_id": "9c562542-c199-4eac-8035-8c7651b78417",
     "lecturer_id": "3f82ae22-4603-47d4-8a70-9bd2a228f5b5",
@@ -15,8 +15,8 @@
   {
     "id": "6f77bdb1-f1db-47ef-8b48-c01f9fe63d58",
     "day": "monday",
-    "start_time": "12:20:00",
-    "end_time": "13:50:00",
+    "start_time": "12:20",
+    "end_time": "13:50",
     "grade": "3",
     "subject_id": "e22084e8-552a-4d4e-a56b-12b1524f6af5",
     "lecturer_id": "0f52399f-59c0-4e33-8ee8-6bc535e4ce46",
@@ -28,8 +28,8 @@
   {
     "id": "a8bffcbd-ac6a-4dfa-b034-5f4799b23716",
     "day": "tuesday",
-    "start_time": "08:00:00",
-    "end_time": "09:30:00",
+    "start_time": "08:00",
+    "end_time": "09:30",
     "grade": "3",
     "subject_id": "61921b7a-cf8a-4dc9-9627-9509d3e0babb",
     "lecturer_id": "13c274dc-cb1d-4b29-a89f-1960a83986cc",
@@ -41,7 +41,7 @@
   {
     "id": "627b122c-b4d6-419a-b418-fd4f8aec8411",
     "day": "tuesday",
-    "start_time": "09:40:00",
+    "start_time": "09:40",
     "end_time": "11:10",
     "grade": "3",
     "subject_id": "0ab06739-7007-4d8a-bc04-3acbdf0d1e3c",

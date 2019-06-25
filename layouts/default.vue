@@ -61,12 +61,12 @@
           <template #activator="{ on }">
             <v-btn flat="" v-on="on">
               <app-avatar
-                :name="user.email"
+                :name="avatarName"
                 :image="user.image"
                 size="36"
                 class="mr-3"
               />
-              <span class="hidden-xs-only">{{ user.email }}</span>
+              <span class="hidden-xs-only">{{ avatarName }}</span>
               <v-icon right="">arrow_drop_down</v-icon>
             </v-btn>
           </template>
@@ -122,6 +122,12 @@ export default {
     ...mapState('face', {
       isModelsLoading: 'isLoading'
     }),
+    avatarName() {
+      if (this.user.role === 'admin') {
+        return 'Admin'
+      }
+      return this.user.profile.name
+    },
     menus() {
       if (this.user.role === 'room') {
         return [{ text: 'Home', to: { name: 'room' } }]
