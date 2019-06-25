@@ -160,8 +160,13 @@ export default {
     },
     initToken() {
       const token = Cookie.get('t')
+      const { name } = this.$route
+      const { role } = this.user
       if (token) {
         this.$http.setToken(token, 'Bearer')
+        if (name && role && name !== role) {
+          this.$router.replace({ name: role })
+        }
       }
     },
     onLogout() {
