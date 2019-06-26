@@ -583,8 +583,8 @@
                 <v-flex xs12="">
                   <v-img
                     v-if="attendance.image"
-                    :src="attendance.url"
-                    :alt="attendance.schedule.subject.name"
+                    :src="enlargedImage.url"
+                    :alt="enlargedImage.name"
                   >
                     <template #placeholder="">
                       <v-layout
@@ -657,8 +657,7 @@ export default {
         end_datetime: null,
         schedule_id: null,
         room_id: null,
-        image: null,
-        url: null
+        image: null
       },
       attendance: {
         id: null,
@@ -667,8 +666,7 @@ export default {
         end_datetime: null,
         schedule_id: null,
         room_id: null,
-        image: null,
-        url: null
+        image: null
       },
       attendances: [],
       filter: {
@@ -728,6 +726,10 @@ export default {
         name: '',
         url: '',
         file: null
+      },
+      enlargedImage: {
+        name: '',
+        url: ''
       }
     }
   },
@@ -850,9 +852,8 @@ export default {
       },
       deep: true
     },
-    'image.file': async function(file) {
+    'image.file': function(file) {
       this.attendance.image = file
-      this.attendance.url = await fileReader(file)
     }
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
@@ -1038,9 +1039,16 @@ export default {
         this.isLoading = false
       }
     },
-    onTriggerEnlargeImage(event, item) {
+    async onTriggerEnlargeImage(event, item) {
       this.isEnlargingImageDialog = true
       this.attendance = { ...item }
+
+      this.enlargedImage.name = item.schedule.subject.name
+      if (this.attendance.image instanceof File) {
+        this.enlargedImage.url = await fileReader(this.attendance.image)
+      } else {
+        this.enlargedImage.url = item.image
+      }
     },
     onTrigger(event, item) {
       this.isCreatingOrEditingDialog = true
@@ -1090,7 +1098,6 @@ export default {
 
           delete payload.room
           delete payload.schedule
-          delete payload.url
 
           if (this.isEditing) {
             payload = {
