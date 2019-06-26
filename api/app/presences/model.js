@@ -14,6 +14,9 @@ module.exports = bookshelf =>
     getValidators() {
       return {
         image: ['required', 'string'],
+        is_late: ['boolean'],
+        status: ['string'],
+        datetime: [],
         student_id: ['required', 'uuid'],
         attendance_id: ['required', 'uuid']
       }

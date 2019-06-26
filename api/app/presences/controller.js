@@ -1,6 +1,7 @@
 'use strict'
 
 const fs = require('fs')
+const boolean = require('boolean')
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
 
@@ -12,7 +13,7 @@ class PresenceController extends Controller {
     return errorCatcher(async (req, res) => {
       const {
         // eslint-disable-next-line
-        body: { student_id, attendance_id },
+        body,
         file
       } = this._getFormDataPayload(req)
       const service = this._getService(req)
@@ -27,9 +28,10 @@ class PresenceController extends Controller {
 
       const payload = {
         image: path.replace('static', ''),
-        student_id,
-        attendance_id
+        ...body
       }
+
+      payload.is_late = boolean(payload.is_late)
 
       const queryResult = await service.create(payload, {
         trx

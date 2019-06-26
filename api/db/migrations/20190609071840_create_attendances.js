@@ -10,8 +10,8 @@ exports.up = function(knex, Promise) {
       .notNullable()
       .defaultTo('')
     table.boolean('is_active').defaultTo(true)
-    table.datetime('start_datetime').notNullable()
-    table.datetime('end_datetime').notNullable()
+    table.datetime('start_datetime').defaultTo(knex.fn.now())
+    table.datetime('end_datetime')
     table
       .uuid('schedule_id')
       .notNullable()

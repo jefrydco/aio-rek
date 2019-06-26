@@ -2,17 +2,17 @@
   <v-card>
     <v-toolbar card="">
       <v-toolbar-title>
-        <h2 class="headline">Attendances</h2>
+        <h2 class="headline">Presences</h2>
       </v-toolbar-title>
       <v-spacer />
       <v-btn color="primary" @click="onTrigger">
-        Create Attendance
+        Create Presence
       </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-data-table
         :headers="headers"
-        :items="attendances"
+        :items="presences"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
         :total-items="totalItems"
@@ -22,43 +22,38 @@
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1">
               <app-avatar
-                :name="item.schedule.subject.name"
+                :name="item.student.name"
                 :image="item.image"
                 text-class="caption"
               />
             </td>
-            <td class="py-1 body-2">{{ item.schedule.subject.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.lecturer.name }}</td>
-            <td class="py-1 body-2">{{ item.room.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.grade }}</td>
-            <td class="py-1 body-2">{{ item.schedule.study_program.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.major.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.group.name }}</td>
+            <td class="py-1 body-2">
+              {{ item.student.name }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.attendance.schedule.lecturer.name }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.attendance.room.name }}
+            </td>
             <td class="py-1 body-2 text-xs-center">
-              <v-chip v-if="item.is_active" color="info" text-color="white">
-                <v-avatar class="info darken-3">
-                  <v-icon>priority_high</v-icon>
+              <v-chip v-if="item.is_late" color="error" text-color="white">
+                <v-avatar class="error darken-3">
+                  <v-icon>close</v-icon>
                 </v-avatar>
-                <span>Active</span>
+                <span>Late</span>
               </v-chip>
-              <v-chip v-else="" color="success" text-color="white">
-                <v-avatar class="success darken-3">
+              <v-chip v-else="" color="info" text-color="white">
+                <v-avatar class="info darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
-                <span>Finished</span>
+                <span>On Time</span>
               </v-chip>
             </td>
             <td class="py-1 body-2">
-              {{ $moment(item.start_datetime).format('llll') }}
+              {{ item.datetime ? $moment(item.datetime).format('llll') : '' }}
             </td>
             <td class="py-1 body-2">
-              {{
-                item.end_datetime
-                  ? $moment(item.end_datetime).format('llll')
-                  : '-'
-              }}
-            </td>
-            <td class="py-1 body-2 text-xs-center">
               <v-btn color="info" @click="onTriggerEnlargeImage($event, item)">
                 Enlarge Image
               </v-btn>
@@ -82,7 +77,7 @@
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
               <h3 class="title">
-                {{ isEditing ? 'Edit' : 'Create' }} Attendance
+                {{ isEditing ? 'Edit' : 'Create' }} Presence
               </h3>
             </v-toolbar-title>
             <v-spacer />
@@ -92,192 +87,6 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-menu
-                    ref="startDate"
-                    v-model="isStartDate"
-                    offset-y=""
-                    bottom=""
-                    :close-on-content-click="false"
-                  >
-                    <template #activator="{on}">
-                      <v-text-field
-                        v-validate="'required'"
-                        :value="startDate"
-                        :error-messages="errors.collect('start_date')"
-                        :disabled="isLoading"
-                        label="Start Date"
-                        data-vv-name="start_date"
-                        data-vv-as="start date"
-                        name="start_date"
-                        required=""
-                        clearable=""
-                        outline=""
-                        readonly=""
-                        data-vv-delay="1000"
-                        v-on="on"
-                        @click:clear="
-                          () => {
-                            start.date = null
-                          }
-                        "
-                      />
-                    </template>
-                    <v-date-picker v-model="start.date" scrollable="">
-                      <v-spacer />
-                      <v-btn flat="" @click="isStartDate = false">Cancel</v-btn>
-                      <v-btn
-                        flat=""
-                        color="primary"
-                        @click="$refs.startDate.save(start.date)"
-                      >
-                        Ok
-                      </v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-menu
-                    ref="startTime"
-                    v-model="isStartTime"
-                    offset-y=""
-                    bottom=""
-                    :close-on-content-click="false"
-                  >
-                    <template #activator="{on}">
-                      <v-text-field
-                        v-validate="'required'"
-                        :value="startTime"
-                        :error-messages="errors.collect('start_time')"
-                        :disabled="isLoading"
-                        label="Start Time"
-                        data-vv-name="start_time"
-                        data-vv-as="start time"
-                        name="start_time"
-                        required=""
-                        clearable=""
-                        outline=""
-                        readonly=""
-                        data-vv-delay="1000"
-                        v-on="on"
-                        @click:clear="
-                          () => {
-                            start.time = null
-                          }
-                        "
-                      />
-                    </template>
-                    <v-time-picker
-                      v-model="start.time"
-                      scrollable=""
-                      :max="end.time"
-                    >
-                      <v-spacer />
-                      <v-btn flat="" @click="isStartTime = false">Cancel</v-btn>
-                      <v-btn
-                        flat=""
-                        color="primary"
-                        @click="$refs.startTime.save(start.time)"
-                      >
-                        Ok
-                      </v-btn>
-                    </v-time-picker>
-                  </v-menu>
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-menu
-                    ref="endDate"
-                    v-model="isEndDate"
-                    offset-y=""
-                    bottom=""
-                    :close-on-content-click="false"
-                  >
-                    <template #activator="{on}">
-                      <v-text-field
-                        v-validate="'required'"
-                        :value="endDate"
-                        :error-messages="errors.collect('end_date')"
-                        :disabled="isLoading"
-                        label="End Date"
-                        data-vv-name="end_date"
-                        data-vv-as="end date"
-                        name="end_date"
-                        required=""
-                        clearable=""
-                        outline=""
-                        readonly=""
-                        data-vv-delay="1000"
-                        v-on="on"
-                        @click:clear="
-                          () => {
-                            end.date = null
-                          }
-                        "
-                      />
-                    </template>
-                    <v-date-picker
-                      v-model="end.date"
-                      scrollable=""
-                      :min="start.date"
-                    >
-                      <v-spacer />
-                      <v-btn flat="" @click="isEndDate = false">Cancel</v-btn>
-                      <v-btn
-                        flat=""
-                        color="primary"
-                        @click="$refs.endDate.save(end.date)"
-                      >
-                        Ok
-                      </v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-menu
-                    ref="endTime"
-                    v-model="isEndTime"
-                    offset-y=""
-                    bottom=""
-                    :close-on-content-click="false"
-                  >
-                    <template #activator="{on}">
-                      <v-text-field
-                        :value="endTime"
-                        :disabled="isLoading"
-                        label="End Time"
-                        name="end_time"
-                        clearable=""
-                        outline=""
-                        readonly=""
-                        v-on="on"
-                        @click:clear="
-                          () => {
-                            end.time = null
-                          }
-                        "
-                      />
-                    </template>
-                    <v-time-picker
-                      v-model="end.time"
-                      scrollable=""
-                      :min="start.time"
-                    >
-                      <v-spacer />
-                      <v-btn flat="" @click="isEndTime = false">Cancel</v-btn>
-                      <v-btn
-                        flat=""
-                        color="primary"
-                        @click="$refs.endTime.save(end.time)"
-                      >
-                        Ok
-                      </v-btn>
-                    </v-time-picker>
-                  </v-menu>
-                </v-flex>
-              </v-layout>
               <v-layout row="" wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
@@ -404,7 +213,7 @@
               <v-layout row="" wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
-                    v-model="attendance.schedule_id"
+                    v-model="attendanceFilter.schedule_id"
                     v-validate="'required'"
                     :error-messages="errors.collect('schedule_id')"
                     :disabled="isLoading"
@@ -418,7 +227,7 @@
                     clearable=""
                     outline=""
                     hint="Please choose the study program, department, major, group, grade and lecturer first"
-                    data-vv-value-path="attendance.schedule_id"
+                    data-vv-value-path="attendanceFilter.schedule_id"
                   >
                     <template #selection="{ item, selected }">
                       {{ item.subject.name }}
@@ -431,11 +240,19 @@
                         <v-list-tile-sub-title>
                           {{ item.room.name }} -
                           {{
-                            $moment(item.start_time, 'HH:mm:ss').format('HH:mm')
+                            item.start_time
+                              ? $moment(item.start_time, 'HH:mm:ss').format(
+                                  'HH:mm'
+                                )
+                              : ''
                           }}
                           -
                           {{
-                            $moment(item.end_time, 'HH:mm:ss').format('HH:mm')
+                            item.end_time
+                              ? $moment(item.end_time, 'HH:mm:ss').format(
+                                  'HH:mm'
+                                )
+                              : ''
                           }}
                         </v-list-tile-sub-title>
                       </v-list-tile-content>
@@ -444,7 +261,7 @@
                 </v-flex>
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
-                    v-model="attendance.room_id"
+                    v-model="attendanceFilter.room_id"
                     v-validate="'required'"
                     :error-messages="errors.collect('room_id')"
                     :disabled="isLoading"
@@ -458,18 +275,109 @@
                     required=""
                     clearable=""
                     outline=""
-                    data-vv-value-path="attendance.room_id"
+                    data-vv-value-path="attendanceFilter.room_id"
                   />
                 </v-flex>
               </v-layout>
               <v-layout row="" wrap="">
                 <v-flex xs12="" sm6="">
-                  <v-switch
-                    v-model="attendance.is_active"
-                    class="ma-0"
-                    label="Is attendance active?"
-                  />
+                  <v-autocomplete
+                    v-model="presence.attendance_id"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('attendance_id')"
+                    :disabled="isLoading"
+                    :items="attendances"
+                    item-value="id"
+                    item-text="name"
+                    label="Attendance"
+                    data-vv-name="attendance_id"
+                    data-vv-as="attendance"
+                    name="attendance_id"
+                    required=""
+                    clearable=""
+                    outline=""
+                    data-vv-value-path="presence.attendance_id"
+                  >
+                    <template #selection="{ item, selected }">
+                      <v-chip :selected="selected">
+                        <app-avatar
+                          :image="item.schedule.lecturer.image"
+                          :name="item.schedule.lecturer.name"
+                          text-class="caption"
+                        />
+                        <span>{{ item.schedule.lecturer.name }}</span>
+                      </v-chip>
+                    </template>
+                    <template #item="{ item }">
+                      <v-list-tile-avatar>
+                        <app-avatar
+                          :image="item.image"
+                          :name="item.schedule.lecturer.name"
+                          text-class="caption"
+                        />
+                      </v-list-tile-avatar>
+                      <v-list-tile-content>
+                        <v-list-tile-title>
+                          {{ item.schedule.lecturer.name }}
+                        </v-list-tile-title>
+                        <v-list-tile-sub-title>
+                          {{
+                            item.start_datetime
+                              ? $moment(item.start_datetime).format('llll')
+                              : ''
+                          }}
+                        </v-list-tile-sub-title>
+                      </v-list-tile-content>
+                    </template>
+                  </v-autocomplete>
                 </v-flex>
+                <v-flex xs12="" sm6="">
+                  <v-autocomplete
+                    v-model="presence.student_id"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('student_id')"
+                    :disabled="isLoading"
+                    :items="students"
+                    item-value="id"
+                    item-text="name"
+                    label="Student"
+                    data-vv-name="student_id"
+                    data-vv-as="student"
+                    name="student_id"
+                    required=""
+                    clearable=""
+                    outline=""
+                    data-vv-value-path="presence.student_id"
+                  >
+                    <template #selection="{ item, selected }">
+                      <v-chip :selected="selected">
+                        <app-avatar
+                          :image="item.image"
+                          :name="item.name"
+                          text-class="caption"
+                        />
+                        <span>{{ item.name }}</span>
+                      </v-chip>
+                    </template>
+                    <template #item="{ item }">
+                      <v-list-tile-avatar>
+                        <app-avatar
+                          :image="item.image"
+                          :name="item.name"
+                          :size="36"
+                          text-class="caption"
+                        />
+                      </v-list-tile-avatar>
+                      <v-list-tile-content>
+                        <v-list-tile-title>
+                          {{ item.name }}
+                        </v-list-tile-title>
+                      </v-list-tile-content>
+                    </template>
+                  </v-autocomplete>
+                </v-flex>
+              </v-layout>
+              <v-layout row="" wrap="">
                 <v-flex xs12="" sm6="">
                   <div>
                     <input
@@ -552,7 +460,7 @@
           </v-toolbar>
           <v-card-text>
             <div class="body-2">
-              Are you sure you want to remove {{ attendance.name }}?
+              Are you sure you want to remove {{ presence.student.name }}?
             </div>
           </v-card-text>
           <v-divider />
@@ -571,7 +479,7 @@
               :disabled="isLoading"
               color="error"
               flat=""
-              @click="onRemove(attendance)"
+              @click="onRemove(presence)"
             >
               Remove
             </v-btn>
@@ -596,7 +504,7 @@
               <v-layout row="" wrap="">
                 <v-flex xs12="">
                   <v-img
-                    v-if="attendance.image"
+                    v-if="presence.image"
                     :src="enlargedImage.url"
                     :alt="enlargedImage.name"
                   >
@@ -650,11 +558,10 @@ export default {
   },
   head() {
     return {
-      title: 'Attendances'
+      title: 'Presences'
     }
   },
   data() {
-    const datetime = this.$moment()
     return {
       isStartDate: false,
       isStartTime: false,
@@ -666,23 +573,27 @@ export default {
       isRemovingDialog: false,
       default: {
         id: null,
-        is_active: true,
-        start_datetime: null,
-        end_datetime: null,
-        schedule_id: null,
-        room_id: null,
+        attendance_id: null,
+        student_id: null,
+        student: {
+          name: null
+        },
+        is_late: false,
+        status: 'alpha',
         image: null
       },
-      attendance: {
+      presence: {
         id: null,
-        is_active: true,
-        start_datetime: null,
-        end_datetime: null,
-        schedule_id: null,
-        room_id: null,
+        attendance_id: null,
+        student_id: null,
+        student: {
+          name: null
+        },
+        is_late: false,
+        status: 'alpha',
         image: null
       },
-      attendances: [],
+      presences: [],
       filter: {
         limit: 0,
         offset: 0,
@@ -692,16 +603,11 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Image', value: 'image', sortable: false },
-        { text: 'Subject', value: 'schedule.subject.name' },
-        { text: 'Lecturer', value: 'schedule.lecturer.name' },
-        { text: 'Room', value: 'schedule.room.name' },
-        { text: 'Grade', value: 'schedule.grade' },
-        { text: 'Study Program', value: 'schedule.study_program.name' },
-        { text: 'Major', value: 'schedule.major.name' },
-        { text: 'Group', value: 'schedule.group.name' },
-        { text: 'Is Active?', value: 'is_active', align: 'center' },
-        { text: 'Start Datetime', value: 'start_time' },
-        { text: 'End Datetime', value: 'end_time' },
+        { text: 'Name', value: 'student.name' },
+        { text: 'Lecturer', value: 'attendance.schedule.lecturer.name' },
+        { text: 'Room', value: 'attendance.room.name' },
+        { text: 'Is late?', value: 'is_late', align: 'center' },
+        { text: 'Datetime', value: 'datetime' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [25, 50, 75, 100],
@@ -709,10 +615,12 @@ export default {
         descending: false,
         page: 1,
         rowsPerPage: 25,
-        sortBy: '-start_datetime',
+        sortBy: '-datetime',
         totalItems: 25
       },
       totalItems: 0,
+      students: [],
+      attendances: [],
       schedules: [],
       studyPrograms: [],
       departments: [],
@@ -728,13 +636,9 @@ export default {
         grade: '3',
         lecturer_id: 'c860b8a4-1245-43fd-9044-030781ab7879'
       },
-      start: {
-        date: datetime.format('YYYY-MM-DD'),
-        time: datetime.format('HH:mm')
-      },
-      end: {
-        date: datetime.format('YYYY-MM-DD'),
-        time: null
+      attendanceFilter: {
+        schedule_id: '2ff0150d-9cba-464e-a9c9-03e5587271a2',
+        room_id: '1f38c427-eb2f-43f5-8c4f-7b9409c748ff'
       },
       image: {
         name: '',
@@ -748,26 +652,6 @@ export default {
     }
   },
   computed: {
-    startDate() {
-      return this.start.date
-        ? this.$moment(this.start.date, 'YYYY-MM-DD').format('LL')
-        : ''
-    },
-    startTime() {
-      return this.start.time
-        ? this.$moment(this.start.time, 'HH:mm').format('LT')
-        : ''
-    },
-    endDate() {
-      return this.end.date
-        ? this.$moment(this.end.date, 'YYYY-MM-DD').format('LL')
-        : ''
-    },
-    endTime() {
-      return this.end.time
-        ? this.$moment(this.end.time, 'HH:mm').format('LT')
-        : ''
-    },
     grades() {
       const grades = []
       const studyProgram = this.studyPrograms.find(
@@ -796,37 +680,12 @@ export default {
         if (descending) {
           sortBy = `-${sortBy}`
         }
-        this.fetchAttendances({
+        this.fetchPresences({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
           offset: (page - 1) * rowsPerPage
         })
-      },
-      deep: true
-    },
-    start: {
-      handler({ date, time }) {
-        if (date && time) {
-          this.attendance.start_datetime = this.$moment(
-            `${date} ${time}`
-          ).toISOString()
-        } else {
-          this.attendance.start_datetime = null
-        }
-      },
-      deep: true,
-      immediate: true
-    },
-    end: {
-      handler({ date, time }) {
-        if (date && time) {
-          this.attendance.end_datetime = this.$moment(
-            `${date} ${time}`
-          ).toISOString()
-        } else {
-          this.attendance.end_datetime = null
-        }
       },
       deep: true
     },
@@ -863,36 +722,48 @@ export default {
             lecturer_id
           })
         }
+        if (study_program_id && major_id && group_id && grade) {
+          this.fetchStudents({
+            study_program_id,
+            major_id,
+            group_id,
+            grade
+          })
+        }
+      },
+      deep: true
+    },
+    attendanceFilter: {
+      handler({ schedule_id, room_id }) {
+        if (schedule_id && room_id) {
+          this.fetchAttendances({
+            schedule_id,
+            room_id
+          })
+        }
       },
       deep: true
     },
     'image.file': function(file) {
-      this.attendance.image = file
-    },
-    'end.time': function(time) {
-      if (time !== null) {
-        this.attendance.is_active = false
-      } else {
-        this.attendance.is_active = true
-      }
+      this.presence.image = file
     }
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
       const [
-        { rowCount, attendances, ...filter },
+        { rowCount, presences, ...filter },
         { studyPrograms },
         { departments },
         { groups },
         { rooms },
         { lecturers }
       ] = await Promise.all([
-        $api.attendances.fetchPage({
-          orderBy: '-start_datetime',
+        $api.presences.fetchPage({
+          orderBy: '-datetime',
           limit: 25,
           offset: 0,
           withRelated:
-            'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
+            'student,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
         }),
         $api.studyPrograms.fetchPage({ limit: -1 }),
         $api.departments.fetchPage({ limit: -1 }),
@@ -902,7 +773,7 @@ export default {
       ])
       return {
         filter,
-        attendances,
+        presences,
         studyPrograms,
         departments,
         groups,
@@ -915,7 +786,7 @@ export default {
     }
   },
   methods: {
-    async fetchAttendances(
+    async fetchPresences(
       {
         orderBy = this.pagination.sortBy,
         limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
@@ -941,18 +812,53 @@ export default {
         }
         const {
           rowCount,
-          attendances,
+          presences,
           ...filter
-        } = await this.$api.attendances.fetchPage({
+        } = await this.$api.presences.fetchPage({
           orderBy,
           limit,
           offset,
           withRelated:
-            'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
+            'student,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
         })
         this.filter = filter
         this.totalItems = rowCount
+        this.presences = presences
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchAttendances({ schedule_id, room_id }) {
+      try {
+        this.isLoading = true
+        const { attendances } = await this.$api.attendances.fetchPage({
+          schedule_id,
+          room_id,
+          is_active: true,
+          limit: -1,
+          withRelated: 'room,schedule.lecturer'
+        })
         this.attendances = attendances
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchStudents({ study_program_id, major_id, group_id, grade }) {
+      try {
+        this.isLoading = true
+        const { students } = await this.$api.students.fetchPage({
+          study_program_id,
+          major_id,
+          group_id,
+          grade,
+          is_active: true,
+          limit: -1
+        })
+        this.students = students
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -1062,11 +968,11 @@ export default {
     },
     async onTriggerEnlargeImage(event, item) {
       this.isEnlargingImageDialog = true
-      this.attendance = { ...item }
+      this.presence = { ...item }
 
-      this.enlargedImage.name = item.schedule.subject.name
-      if (this.attendance.image instanceof File) {
-        this.enlargedImage.url = await fileReader(this.attendance.image)
+      this.enlargedImage.name = item.student.name
+      if (this.presence.image instanceof File) {
+        this.enlargedImage.url = await fileReader(this.presence.image)
       } else {
         this.enlargedImage.url = item.image
       }
@@ -1075,29 +981,35 @@ export default {
       this.isCreatingOrEditingDialog = true
       if (item) {
         this.isEditing = true
-        this.attendance = { ...item }
-
-        if (item.start_datetime) {
-          this.start.date = this.$moment(item.start_datetime).format(
-            'YYYY-MM-DD'
-          )
-          this.start.time = this.$moment(item.start_datetime).format('HH:mm')
-        }
-
-        if (item.end_datetime) {
-          this.end.date = this.$moment(item.end_datetime).format('YYYY-MM-DD')
-          this.end.time = this.$moment(item.end_datetime).format('HH:mm')
-        }
+        this.presence = { ...item }
 
         this.image.url = item.image
 
+        this.scheduleFilter.study_program_id =
+          item.attendance.schedule.study_program_id
+        this.scheduleFilter.department_id =
+          item.attendance.schedule.major.department_id
+        this.scheduleFilter.major_id = item.attendance.schedule.major_id
+        this.scheduleFilter.group_id = item.attendance.schedule.group_id
+        this.scheduleFilter.grade = item.attendance.schedule.grade
+        this.scheduleFilter.lecturer_id = item.attendance.schedule.lecturer_id
+
+        this.attendanceFilter.schedule_id = item.attendance.schedule_id
+        this.attendanceFilter.room_id = item.attendance.room_id
+
         await this.fetchMajors({
-          study_program_id: item.schedule.study_program_id,
-          department_id: item.schedule.major.department_id
+          study_program_id: item.attendance.study_program_id,
+          department_id: item.attendance.schedule.major.department_id
         })
         await this.fetchSchedules({
-          lecturer_id: item.schedule.lecturer_id,
+          lecturer_id: item.attendance.schedule.lecturer_id,
           room_id: item.room_id
+        })
+        await this.fetchStudents({
+          study_program_id: item.attendance.schedule.study_program_id,
+          major_id: item.attendance.schedule.major_id,
+          group_id: item.attendance.schedule.group_id,
+          grade: item.attendance.schedule.grade
         })
       }
     },
@@ -1105,12 +1017,12 @@ export default {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
       this.$validator.reset()
-      this.attendance = { ...this.default }
+      this.presence = { ...this.default }
     },
     async onCreateOrEdit(
       event,
-      { _payload = this.attendance, isEditing = false } = {
-        _payload: this.attendance,
+      { _payload = this.presence, isEditing = false } = {
+        _payload: this.presence,
         isEditing: false
       }
     ) {
@@ -1121,8 +1033,9 @@ export default {
 
           let payload = cloneDeep(_payload)
 
-          delete payload.room
-          delete payload.schedule
+          delete payload.id
+          delete payload.student
+          delete payload.attendance
 
           if (this.isEditing) {
             payload = {
@@ -1133,32 +1046,30 @@ export default {
               payload = toFormData(payload)
             } else {
               payload = {
-                attendance: {
+                presence: {
                   ...payload
                 }
               }
             }
-            await this.$api.attendances.update(_payload.id, payload, {
+            await this.$api.presences.update(_payload.id, payload, {
               lecturer_id: this.scheduleFilter.lecturer_id
             })
-            await this.onRemoveImage()
-            await this.$notify({
+            this.$notify({
               kind: 'success',
-              message: 'Attendance is updated successfully'
+              message: 'Presence is updated successfully'
             })
           } else {
             payload = toFormData(payload)
-            await this.$api.attendances.create(payload, {
+            await this.$api.presences.create(payload, {
               lecturer_id: this.scheduleFilter.lecturer_id
             })
-            await this.onRemoveImage()
             await this.$notify({
               kind: 'success',
-              message: 'Attendance is created successfully'
+              message: 'Presence is created successfully'
             })
           }
 
-          await Promise.all([this.onClose(), this.fetchAttendances()])
+          await Promise.all([this.onClose(), this.fetchPresences()])
         } else {
           this.$notify({
             isError: true,
@@ -1173,24 +1084,24 @@ export default {
     },
     onTriggerRemoving(item) {
       this.isRemovingDialog = true
-      this.attendance = { ...item }
+      this.presence = { ...item }
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
       this.$validator.reset()
-      this.attendance = { ...this.default }
+      this.presence = { ...this.default }
     },
     async onRemove(item) {
       try {
         this.isLoading = true
 
-        await this.$api.attendances.destroy(item.id)
+        await this.$api.presences.destroy(item.id)
         await Promise.all([
-          this.fetchAttendances(),
+          this.fetchPresences(),
           this.onCloseRemoving(),
           this.$notify({
             kind: 'success',
-            message: 'Attendance is deleted successfully'
+            message: 'Presence is deleted successfully'
           })
         ])
       } catch (error) {

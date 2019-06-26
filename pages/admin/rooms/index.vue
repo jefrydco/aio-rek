@@ -52,16 +52,16 @@
             </td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.in_use" color="error" text-color="white">
-                <v-avatar class="red darken-3">
+                <v-avatar class="error darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
-                In use
+                <span>Used</span>
               </v-chip>
               <v-chip v-else="" color="info" text-color="white">
                 <v-avatar class="blue darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
-                Not in use
+                <span>Not used</span>
               </v-chip>
             </td>
             <td class="py-1 body-2 text-xs-center">

@@ -11,6 +11,7 @@ exports.up = function(knex, Promise) {
       .defaultTo('')
     table.boolean('is_late').defaultTo(false)
     table.enum('status', ['alpha', 'sick', 'present']).defaultTo('alpha')
+    table.datetime('datetime').defaultTo(knex.fn.now())
     table
       .uuid('student_id')
       .notNullable()

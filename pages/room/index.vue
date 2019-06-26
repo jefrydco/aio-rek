@@ -272,13 +272,14 @@
 
 <script>
 import { Howl } from 'howler'
+import toFormData from 'json-form-data'
 import prettyMs from 'pretty-ms'
 import { mapState, mapActions } from 'vuex'
 import {
   setIntervalAsync,
   clearIntervalAsync
 } from 'set-interval-async/dynamic'
-import { drawImage } from '~/utils/canvas'
+import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 
 import { types as detectionTypes } from '~/store/detection'
 import { types as cameraTypes } from '~/store/camera'
@@ -513,7 +514,32 @@ export default {
     onTriggerStart() {
       this.isChoosingSchedule = true
     },
-    onStart(schedule) {},
+    async onStart(schedule) {
+      try {
+        this.isLoading = true
+        const canvas = this.$refs.liveCanvas
+        const image = await getImageFromCanvas(canvas)
+
+        const payload = toFormData({
+          schedule_id: schedule.id,
+          room_id: this.user.profile.id,
+          is_active: true,
+          image
+        })
+        const { attendance } = await this.$api.attendances.create(payload, {
+          lecturer_id: this.detectedLecturer.id
+        })
+        await (() => {
+          console.log(attendance)
+          this.isChoosingSchedule = false
+        })()
+      } catch (error) {
+        console.log(error)
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
     async fetchLecturers() {
       try {
         this.isLoading = true
@@ -532,7 +558,8 @@ export default {
         const { schedules } = await this.$api.schedules.fetchPage({
           withRelated: 'subject,lecturer,room,study_program,major,group',
           lecturer_id,
-          room_id
+          room_id,
+          limit: -1
         })
         this.schedules = schedules
       } catch (error) {

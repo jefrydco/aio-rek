@@ -148,7 +148,8 @@ export default {
             { text: 'Schedules', to: { name: 'admin-schedules' } }
           ]
         },
-        { text: 'Attendances', to: { name: 'admin-attendances' } }
+        { text: 'Attendances', to: { name: 'admin-attendances' } },
+        { text: 'Presences', to: { name: 'admin-presences' } }
       ]
     }
   },

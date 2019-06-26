@@ -14,8 +14,8 @@ module.exports = bookshelf =>
     getValidators() {
       return {
         is_active: ['boolean'],
-        start_datetime: ['required'],
-        end_datetime: ['required'],
+        start_datetime: [],
+        end_datetime: [],
         schedule_id: ['required', 'uuid'],
         room_id: ['required', 'uuid']
       }

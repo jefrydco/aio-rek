@@ -14,7 +14,7 @@ router.post(
   '/student-images',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   handleImage('static/uploads/images/datasets/students').array('images'),
   create
 )

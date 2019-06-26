@@ -33,13 +33,13 @@
                 <v-avatar class="info darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
-                Active
+                <span>Active</span>
               </v-chip>
               <v-chip v-else="" color="error" text-color="white">
-                <v-avatar class="red darken-3">
+                <v-avatar class="error darken-3">
                   <v-icon>close</v-icon>
                 </v-avatar>
-                Inactive
+                <span>Inactive</span>
               </v-chip>
             </td>
             <td class="py-1 body-2 text-xs-center">

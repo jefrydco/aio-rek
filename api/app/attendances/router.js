@@ -9,12 +9,11 @@ const {
   handleImage
 } = require('../middleware')
 const { create, fetchPage, fetch, update, destroy } = require('./controller')
-
 router.post(
   '/attendances',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   handleImage('static/uploads/images/attendances').single('image'),
   create
 )
@@ -22,14 +21,14 @@ router.get(
   '/attendances',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetchPage
 )
 router.get(
   '/attendances/:id',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetch
 )
 router.put(

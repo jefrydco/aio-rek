@@ -16,20 +16,17 @@ class AttendanceController extends Controller {
 
       const trx = this._getTrx(res)
 
-      let payload = null
-      if (file) {
-        payload = { ...body }
-        const { path } = file
-
-        payload = {
-          image: path.replace('static', ''),
-          ...body
-        }
-      } else {
-        payload = this._getPayload(req)
+      if (!file) {
+        throw new Error(`Image field shouldn't be empty`)
       }
 
-      console.log(payload)
+      const { path } = file
+
+      const payload = {
+        image: path.replace('static', ''),
+        ...body
+      }
+
       payload.is_active = boolean(payload.is_active)
 
       const queryResult = await service.create(payload, {
