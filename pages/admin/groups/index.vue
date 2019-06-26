@@ -63,7 +63,7 @@
                     name="name"
                     required=""
                     clearable=""
-                    box=""
+                    outline=""
                     autofocus=""
                     data-vv-value-path="group.name"
                   />
@@ -94,7 +94,12 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isRemovingDialog" width="350" @input="onCloseRemoving">
+      <v-dialog
+        v-model="isRemovingDialog"
+        width="350"
+        scrollable=""
+        @input="onCloseRemoving"
+      >
         <v-card>
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
@@ -224,18 +229,28 @@ export default {
   methods: {
     async fetchGroups(
       {
-        orderBy = 'name',
-        limit = 25, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+        orderBy = this.pagination.sortBy,
+        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending = this.pagination.descending
       } = {
-        orderBy: 'name',
-        limit: 25,
+        orderBy: this.pagination.sortBy,
+        limit: this.pagination.rowsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending: this.pagination.descending
       }
     ) {
       try {
         this.isLoading = true
+        if (orderBy) {
+          if (orderBy.includes('.name')) {
+            orderBy = `${orderBy.replace('.name', '')}_id`
+          }
+        }
+        if (descending) {
+          orderBy = `-${orderBy}`
+        }
         const {
           rowCount,
           groups,

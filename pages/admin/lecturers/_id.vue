@@ -9,7 +9,7 @@
             item-text="name"
             item-value="id"
             :items="lecturers"
-            box=""
+            outline=""
           />
         </v-flex>
       </v-layout>
@@ -36,7 +36,7 @@
                       name="name"
                       required=""
                       clearable=""
-                      box=""
+                      outline=""
                       autofocus=""
                       data-vv-value-path="editedLecturer.name"
                     />
@@ -55,7 +55,7 @@
                       name="identifier"
                       required=""
                       clearable=""
-                      box=""
+                      outline=""
                       data-vv-value-path="editedLecturer.identifier"
                     />
                   </v-flex>
@@ -64,6 +64,7 @@
                   <v-flex xs12="">
                     <v-switch
                       v-model="editedLecturer.is_active"
+                      class="ma-0"
                       label="Is lecturer active?"
                     />
                   </v-flex>
@@ -181,7 +182,7 @@
                         v-model="selectedCamera"
                         :items="cameras"
                         label="Select Camera"
-                        box=""
+                        outline=""
                         item-value="deviceId"
                         item-text="label"
                       />

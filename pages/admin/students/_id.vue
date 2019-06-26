@@ -9,7 +9,7 @@
             item-text="name"
             item-value="id"
             :items="students"
-            box=""
+            outline=""
           />
         </v-flex>
       </v-layout>
@@ -36,7 +36,7 @@
                       name="name"
                       required=""
                       clearable=""
-                      box=""
+                      outline=""
                       autofocus=""
                       data-vv-value-path="editedStudent.name"
                     />
@@ -55,29 +55,8 @@
                       name="identifier"
                       required=""
                       clearable=""
-                      box=""
+                      outline=""
                       data-vv-value-path="editedStudent.identifier"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-autocomplete
-                      v-model="selectedDepartment"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('selectedDepartment')"
-                      :disabled="isLoading"
-                      :items="departments"
-                      item-value="id"
-                      item-text="name"
-                      label="Department"
-                      data-vv-name="selectedDepartment"
-                      data-vv-as="department"
-                      name="selectedDepartment"
-                      required=""
-                      clearable=""
-                      box=""
-                      data-vv-value-path="selectedDepartment"
                     />
                   </v-flex>
                 </v-layout>
@@ -97,8 +76,29 @@
                       name="study_program_id"
                       required=""
                       clearable=""
-                      box=""
+                      outline=""
                       data-vv-value-path="editedStudent.study_program_id"
+                    />
+                  </v-flex>
+                </v-layout>
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-autocomplete
+                      v-model="selectedDepartment"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('selectedDepartment')"
+                      :disabled="isLoading"
+                      :items="departments"
+                      item-value="id"
+                      item-text="name"
+                      label="Department"
+                      data-vv-name="selectedDepartment"
+                      data-vv-as="department"
+                      name="selectedDepartment"
+                      required=""
+                      clearable=""
+                      outline=""
+                      data-vv-value-path="selectedDepartment"
                     />
                   </v-flex>
                 </v-layout>
@@ -118,13 +118,14 @@
                       name="major_id"
                       required=""
                       clearable=""
-                      box=""
+                      outline=""
+                      hint="Please choose the study program and department first"
                       data-vv-value-path="editedStudent.major_id"
                     />
                   </v-flex>
                 </v-layout>
                 <v-layout row="" wrap="">
-                  <v-flex xs12="">
+                  <v-flex xs12="" sm6="">
                     <v-autocomplete
                       v-model="editedStudent.group_id"
                       v-validate="'required'"
@@ -139,8 +140,28 @@
                       name="group_id"
                       required=""
                       clearable=""
-                      box=""
+                      outline=""
                       data-vv-value-path="editedStudent.group_id"
+                    />
+                  </v-flex>
+                  <v-flex xs12="" sm6="">
+                    <v-autocomplete
+                      v-model="editedStudent.grade"
+                      v-validate="'required'"
+                      :error-messages="errors.collect('grade')"
+                      :disabled="isLoading"
+                      :items="grades"
+                      item-text="name"
+                      item-value="id"
+                      label="Grade"
+                      data-vv-name="grade"
+                      data-vv-as="grade"
+                      name="grade"
+                      required=""
+                      clearable=""
+                      outline=""
+                      hint="Please choose the study program first"
+                      data-vv-value-path="editedStudent.grade"
                     />
                   </v-flex>
                 </v-layout>
@@ -148,6 +169,7 @@
                   <v-flex xs12="">
                     <v-switch
                       v-model="editedStudent.is_active"
+                      class="ma-0"
                       label="Is student active?"
                     />
                   </v-flex>
@@ -265,7 +287,7 @@
                         v-model="selectedCamera"
                         :items="cameras"
                         label="Select Camera"
-                        box=""
+                        outline=""
                         item-value="deviceId"
                         item-text="label"
                       />
@@ -724,6 +746,22 @@ export default {
           selectedCamera
         )
       }
+    },
+    grades() {
+      const grades = []
+      const studyProgram = this.studyPrograms.find(
+        ({ id }) => id === this.editedStudent.study_program_id
+      )
+      if (studyProgram && studyProgram.name === 'D3') {
+        return ['1', '2', '3']
+      }
+      if (studyProgram && studyProgram.name === 'D4') {
+        return ['1', '2', '3', '4']
+      }
+      if (studyProgram && studyProgram.name === 'Pascasarjana') {
+        return ['1', '2']
+      }
+      return grades
     }
   },
   watch: {
@@ -740,8 +778,27 @@ export default {
         image: file
       })
     },
+    // eslint-disable-next-line
+    'editedStudent.study_program_id': function(study_program_id) {
+      // eslint-disable-next-line
+      if (study_program_id && this.selectedDepartment) {
+        this.fetchMajors({
+          study_program_id,
+          department_id: this.selectedDepartment
+        })
+      } else {
+        this.majors = []
+      }
+    },
     selectedDepartment(selectedDepartment) {
-      this.fetchMajors(selectedDepartment)
+      if (this.editedStudent.study_program_id && selectedDepartment) {
+        this.fetchMajors({
+          study_program_id: this.editedStudent.study_program_id,
+          department_id: selectedDepartment
+        })
+      } else {
+        this.majors = []
+      }
     },
     selectedCamera(selectedCamera) {
       this.initCamera(selectedCamera)
@@ -901,11 +958,13 @@ export default {
       }
     },
     // eslint-disable-next-line
-    async fetchMajors(department_id) {
+    async fetchMajors({ study_program_id, department_id }) {
       try {
         this.isLoading = true
         const { majors } = await this.$api.majors.fetchPage({
-          department_id
+          study_program_id,
+          department_id,
+          limit: -1
         })
         this.majors = majors
       } catch (error) {

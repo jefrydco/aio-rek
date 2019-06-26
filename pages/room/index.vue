@@ -38,7 +38,7 @@
                       v-model="selectedCamera"
                       :items="cameras"
                       label="Select Camera"
-                      box=""
+                      outline=""
                       item-value="deviceId"
                       item-text="label"
                     />
@@ -162,7 +162,7 @@
                         </v-btn>
                         <v-dialog
                           v-model="isChoosingSchedule"
-                          width="700"
+                          width="1050"
                           scrollable=""
                         >
                           <template #activator="{ on }">
@@ -199,49 +199,36 @@
                                 >
                                   <template #item="{ item }">
                                     <v-fade-transition>
-                                      <v-flex xs12="" sm6="">
-                                        <v-card ripple="">
+                                      <v-flex xs12="" sm6="" md4="">
+                                        <v-card
+                                          ripple=""
+                                          @click="onStart(item)"
+                                        >
                                           <v-card-text>
-                                            <v-layout row="" wrap="">
-                                              <v-flex xs12="">
-                                                <h4>Subject</h4>
-                                                <h5 class="subheading">
-                                                  {{ item.subject.name }}
-                                                </h5>
-                                              </v-flex>
-                                            </v-layout>
-                                            <v-layout row="" wrap="">
-                                              <v-flex xs12="">
-                                                <h4>Grade</h4>
-                                                <h5 class="subheading">
-                                                  {{ item.grade }}
-                                                </h5>
-                                              </v-flex>
-                                            </v-layout>
-                                            <v-layout row="" wrap="">
-                                              <v-flex xs12="">
-                                                <h4>Study Program</h4>
-                                                <h5 class="subheading">
-                                                  {{ item.study_program.name }}
-                                                </h5>
-                                              </v-flex>
-                                            </v-layout>
-                                            <v-layout row="" wrap="">
-                                              <v-flex xs12="">
-                                                <h4>Major</h4>
-                                                <h5 class="subheading">
-                                                  {{ item.major.name }}
-                                                </h5>
-                                              </v-flex>
-                                            </v-layout>
-                                            <v-layout row="" wrap="">
-                                              <v-flex xs12="">
-                                                <h4>Group</h4>
-                                                <h5 class="subheading">
-                                                  {{ item.group.name }}
-                                                </h5>
-                                              </v-flex>
-                                            </v-layout>
+                                            <h4>Subject</h4>
+                                            <h5 class="subheading">
+                                              {{ item.subject.name }}
+                                            </h5>
+
+                                            <h4>Grade</h4>
+                                            <h5 class="subheading">
+                                              {{ item.grade }}
+                                            </h5>
+
+                                            <h4>Study Program</h4>
+                                            <h5 class="subheading">
+                                              {{ item.study_program.name }}
+                                            </h5>
+
+                                            <h4>Major</h4>
+                                            <h5 class="subheading">
+                                              {{ item.major.name }}
+                                            </h5>
+
+                                            <h4>Group</h4>
+                                            <h5 class="subheading">
+                                              {{ item.group.name }}
+                                            </h5>
                                           </v-card-text>
                                         </v-card>
                                       </v-flex>
@@ -255,11 +242,11 @@
                               <v-spacer />
                               <v-btn
                                 large=""
+                                flat=""
                                 @click="isChoosingSchedule = false"
                               >
                                 Cancel
                               </v-btn>
-                              <v-btn color="accent" large="">Start</v-btn>
                             </v-card-actions>
                           </v-card>
                         </v-dialog>
@@ -517,6 +504,7 @@ export default {
     onTriggerStart() {
       this.isChoosingSchedule = true
     },
+    onStart(schedule) {},
     async fetchLecturers() {
       try {
         this.isLoading = true
@@ -529,7 +517,7 @@ export default {
       }
     },
     // eslint-disable-next-line
-    async fetchSchedules({ lecturer_id, room_id }) {
+    async fetchSchedules({ lecturer_id, room_id = this.user.profile.id }) {
       try {
         this.isLoading = true
         const { schedules } = await this.$api.schedules.fetchPage({

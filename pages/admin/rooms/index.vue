@@ -24,7 +24,7 @@
             <td class="py-1 body-2">
               <v-text-field
                 readonly=""
-                solo-inverted=""
+                outline=""
                 label="Email"
                 append-outer-icon="file_copy"
                 flat=""
@@ -36,7 +36,7 @@
             <td class="py-1 body-2">
               <v-text-field
                 readonly=""
-                solo-inverted=""
+                outline=""
                 label="Password"
                 :type="item.user.isPassword ? 'password' : 'text'"
                 :append-icon="item.user.isPassword ? 'lock_open' : 'lock'"
@@ -106,7 +106,7 @@
                     name="name"
                     required=""
                     clearable=""
-                    box=""
+                    outline=""
                     autofocus=""
                     data-vv-value-path="room.name"
                     hint="Name must be unique"
@@ -143,7 +143,12 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isRemovingDialog" width="350" @input="onCloseRemoving">
+      <v-dialog
+        v-model="isRemovingDialog"
+        width="350"
+        scrollable=""
+        @input="onCloseRemoving"
+      >
         <v-card>
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
@@ -286,18 +291,28 @@ export default {
   methods: {
     async fetchRooms(
       {
-        orderBy = 'name',
-        limit = 25, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+        orderBy = this.pagination.sortBy,
+        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending = this.pagination.descending
       } = {
-        orderBy: 'name',
-        limit: 25,
+        orderBy: this.pagination.sortBy,
+        limit: this.pagination.rowsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending: this.pagination.descending
       }
     ) {
       try {
         this.isLoading = true
+        if (orderBy) {
+          if (orderBy.includes('.name')) {
+            orderBy = `${orderBy.replace('.name', '')}_id`
+          }
+        }
+        if (descending) {
+          orderBy = `-${orderBy}`
+        }
         const { rowCount, rooms, ...filter } = await this.$api.rooms.fetchPage({
           orderBy,
           limit,

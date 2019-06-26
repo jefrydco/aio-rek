@@ -2,15 +2,20 @@
 
 const bodyParser = require('body-parser')
 const router = require('express').Router()
-const { createTransaction, jwtAuth, handleRole } = require('../middleware')
+const {
+  createTransaction,
+  jwtAuth,
+  handleRole,
+  handleImage
+} = require('../middleware')
 const { create, fetchPage, fetch, update, destroy } = require('./controller')
 
 router.post(
   '/attendances',
-  bodyParser.json(),
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
+  handleImage('static/uploads/images/attendances').single('image'),
   create
 )
 router.get(
@@ -33,6 +38,7 @@ router.put(
   createTransaction,
   jwtAuth.required,
   handleRole('admin'),
+  handleImage('static/uploads/images/attendances').single('image'),
   update
 )
 router.delete(

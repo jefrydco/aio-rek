@@ -18,7 +18,7 @@
               data-vv-as="email"
               required=""
               clearable=""
-              box=""
+              outline=""
               autofocus=""
               data-vv-value-path="credential.email"
             />
@@ -38,7 +38,7 @@
               data-vv-as="password"
               required=""
               clearable=""
-              box=""
+              outline=""
               data-vv-value-path="credential.password"
               @click:append="() => (isPassword = !isPassword)"
             />

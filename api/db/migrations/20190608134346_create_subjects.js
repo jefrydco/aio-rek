@@ -11,8 +11,8 @@ exports.up = function(knex, Promise) {
       .notNullable()
     table
       .string('identifier')
-      .notNullable()
       .unique()
+      .notNullable()
   })
 }
 

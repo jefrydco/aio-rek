@@ -64,7 +64,7 @@
                     name="name"
                     required=""
                     clearable=""
-                    box=""
+                    outline=""
                     autofocus=""
                     data-vv-value-path="major.name"
                   />
@@ -86,7 +86,7 @@
                     name="department_id"
                     required=""
                     clearable=""
-                    box=""
+                    outline=""
                     data-vv-value-path="major.department_id"
                   />
                 </v-flex>
@@ -116,7 +116,12 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isRemovingDialog" width="350" @input="onCloseRemoving">
+      <v-dialog
+        v-model="isRemovingDialog"
+        width="350"
+        scrollable=""
+        @input="onCloseRemoving"
+      >
         <v-card>
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
@@ -234,13 +239,18 @@ export default {
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
     try {
-      const { rowCount, majors, ...filter } = await $api.majors.fetchPage({
-        orderBy: 'name',
-        limit: 25,
-        offset: 0,
-        withRelated: 'department'
-      })
-      const { departments } = await $api.departments.fetchPage()
+      const [
+        { rowCount, majors, ...filter },
+        { departments }
+      ] = await Promise.all([
+        $api.majors.fetchPage({
+          orderBy: 'name',
+          limit: 25,
+          offset: 0,
+          withRelated: 'department'
+        }),
+        $api.departments.fetchPage({ limit: -1 })
+      ])
       return {
         filter,
         majors,
@@ -254,19 +264,28 @@ export default {
   methods: {
     async fetchStudyPrograms(
       {
-        orderBy = 'name',
-        limit = 25,
+        orderBy = this.pagination.sortBy,
+        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated = 'department'
+        descending = this.pagination.descending
       } = {
-        orderBy: 'name',
-        limit: 25,
+        orderBy: this.pagination.sortBy,
+        limit: this.pagination.rowsPerPage,
+        // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated: 'department'
+        descending: this.pagination.descending
       }
     ) {
       try {
         this.isLoading = true
+        if (orderBy) {
+          if (orderBy.includes('.name')) {
+            orderBy = `${orderBy.replace('.name', '')}_id`
+          }
+        }
+        if (descending) {
+          orderBy = `-${orderBy}`
+        }
         const {
           rowCount,
           majors,
@@ -275,11 +294,24 @@ export default {
           orderBy,
           limit,
           offset,
-          withRelated
+          withRelated: 'department'
         })
         this.filter = filter
         this.totalItems = rowCount
         this.majors = majors
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchDepartments() {
+      try {
+        this.isLoading = true
+        const { departments } = await this.$api.departments.fetchPage({
+          limit: -1
+        })
+        this.departments = departments
       } catch (error) {
         this.$handleError(error)
       } finally {

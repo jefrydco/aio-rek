@@ -75,7 +75,7 @@
                     name="day"
                     required=""
                     clearable=""
-                    box=""
+                    outline=""
                     autofocus=""
                     data-vv-value-path="schedule.day"
                   />
@@ -95,8 +95,7 @@
                     name="room_id"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="schedule.room_id"
                   />
                 </v-flex>
@@ -117,8 +116,7 @@
                     name="subject_id"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="schedule.subject_id"
                   />
                 </v-flex>
@@ -137,8 +135,7 @@
                     name="lecturer_id"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="schedule.lecturer_id"
                   />
                 </v-flex>
@@ -156,8 +153,7 @@
                     name="start_time"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="schedule.start_time"
                     mask="time"
                   />
@@ -174,8 +170,7 @@
                     name="end_time"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="schedule.end_time"
                     mask="time"
                   />
@@ -197,8 +192,7 @@
                     name="study_program_id"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="schedule.study_program_id"
                   />
                 </v-flex>
@@ -217,8 +211,7 @@
                     name="department"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="selectedDepartment"
                   />
                 </v-flex>
@@ -239,8 +232,8 @@
                     name="major_id"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
+                    hint="Please choose the study program and department first"
                     data-vv-value-path="schedule.major_id"
                   />
                 </v-flex>
@@ -259,8 +252,7 @@
                     name="group_id"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
                     data-vv-value-path="schedule.group_id"
                   />
                 </v-flex>
@@ -281,8 +273,8 @@
                     name="grade"
                     required=""
                     clearable=""
-                    box=""
-                    autofocus=""
+                    outline=""
+                    hint="Please choose the study program first"
                     data-vv-value-path="schedule.grade"
                   />
                 </v-flex>
@@ -312,7 +304,12 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isRemovingDialog" width="350" @input="onCloseRemoving">
+      <v-dialog
+        v-model="isRemovingDialog"
+        width="350"
+        scrollable=""
+        @input="onCloseRemoving"
+      >
         <v-card>
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
@@ -560,15 +557,18 @@ export default {
       }
     },
     grades() {
-      const grades = ['1', '2', '3']
-      const department = this.departments.find(
-        ({ id }) => this.selectedDepartment
+      const grades = []
+      const studyProgram = this.studyPrograms.find(
+        ({ id }) => id === this.schedule.study_program_id
       )
-      if (department && department.name === 'D3') {
-        return grades
+      if (studyProgram && studyProgram.name === 'D3') {
+        return ['1', '2', '3']
       }
-      if (department && department.name === 'D4') {
-        return [...grades, '4']
+      if (studyProgram && studyProgram.name === 'D4') {
+        return ['1', '2', '3', '4']
+      }
+      if (studyProgram && studyProgram.name === 'Pascasarjana') {
+        return ['1', '2']
       }
       return grades
     }
@@ -576,19 +576,12 @@ export default {
   watch: {
     pagination: {
       handler({ descending, page, rowsPerPage, sortBy }) {
-        if (sortBy) {
-          if (sortBy.includes('.name')) {
-            sortBy = `${sortBy.replace('.name', '')}_id`
-          }
-        }
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
         this.fetchSchedules({
           orderBy: sortBy,
           limit: rowsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * rowsPerPage,
+          descending
         })
       },
       deep: true
@@ -601,6 +594,8 @@ export default {
           study_program_id,
           department_id: this.selectedDepartment
         })
+      } else {
+        this.majors = []
       }
     },
     selectedDepartment(selectedDepartment) {
@@ -609,6 +604,8 @@ export default {
           study_program_id: this.schedule.study_program_id,
           department_id: selectedDepartment
         })
+      } else {
+        this.majors = []
       }
     }
   },
@@ -618,7 +615,6 @@ export default {
         { rowCount, schedules, ...filter },
         { studyPrograms },
         { departments },
-        { majors },
         { groups },
         { rooms },
         { subjects },
@@ -633,7 +629,6 @@ export default {
         }),
         $api.studyPrograms.fetchPage({ limit: -1 }),
         $api.departments.fetchPage({ limit: -1 }),
-        $api.majors.fetchPage({ limit: -1 }),
         $api.groups.fetchPage({ limit: -1 }),
         $api.rooms.fetchPage({ limit: -1 }),
         $api.subjects.fetchPage({ limit: -1 }),
@@ -645,7 +640,6 @@ export default {
         schedules,
         studyPrograms,
         departments,
-        majors,
         groups,
         rooms,
         subjects,
@@ -659,18 +653,28 @@ export default {
   methods: {
     async fetchSchedules(
       {
-        orderBy = 'day',
-        limit = 25, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+        orderBy = this.pagination.sortBy,
+        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending = this.pagination.descending
       } = {
-        orderBy: 'day',
-        limit: 25,
+        orderBy: this.pagination.sortBy,
+        limit: this.pagination.rowsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending: this.pagination.descending
       }
     ) {
       try {
         this.isLoading = true
+        if (orderBy) {
+          if (orderBy.includes('.name')) {
+            orderBy = `${orderBy.replace('.name', '')}_id`
+          }
+        }
+        if (descending) {
+          orderBy = `-${orderBy}`
+        }
         const {
           rowCount,
           schedules,
@@ -693,7 +697,9 @@ export default {
     async fetchDepartments() {
       try {
         this.isLoading = true
-        const { departments } = await this.$api.departments.fetchPage()
+        const { departments } = await this.$api.departments.fetchPage({
+          limit: -1
+        })
         this.departments = departments
       } catch (error) {
         this.$handleError(error)
@@ -704,7 +710,9 @@ export default {
     async fetchStudyPrograms() {
       try {
         this.isLoading = true
-        const { studyPrograms } = await this.$api.studyPrograms.fetchPage()
+        const { studyPrograms } = await this.$api.studyPrograms.fetchPage({
+          limit: -1
+        })
         this.studyPrograms = studyPrograms
       } catch (error) {
         this.$handleError(error)
@@ -718,7 +726,8 @@ export default {
         this.isLoading = true
         const { majors } = await this.$api.majors.fetchPage({
           study_program_id,
-          department_id
+          department_id,
+          limit: -1
         })
         this.majors = majors
       } catch (error) {
@@ -730,7 +739,7 @@ export default {
     async fetchGroups() {
       try {
         this.isLoading = true
-        const { groups } = await this.$api.groups.fetchPage()
+        const { groups } = await this.$api.groups.fetchPage({ limit: -1 })
         this.groups = groups
       } catch (error) {
         this.$handleError(error)

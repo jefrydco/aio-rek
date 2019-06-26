@@ -29,6 +29,8 @@ class StudentController extends Controller {
         payload = this._getPayload(req)
       }
 
+      payload.is_active = boolean(payload.is_active)
+
       const queryResult = await service.create(payload, {
         trx
       })

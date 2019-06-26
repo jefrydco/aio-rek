@@ -147,7 +147,8 @@ export default {
             { text: 'Groups', to: { name: 'admin-groups' } },
             { text: 'Schedules', to: { name: 'admin-schedules' } }
           ]
-        }
+        },
+        { text: 'Attendances', to: { name: 'admin-attendances' } }
       ]
     }
   },
@@ -164,7 +165,7 @@ export default {
       const { role } = this.user
       if (token) {
         this.$http.setToken(token, 'Bearer')
-        if (name && role && name !== role) {
+        if (name && role && !name.includes(role)) {
           this.$router.replace({ name: role })
         }
       }

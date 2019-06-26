@@ -22,6 +22,8 @@ module.exports = {
     // https://http.nuxtjs.org/
     '@nuxt/http',
 
+    '@nuxtjs/moment',
+
     // https://pwa.nuxtjs.org/
     '@nuxtjs/pwa',
 

@@ -5,6 +5,10 @@ exports.up = function(knex, Promise) {
       .primary()
       .defaultTo(knex.raw('uuid_generate_v4()'))
     table.timestamps(true, true)
+    table
+      .string('image')
+      .notNullable()
+      .defaultTo('')
     table.boolean('is_active').defaultTo(true)
     table.datetime('start_datetime').notNullable()
     table.datetime('end_datetime').notNullable()
