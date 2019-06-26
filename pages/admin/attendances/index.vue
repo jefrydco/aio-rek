@@ -34,11 +34,29 @@
             <td class="py-1 body-2">{{ item.schedule.study_program.name }}</td>
             <td class="py-1 body-2">{{ item.schedule.major.name }}</td>
             <td class="py-1 body-2">{{ item.schedule.group.name }}</td>
+            <td class="py-1 body-2 text-xs-center">
+              <v-chip v-if="item.is_active" color="info" text-color="white">
+                <v-avatar class="info darken-3">
+                  <v-icon>priority_high</v-icon>
+                </v-avatar>
+                Active
+              </v-chip>
+              <v-chip v-else="" color="success" text-color="white">
+                <v-avatar class="success darken-3">
+                  <v-icon>check</v-icon>
+                </v-avatar>
+                Finished
+              </v-chip>
+            </td>
             <td class="py-1 body-2">
               {{ $moment(item.start_datetime).format('llll') }}
             </td>
             <td class="py-1 body-2">
-              {{ $moment(item.end_datetime).format('llll') }}
+              {{
+                item.end_datetime
+                  ? $moment(item.end_datetime).format('llll')
+                  : '-'
+              }}
             </td>
             <td class="py-1 body-2 text-xs-center">
               <v-btn color="info" @click="onTriggerEnlargeImage($event, item)">
@@ -565,7 +583,7 @@
                 <v-flex xs12="">
                   <v-img
                     v-if="attendance.image"
-                    :src="attendance.image"
+                    :src="attendance.url"
                     :alt="attendance.schedule.subject.name"
                   >
                     <template #placeholder="">
@@ -639,7 +657,8 @@ export default {
         end_datetime: null,
         schedule_id: null,
         room_id: null,
-        image: null
+        image: null,
+        url: null
       },
       attendance: {
         id: null,
@@ -648,7 +667,8 @@ export default {
         end_datetime: null,
         schedule_id: null,
         room_id: null,
-        image: null
+        image: null,
+        url: null
       },
       attendances: [],
       filter: {
@@ -667,6 +687,7 @@ export default {
         { text: 'Study Program', value: 'schedule.study_program.name' },
         { text: 'Major', value: 'schedule.major.name' },
         { text: 'Group', value: 'schedule.group.name' },
+        { text: 'Is Active?', value: 'is_active', align: 'center' },
         { text: 'Start Datetime', value: 'start_time' },
         { text: 'End Datetime', value: 'end_time' },
         { text: 'Action', align: 'center', sortable: false }
@@ -770,18 +791,26 @@ export default {
     },
     start: {
       handler({ date, time }) {
-        this.attendance.start_datetime = this.$moment(
-          `${date} ${time}`
-        ).toISOString()
+        if (date && time) {
+          this.attendance.start_datetime = this.$moment(
+            `${date} ${time}`
+          ).toISOString()
+        } else {
+          this.attendance.start_datetime = null
+        }
       },
       deep: true,
       immediate: true
     },
     end: {
       handler({ date, time }) {
-        this.attendance.end_datetime = this.$moment(
-          `${date} ${time}`
-        ).toISOString()
+        if (date && time) {
+          this.attendance.end_datetime = this.$moment(
+            `${date} ${time}`
+          ).toISOString()
+        } else {
+          this.attendance.end_datetime = null
+        }
       },
       deep: true
     },
@@ -821,8 +850,9 @@ export default {
       },
       deep: true
     },
-    'image.file': function(file) {
+    'image.file': async function(file) {
       this.attendance.image = file
+      this.attendance.url = await fileReader(file)
     }
   },
   async asyncData({ app: { $api, $http, $handleError } }) {
@@ -1017,6 +1047,25 @@ export default {
       if (item) {
         this.isEditing = true
         this.attendance = { ...item }
+
+        this.start.date = this.$moment(item.start_datetime).format('YYYY-MM-DD')
+        this.start.time = this.$moment(item.start_datetime).format('HH:mm')
+
+        this.end.date = this.$moment(item.end_datetime).format('YYYY-MM-DD')
+        this.end.time = this.$moment(item.end_datetime).format('HH:mm')
+
+        this.image.url = item.image
+
+        Promise.all([
+          this.fetchMajors({
+            study_program_id: item.schedule.study_program_id,
+            department_id: item.schedule.major.department_id
+          }),
+          this.fetchSchedules({
+            lecturer_id: item.schedule.lecturer_id,
+            room_id: item.room_id
+          })
+        ])
       }
     },
     onClose() {
@@ -1039,12 +1088,16 @@ export default {
 
           let payload = cloneDeep(_payload)
 
+          delete payload.room
+          delete payload.schedule
+          delete payload.url
+
           if (this.isEditing) {
             payload = {
               ...payload,
               updated_at: new Date().toISOString()
             }
-            if (payload.image) {
+            if (payload.image instanceof File) {
               payload = toFormData(payload)
             } else {
               payload = {
