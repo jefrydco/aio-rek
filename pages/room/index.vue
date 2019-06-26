@@ -271,6 +271,7 @@
 </template>
 
 <script>
+import { Howl } from 'howler'
 import prettyMs from 'pretty-ms'
 import { mapState, mapActions } from 'vuex'
 import {
@@ -334,7 +335,8 @@ export default {
         'expression',
         'agegender'
       ],
-      isDrawing: true
+      isDrawing: true,
+      sound: null
     }
   },
   computed: {
@@ -396,8 +398,14 @@ export default {
       'drawBestMatch'
     ]),
     async init() {
+      this.initSound()
       await this.getCameras()
       await this.initCamera(this.selectedCamera)
+    },
+    initSound() {
+      this.sound = new Howl({
+        src: '/sounds/slow-spring-board.mp3'
+      })
     },
     async initCamera(deviceId) {
       try {
@@ -478,6 +486,7 @@ export default {
                     `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
                     detection.detected
                   )
+                  this.sound.play()
                   this.clearFaceDetection()
                   this.fetchSchedules({ lecturer_id: detection.detected.id })
                 }

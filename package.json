@@ -65,6 +65,7 @@
     "express-pino-logger": "^4.0.0",
     "face-api.js": "^0.20.0",
     "helmet": "^3.18.0",
+    "howler": "^2.1.2",
     "initials": "^3.0.1",
     "is-dark-color": "^1.2.0",
     "js-cookie": "^2.2.0",
