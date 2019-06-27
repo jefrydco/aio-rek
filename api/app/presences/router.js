@@ -12,9 +12,10 @@ const { create, fetchPage, fetch, update, destroy } = require('./controller')
 
 router.post(
   '/presences',
+  bodyParser.json(),
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   handleImage('static/uploads/images/presences').single('image'),
   create
 )
@@ -22,14 +23,14 @@ router.get(
   '/presences',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetchPage
 )
 router.get(
   '/presences/:id',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['room']]),
   fetch
 )
 router.put(

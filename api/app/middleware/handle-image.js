@@ -2,7 +2,6 @@
 
 const fs = require('fs')
 const path = require('path')
-const Boom = require('@hapi/boom')
 const multer = require('multer')
 const uuid = require('uuid/v4')
 
@@ -10,24 +9,25 @@ const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
   const storage = multer.diskStorage({
     destination(req, file, cb) {
       const {
-        user,
+        user: { role },
         // eslint-disable-next-line
         query: { student_id, lecturer_id }
       } = req
-      if (user.role !== 'admin') {
-        return Boom.unauthorized()
-      }
-      const uploadPath = path.join(
-        location,
-        // eslint-disable-next-line
-        student_id || lecturer_id || 'others'
-      )
+      if (role && (role === 'admin' || role === 'room')) {
+        const uploadPath = path.join(
+          location,
+          // eslint-disable-next-line
+          student_id || lecturer_id || 'others'
+        )
 
-      if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true })
-      }
+        if (!fs.existsSync(uploadPath)) {
+          fs.mkdirSync(uploadPath, { recursive: true })
+        }
 
-      cb(null, uploadPath)
+        cb(null, uploadPath)
+      } else {
+        cb(new Error('Unautorized'))
+      }
     },
     filename(req, file, cb) {
       cb(null, `${uuid()}.jpg`)

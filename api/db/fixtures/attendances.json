@@ -1,0 +1,11 @@
+[
+  {
+    "id":"aa3aa1e6-f207-4843-bc27-845cfbb57a0b",
+    "image":"/uploads/images/attendances/c860b8a4-1245-43fd-9044-030781ab7879/491a0be5-8c45-45e4-9c08-1551b7089005.jpg",
+    "is_active":true,
+    "start_datetime":"2019-06-27T02:53:30.927Z",
+    "end_datetime":null,
+    "schedule_id":"2ff0150d-9cba-464e-a9c9-03e5587271a2",
+    "room_id":"1f38c427-eb2f-43f5-8c4f-7b9409c748ff"
+  }
+]

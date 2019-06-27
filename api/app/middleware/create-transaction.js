@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
 // that point all controller and related operations would have completed
 // successfully.
 //
-// Note that transaction rollack is handled in the `rollback-transaction.js`
+// Note that transaction rollback is handled in the `rollback-transaction.js`
 // middleware.
 function commitTransactionBeforeSend(req, res, next) {
   interceptor((req, res) => ({

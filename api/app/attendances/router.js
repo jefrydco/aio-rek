@@ -9,8 +9,10 @@ const {
   handleImage
 } = require('../middleware')
 const { create, fetchPage, fetch, update, destroy } = require('./controller')
+
 router.post(
   '/attendances',
+  bodyParser.json(),
   createTransaction,
   jwtAuth.required,
   handleRole([['admin'], ['room']]),

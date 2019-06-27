@@ -526,15 +526,13 @@ export default {
           is_active: true,
           image
         })
-        const { attendance } = await this.$api.attendances.create(payload, {
+        await this.$api.attendances.create(payload, {
           lecturer_id: this.detectedLecturer.id
         })
         await (() => {
-          console.log(attendance)
           this.isChoosingSchedule = false
         })()
       } catch (error) {
-        console.log(error)
         this.$handleError(error)
       } finally {
         this.isLoading = false

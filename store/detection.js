@@ -4,7 +4,8 @@ export const types = {
   SET_DETECTED_LECTURER: 'SET_DETECTED_LECTURER',
   STUDENTS_DETECTING: 'STUDENTS_DETECTING',
   STUDENTS_DETECTED: 'STUDENTS_DETECTED',
-  SET_DETECTED_STUDENTS: 'SET_DETECTED_STUDENTS'
+  SET_DETECTED_STUDENTS: 'SET_DETECTED_STUDENTS',
+  SET_ATTENDANCE: 'SET_ATTENDANCE'
 }
 
 export const state = () => ({
@@ -13,7 +14,8 @@ export const state = () => ({
   detectedLecturer: null,
   isStudentsDetecting: false,
   isStudentsDetected: false,
-  detectedStudents: []
+  detectedStudents: [],
+  attendance: null
 })
 
 export const mutations = {
@@ -36,5 +38,8 @@ export const mutations = {
   },
   [types.SET_DETECTED_STUDENTS](state, detectedStudents) {
     state.detectedStudents = detectedStudents
+  },
+  [types.SET_ATTENDANCE](state, attendance) {
+    state.attendance = attendance
   }
 }

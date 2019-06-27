@@ -148,8 +148,13 @@ export default {
             { text: 'Schedules', to: { name: 'admin-schedules' } }
           ]
         },
-        { text: 'Attendances', to: { name: 'admin-attendances' } },
-        { text: 'Presences', to: { name: 'admin-presences' } }
+        {
+          text: 'Attendance',
+          subMenus: [
+            { text: 'Attendances', to: { name: 'admin-attendances' } },
+            { text: 'Presences', to: { name: 'admin-presences' } }
+          ]
+        }
       ]
     }
   },
