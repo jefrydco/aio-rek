@@ -502,8 +502,6 @@ import cloneDeep from 'lodash/fp/cloneDeep'
 import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 import { fileReader, getFileFromUrl } from '~/utils/file'
 
-import AppAvatar from '~/components/AppAvatar'
-
 import string from '~/mixins/string'
 
 import { types as cameraTypes } from '~/store/camera'
@@ -511,9 +509,6 @@ import { types as cameraTypes } from '~/store/camera'
 export default {
   validate({ params: { id = '' } }) {
     return uuidValidate(id, 4)
-  },
-  components: {
-    AppAvatar
   },
   mixins: [string],
   head() {

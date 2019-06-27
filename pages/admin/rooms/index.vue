@@ -21,35 +21,6 @@
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 body-2">
-              <v-text-field
-                readonly=""
-                outline=""
-                label="Email"
-                append-outer-icon="file_copy"
-                flat=""
-                hide-details=""
-                :value="item.user.email"
-                @click:append-outer="onCopy('Email', item.user.email)"
-              />
-            </td>
-            <td class="py-1 body-2">
-              <v-text-field
-                readonly=""
-                outline=""
-                label="Password"
-                :type="item.user.isPassword ? 'password' : 'text'"
-                :append-icon="item.user.isPassword ? 'lock_open' : 'lock'"
-                append-outer-icon="file_copy"
-                flat=""
-                hide-details=""
-                :value="item.user.password"
-                @click:append="
-                  () => (item.user.isPassword = !item.user.isPassword)
-                "
-                @click:append-outer="onCopy('Password', item.user.password)"
-              />
-            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.in_use" color="error" text-color="white">
                 <v-avatar class="error darken-3">
@@ -196,7 +167,6 @@
 <script>
 import copy from 'clipboard-copy'
 import cloneDeep from 'lodash/fp/cloneDeep'
-import kebabCase from 'lodash/fp/kebabCase'
 
 export default {
   head() {
@@ -229,8 +199,6 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Name', value: 'name' },
-        { text: 'Email', value: 'user.email' },
-        { text: 'Password', sortable: false },
         { text: 'In use?', value: 'is_active', align: 'center' },
         { text: 'Action', align: 'center', sortable: false }
       ],
@@ -271,17 +239,11 @@ export default {
       const { rowCount, rooms, ...filter } = await $api.rooms.fetchPage({
         orderBy: 'name',
         limit: 25,
-        offset: 0,
-        withRelated: 'user'
-      })
-      const _rooms = rooms.map(room => {
-        room.user.password = room.user.email.replace('@gmail.com', '123')
-        room.user.isPassword = true
-        return room
+        offset: 0
       })
       return {
         filter,
-        rooms: _rooms,
+        rooms,
         totalItems: rowCount
       }
     } catch ({ response }) {
@@ -316,17 +278,11 @@ export default {
         const { rowCount, rooms, ...filter } = await this.$api.rooms.fetchPage({
           orderBy,
           limit,
-          offset,
-          withRelated: 'user'
-        })
-        const _rooms = rooms.map(room => {
-          room.user.password = room.user.email.replace('@gmail.com', '123')
-          room.user.isPassword = true
-          return room
+          offset
         })
         this.filter = filter
         this.totalItems = rowCount
-        this.rooms = _rooms
+        this.rooms = rooms
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -375,21 +331,11 @@ export default {
               message: 'Room is updated successfully'
             })
           } else {
-            const { user } = await this.$api.users.create({
-              user: {
-                email: `${kebabCase(payload.room.name)}@gmail.com`,
-                role: 'room',
-                password: `${kebabCase(payload.room.name)}123`
-              }
+            await this.$api.rooms.create(payload)
+            await this.$notify({
+              kind: 'success',
+              message: 'Room is created successfully'
             })
-            if (user) {
-              payload.room.user_id = user.id
-              await this.$api.rooms.create(payload)
-              await this.$notify({
-                kind: 'success',
-                message: 'Room is created successfully'
-              })
-            }
           }
 
           await Promise.all([this.onClose(), this.fetchRooms()])

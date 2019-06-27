@@ -10,11 +10,6 @@ exports.up = function(knex, Promise) {
       .unique()
       .notNullable()
     table.boolean('in_use').defaultTo(false)
-    table
-      .uuid('user_id')
-      .notNullable()
-      .references('users.id')
-      .onDelete('CASCADE')
   })
 }
 

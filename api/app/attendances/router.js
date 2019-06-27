@@ -15,7 +15,7 @@ router.post(
   bodyParser.json(),
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['room']]),
+  handleRole([['admin'], ['device']]),
   handleImage('static/uploads/images/attendances').single('image'),
   create
 )
@@ -23,14 +23,14 @@ router.get(
   '/attendances',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['room']]),
+  handleRole([['admin'], ['device']]),
   fetchPage
 )
 router.get(
   '/attendances/:id',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['room']]),
+  handleRole([['admin'], ['device']]),
   fetch
 )
 router.put(

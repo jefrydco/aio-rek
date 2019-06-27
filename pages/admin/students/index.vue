@@ -61,12 +61,7 @@
 </template>
 
 <script>
-import AppAvatar from '~/components/AppAvatar'
-
 export default {
-  components: {
-    AppAvatar
-  },
   head() {
     return {
       title: 'Students'

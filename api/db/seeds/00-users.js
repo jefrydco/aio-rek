@@ -1,8 +1,6 @@
 const argon2 = require('argon2')
-const kebabCase = require('lodash/fp/kebabCase')
 const students = require('../fixtures/students.json')
 const lecturers = require('../fixtures/lecturers.json')
-const rooms = require('../fixtures/rooms.json')
 
 exports.seed = async function(knex, Promise) {
   const qb = knex('users')
@@ -30,17 +28,6 @@ exports.seed = async function(knex, Promise) {
       })
     }))
   )
-  const roomsData = await Promise.all(
-    // eslint-disable-next-line
-    rooms.map(async ({ user_id, name }, i) => ({
-      id: user_id,
-      email: `${kebabCase(name)}@gmail.com`,
-      role: 'room',
-      hashed_password: await argon2.hash(`${kebabCase(name)}123`, {
-        type: argon2.argon2id
-      })
-    }))
-  )
   return qb.insert(
     [
       {
@@ -49,10 +36,16 @@ exports.seed = async function(knex, Promise) {
         hashed_password: await argon2.hash(`admin123`, {
           type: argon2.argon2id
         })
+      },
+      {
+        email: 'device@gmail.com',
+        role: 'device',
+        hashed_password: await argon2.hash(`device123`, {
+          type: argon2.argon2id
+        })
       }
     ]
       .concat(studentsData)
       .concat(lecturersData)
-      .concat(roomsData)
   )
 }

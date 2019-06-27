@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
       .string('email')
       .unique()
       .notNullable()
-    table.enum('role', ['admin', 'lecturer', 'student', 'room']).notNullable()
+    table.enum('role', ['admin', 'lecturer', 'student', 'device']).notNullable()
     table.string('hashed_password').notNullable()
   })
 }

@@ -11,8 +11,8 @@ export default ({
     const { role } = user
     if (role === 'admin') {
       redirect({ name: 'admin' })
-    } else if (role === 'room') {
-      redirect({ name: 'room' })
+    } else if (role === 'device') {
+      redirect({ name: 'device' })
     }
   }
 }

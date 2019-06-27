@@ -22,7 +22,7 @@ router.get(
   '/lecturer-images',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['device']]),
   fetchPage
 )
 router.get(

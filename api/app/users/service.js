@@ -10,13 +10,14 @@ class UserService extends Service {
     super(UserService.name, app, ['hashed_password'])
   }
   generateJWT(user) {
+    const role = user.get('role')
     return jwt.sign(
       {
         id: user.id,
-        role: [user.get('role')]
+        role: [role]
       },
       config.get('privateKey'),
-      { algorithm: 'RS256', expiresIn: '1h' }
+      { algorithm: 'RS256', expiresIn: role === 'device' ? '10y' : '1h' }
     )
   }
   getAuthJSON(user, token) {

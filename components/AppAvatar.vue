@@ -18,6 +18,7 @@
 import { isDark, getMaterialColor, getInitials } from '~/utils/color'
 
 export default {
+  name: 'AppAvatar',
   props: {
     name: {
       default: '',

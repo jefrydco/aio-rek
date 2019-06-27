@@ -71,6 +71,15 @@
             </v-btn>
           </template>
           <v-list>
+            <v-list-tile
+              v-if="$route.name.includes('device')"
+              ripple=""
+              @click="onSettings"
+            >
+              <v-list-tile-content>
+                <v-list-tile-title>Settings</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
             <v-list-tile ripple="" @click="onLogout">
               <v-list-tile-content>
                 <v-list-tile-title>Logout</v-list-tile-title>
@@ -103,6 +112,8 @@ import AppNotification from '~/components/AppNotification'
 import AppAvatar from '~/components/AppAvatar'
 import AppLoading from '~/components/AppLoading'
 
+import { types as deviceTypes } from '~/store/device'
+
 const Cookie = process.client ? require('js-cookie') : null
 
 export default {
@@ -125,12 +136,14 @@ export default {
     avatarName() {
       if (this.user.role === 'admin') {
         return 'Admin'
+      } else if (this.user.role === 'device') {
+        return 'Device'
       }
       return this.user.profile.name
     },
     menus() {
-      if (this.user.role === 'room') {
-        return [{ text: 'Home', to: { name: 'room' } }]
+      if (this.user.role === 'device') {
+        return [{ text: 'Home', to: { name: 'device' } }]
       }
       return [
         { text: 'Home', to: { name: 'admin' } },
@@ -175,6 +188,9 @@ export default {
           this.$router.replace({ name: role })
         }
       }
+    },
+    onSettings() {
+      this.$store.commit(`device/${deviceTypes.SET_CONFIGURING}`, true)
     },
     onLogout() {
       Cookie.remove('t')

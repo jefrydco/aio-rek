@@ -54,12 +54,14 @@ module.exports = {
 
   // https://nuxtjs.org/api/configuration-plugins
   plugins: [
+    '~plugins/components',
     '~plugins/vuetify',
     '~plugins/vee-validate',
     '~plugins/api',
     '~plugins/notify',
     '~plugins/handle-error',
-    '~plugins/vue-directive.client'
+    '~plugins/vue-directive.client',
+    '~plugins/vuex-persist.client'
   ],
 
   // https://nuxtjs.org/api/configuration-css

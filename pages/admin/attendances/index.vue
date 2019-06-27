@@ -642,12 +642,7 @@ import toFormData from 'json-form-data'
 import cloneDeep from 'lodash/fp/cloneDeep'
 import { fileReader } from '~/utils/file'
 
-import AppAvatar from '~/components/AppAvatar'
-
 export default {
-  components: {
-    AppAvatar
-  },
   head() {
     return {
       title: 'Attendances'

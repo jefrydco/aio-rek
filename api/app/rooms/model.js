@@ -5,14 +5,10 @@ const Checkit = require('checkit')
 module.exports = bookshelf =>
   bookshelf.model('Room', {
     tableName: 'rooms',
-    user() {
-      return this.belongsTo('User', 'user_id')
-    },
     getValidators() {
       return {
         name: ['required', 'string'],
-        in_use: ['boolean'],
-        user_id: ['required', 'uuid']
+        in_use: ['boolean']
       }
     },
     initialize() {

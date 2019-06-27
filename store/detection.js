@@ -21,6 +21,7 @@ export const state = () => ({
 export const mutations = {
   [types.LECTURER_DETECTING](state) {
     state.isLecturerDetecting = true
+    state.isLecturerDetected = false
   },
   [types.LECTURER_DETECTED](state) {
     state.isLecturerDetecting = false
@@ -31,6 +32,7 @@ export const mutations = {
   },
   [types.STUDENTS_DETECTING](state) {
     state.isStudentsDetecting = true
+    state.isStudentsDetected = false
   },
   [types.STUDENTS_DETECTED](state) {
     state.isStudentsDetecting = false

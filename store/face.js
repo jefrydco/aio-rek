@@ -113,9 +113,9 @@ export const actions = {
       console.log(error)
     }
   },
-  getFaceMatcher({ commit, state }, { lecturers = [] }) {
+  getFaceMatcher({ commit, state }, { datasets = [] }) {
     const labeledDescriptors = []
-    lecturers.forEach(({ id, images }) => {
+    datasets.forEach(({ id, images }) => {
       if (images.length > 0) {
         const descriptors = []
         images.forEach(({ has_descriptor, descriptor: { descriptor } }) => {

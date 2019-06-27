@@ -17,7 +17,7 @@ router.get(
   '/lecturer-descriptors',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['room']]),
+  handleRole([['admin'], ['device']]),
   fetchPage
 )
 router.get(

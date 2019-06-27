@@ -37,7 +37,7 @@
                     <v-select
                       v-model="selectedCamera"
                       :items="cameras"
-                      label="Select Camera"
+                      label="Camera"
                       outline=""
                       item-value="deviceId"
                       item-text="label"
@@ -266,6 +266,68 @@
           </v-card>
         </v-flex>
       </v-layout>
+      <v-dialog v-model="isConfiguring" scrollable="" persistent="" width="350">
+        <v-card>
+          <v-toolbar color="primary" dark="" card="">
+            <v-toolbar-title>
+              <h3 class="title">
+                Device Configuration
+              </h3>
+            </v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-container class="pa-0" fluid="" grid-list-xl="">
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-autocomplete
+                    v-model="selectedRoom"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('room')"
+                    :disabled="isLoading"
+                    :items="rooms"
+                    item-text="name"
+                    item-value="id"
+                    label="Room"
+                    data-vv-name="room"
+                    data-vv-as="room"
+                    name="room"
+                    required=""
+                    clearable=""
+                    outline=""
+                    data-vv-value-path="room"
+                  />
+                </v-flex>
+              </v-layout>
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-select
+                    v-model="selectedDevice"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('camera')"
+                    :disabled="isLoading"
+                    :items="cameras"
+                    item-value="deviceId"
+                    item-text="label"
+                    label="Camera"
+                    data-vv-name="camera"
+                    data-vv-as="camera"
+                    name="camera"
+                    required=""
+                    clearable=""
+                    outline=""
+                    data-vv-value-path="camera"
+                  />
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-divider />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="accent" @click="onSaveConfiguration">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-flex>
   </v-layout>
 </template>
@@ -274,7 +336,7 @@
 import { Howl } from 'howler'
 import toFormData from 'json-form-data'
 import prettyMs from 'pretty-ms'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import {
   setIntervalAsync,
   clearIntervalAsync
@@ -283,14 +345,10 @@ import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 
 import { types as detectionTypes } from '~/store/detection'
 import { types as cameraTypes } from '~/store/camera'
+import { types as deviceTypes } from '~/store/device'
 import string from '~/mixins/string'
 
-import AppAvatar from '~/components/AppAvatar'
-
 export default {
-  components: {
-    AppAvatar
-  },
   mixins: [string],
   data() {
     return {
@@ -298,9 +356,12 @@ export default {
       isConfirming: false,
       isLoading: false,
       interval: null,
+      selectedDevice: null,
+      selectedRoom: null,
       lecturers: [],
       students: [],
       schedules: [],
+      rooms: [],
       rowsPerPageItems: [
         12,
         24,
@@ -348,7 +409,19 @@ export default {
       'isLecturerDetected',
       'detectedLecturer'
     ]),
-
+    ...mapState('device', ['device', 'room']),
+    ...mapGetters('device', ['isConfigured']),
+    isConfiguring: {
+      get() {
+        return this.$store.state.device.isConfiguring
+      },
+      set(isConfiguring) {
+        this.$store.commit(
+          `device/${deviceTypes.SET_CONFIGURING}`,
+          isConfiguring
+        )
+      }
+    },
     prettyDuration() {
       return prettyMs(this.duration, { separateMilliseconds: true })
     },
@@ -366,16 +439,45 @@ export default {
   },
   watch: {
     selectedCamera(selectedCamera) {
-      this.initCamera(selectedCamera)
+      if (selectedCamera) {
+        this.$store.commit(`device/${deviceTypes.SET_DEVICE}`, selectedCamera)
+        this.initCamera(selectedCamera)
+      }
+    },
+    isConfigured(isConfigured) {
+      if (this.isConfigured) {
+        this.isConfiguring = false
+      }
+    },
+    device: {
+      handler(device) {
+        if (device) {
+          this.selectedCamera = device
+          this.selectedDevice = device
+        }
+      },
+      immediate: true
+    },
+    room: {
+      handler(room) {
+        if (room) {
+          this.selectedRoom = room
+        }
+      },
+      immediate: true
     }
   },
   async asyncData({ app: { $api, $handleError } }) {
     try {
-      const { lecturers } = await $api.lecturers.fetchPage({
-        limit: -1,
-        withRelated: 'images.descriptor'
-      })
+      const [{ rooms }, { lecturers }] = await Promise.all([
+        $api.rooms.fetchPage({ limit: -1 }),
+        $api.lecturers.fetchPage({
+          limit: -1,
+          withRelated: 'images.descriptor'
+        })
+      ])
       return {
+        rooms,
         lecturers
       }
     } catch (error) {
@@ -399,6 +501,7 @@ export default {
       'drawBestMatch'
     ]),
     async init() {
+      this.initDevice()
       this.initSound()
       await this.getCameras()
       await this.initCamera(this.selectedCamera)
@@ -407,6 +510,23 @@ export default {
       this.sound = new Howl({
         src: '/sounds/slow-spring-board.mp3'
       })
+    },
+    initDevice() {
+      if (this.isConfigured) {
+        return
+      }
+      this.isConfiguring = true
+    },
+    async onSaveConfiguration() {
+      const valid = await this.$validator.validate()
+      if (valid) {
+        this.$store.commit(`device/${deviceTypes.SET_CONFIGURING}`, false)
+        this.$store.commit(
+          `device/${deviceTypes.SET_DEVICE}`,
+          this.selectedDevice
+        )
+        this.$store.commit(`device/${deviceTypes.SET_ROOM}`, this.selectedRoom)
+      }
     },
     async initCamera(deviceId) {
       try {
@@ -433,7 +553,7 @@ export default {
       canvasCtx.beginPath()
     },
     initFaceMatcher() {
-      this.getFaceMatcher({ lecturers: this.lecturers })
+      this.getFaceMatcher({ datasets: this.lecturers })
     },
     async initLecturerFaceDetection({
       videoEl,
@@ -449,7 +569,7 @@ export default {
         try {
           const t0 = performance.now()
           drawImage(canvasCtx, videoEl, 0, 0, 720, 514, { isFlip: true })
-          if (this.isLecturerDetecting) {
+          if (this.isLecturerDetecting && this.isConfigured) {
             const options = {
               isDetectionEnabled: this.selectedOptions.includes('detection'),
               isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
@@ -508,6 +628,7 @@ export default {
     },
     onUnderstand() {
       this.isConfirming = false
+      this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
       this.init()
     },
     onCustom() {},
@@ -538,10 +659,25 @@ export default {
         this.isLoading = false
       }
     },
+    async fetchRooms() {
+      try {
+        this.isLoading = true
+        const { rooms } = await this.$api.rooms.fetchPage({
+          limit: -1
+        })
+        this.rooms = rooms
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
     async fetchLecturers() {
       try {
         this.isLoading = true
-        const { lecturers } = await this.$api.lecturers.fetchPage()
+        const { lecturers } = await this.$api.lecturers.fetchPage({
+          limit: -1
+        })
         this.lecturers = lecturers
       } catch (error) {
         this.$handleError(error)
@@ -550,7 +686,7 @@ export default {
       }
     },
     // eslint-disable-next-line
-    async fetchSchedules({ lecturer_id, room_id = this.user.profile.id }) {
+    async fetchSchedules({ lecturer_id, room_id = this.room }) {
       try {
         this.isLoading = true
         const { schedules } = await this.$api.schedules.fetchPage({
@@ -569,7 +705,9 @@ export default {
     async fetchDepartments() {
       try {
         this.isLoading = true
-        const { departments } = await this.$api.departments.fetchPage()
+        const { departments } = await this.$api.departments.fetchPage({
+          limit: -1
+        })
         this.departments = departments
       } catch (error) {
         this.$handleError(error)
@@ -580,7 +718,9 @@ export default {
     async fetchStudyPrograms() {
       try {
         this.isLoading = true
-        const { studyPrograms } = await this.$api.studyPrograms.fetchPage()
+        const { studyPrograms } = await this.$api.studyPrograms.fetchPage({
+          limit: -1
+        })
         this.studyPrograms = studyPrograms
       } catch (error) {
         this.$handleError(error)
@@ -593,6 +733,7 @@ export default {
       try {
         this.isLoading = true
         const { majors } = await this.$api.majors.fetchPage({
+          limit: -1,
           study_program_id,
           department_id
         })
@@ -606,7 +747,9 @@ export default {
     async fetchGroups() {
       try {
         this.isLoading = true
-        const { groups } = await this.$api.groups.fetchPage()
+        const { groups } = await this.$api.groups.fetchPage({
+          limit: -1
+        })
         this.groups = groups
       } catch (error) {
         this.$handleError(error)

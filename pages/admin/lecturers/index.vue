@@ -58,13 +58,9 @@
 </template>
 
 <script>
-import AppAvatar from '~/components/AppAvatar'
 import string from '~/mixins/string'
 
 export default {
-  components: {
-    AppAvatar
-  },
   head() {
     return {
       title: 'Lecturers'

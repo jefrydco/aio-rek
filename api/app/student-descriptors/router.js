@@ -17,7 +17,7 @@ router.get(
   '/student-descriptors',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['device']]),
   fetchPage
 )
 router.get(
