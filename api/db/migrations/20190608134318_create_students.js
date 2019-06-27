@@ -23,17 +23,14 @@ exports.up = function(knex, Promise) {
       .onDelete('CASCADE')
     table
       .uuid('study_program_id')
-      .notNullable()
       .references('study_programs.id')
       .onDelete('SET NULL')
     table
       .uuid('major_id')
-      .notNullable()
       .references('majors.id')
       .onDelete('SET NULL')
     table
       .uuid('group_id')
-      .notNullable()
       .references('groups.id')
       .onDelete('SET NULL')
   })

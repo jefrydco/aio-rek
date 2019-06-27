@@ -8,12 +8,10 @@ exports.up = function(knex, Promise) {
     table.string('name').notNullable()
     table
       .uuid('study_program_id')
-      .notNullable()
       .references('study_programs.id')
       .onDelete('SET NULL')
     table
       .uuid('department_id')
-      .notNullable()
       .references('departments.id')
       .onDelete('SET NULL')
   })

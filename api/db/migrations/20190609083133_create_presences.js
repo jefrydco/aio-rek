@@ -14,12 +14,10 @@ exports.up = function(knex, Promise) {
     table.datetime('datetime').defaultTo(knex.fn.now())
     table
       .uuid('student_id')
-      .notNullable()
       .references('students.id')
       .onDelete('SET NULL')
     table
       .uuid('attendance_id')
-      .notNullable()
       .references('attendances.id')
       .onDelete('SET NULL')
   })
