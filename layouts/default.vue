@@ -112,6 +112,7 @@ import AppNotification from '~/components/AppNotification'
 import AppAvatar from '~/components/AppAvatar'
 import AppLoading from '~/components/AppLoading'
 
+import { types as detectionTypes } from '~/store/detection'
 import { types as deviceTypes } from '~/store/device'
 
 const Cookie = process.client ? require('js-cookie') : null
@@ -195,6 +196,9 @@ export default {
     onLogout() {
       Cookie.remove('t')
       this.$http.setToken(false)
+      this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
+      this.$store.commit(`detection/${detectionTypes.SET_DETECTED_LECTURER}`)
+      this.$store.commit(`detection/${detectionTypes.SET_ATTENDANCE}`)
       window.location.reload(true)
     }
   }

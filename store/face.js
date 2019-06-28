@@ -114,6 +114,7 @@ export const actions = {
     }
   },
   getFaceMatcher({ commit, state }, { datasets = [] }) {
+    console.log('faceMatcher: store', datasets)
     const labeledDescriptors = []
     datasets.forEach(({ id, images }) => {
       if (images.length > 0) {
@@ -207,7 +208,8 @@ export const actions = {
       }
     }
   ) {
-    if (isRecognitionEnabled) {
+    if (descriptor && isRecognitionEnabled) {
+      console.log('getBestMatch: store', descriptor)
       const bestMatch = await state.faceMatcher.findBestMatch(descriptor)
       return bestMatch
     }

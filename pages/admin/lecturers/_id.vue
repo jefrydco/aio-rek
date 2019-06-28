@@ -671,7 +671,7 @@ export default {
     async init() {
       await this.fetchLecturer()
       await Promise.all([this.prefillData(), this.getCameras()])
-      await this.initCamera(this.selectedCamera)
+      await this.initCamera()
     },
     async prefillData() {
       try {
@@ -687,11 +687,23 @@ export default {
       }
     },
     async initCamera(deviceId) {
-      try {
-        const videoStream = await this.startCamera(deviceId)
-        this.$refs.liveVideo.srcObject = videoStream
-      } catch (error) {
-        this.$handleError(error)
+      if (!deviceId) {
+        if (this.cameras.length > 0) {
+          const [camera] = this.cameras
+          if (camera) {
+            this.$store.commit(
+              `camera/${cameraTypes.SET_SELECTED_CAMERA}`,
+              camera
+            )
+            deviceId = camera.deviceId
+          }
+        }
+        try {
+          const videoStream = await this.startCamera(deviceId)
+          this.$refs.liveVideo.srcObject = videoStream
+        } catch (error) {
+          this.$handleError(error)
+        }
       }
     },
     async fetchLecturer() {

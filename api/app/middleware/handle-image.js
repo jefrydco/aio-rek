@@ -13,7 +13,7 @@ const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
         // eslint-disable-next-line
         query: { student_id, lecturer_id }
       } = req
-      if (role && (role === 'admin' || role === 'room')) {
+      if (role && (role === 'admin' || role === 'device')) {
         const uploadPath = path.join(
           location,
           // eslint-disable-next-line

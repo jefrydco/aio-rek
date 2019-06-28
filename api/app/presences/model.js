@@ -13,7 +13,7 @@ module.exports = bookshelf =>
     },
     getValidators() {
       return {
-        image: ['required', 'string'],
+        image: ['string'],
         is_late: ['boolean'],
         status: ['string'],
         datetime: [],

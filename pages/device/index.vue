@@ -98,7 +98,7 @@
           </v-card>
         </v-flex>
         <v-flex xs12="" md6="">
-          <v-card>
+          <v-card class="mb-3">
             <v-toolbar card="">
               <v-toolbar-title>
                 <h2 class="headline">
@@ -120,136 +120,216 @@
                         />
                       </v-flex>
                       <v-flex xs12="" sm9="">
-                        <h3 class="display-1 mb-3">
-                          {{ detectedLecturer.name }}
-                        </h3>
-                        <v-dialog v-model="isConfirming" width="350">
-                          <template #activator="{ on }">
-                            <v-btn large="" v-on="on">Cancel</v-btn>
-                          </template>
-                          <v-card>
-                            <v-card-text>
-                              <div class="body-2">
-                                To cancel the lesson, please keep your face away
-                                from the camera
-                              </div>
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-spacer />
-                              <v-btn
-                                :loading="isLoading"
-                                :disabled="isLoading"
-                                flat=""
-                                @click="isConfirming = false"
-                              >
-                                Cancel
-                              </v-btn>
-                              <v-btn
-                                :loading="isLoading"
-                                :disabled="isLoading"
-                                color="primary"
-                                flat=""
-                                @click="onUnderstand"
-                              >
-                                I Understand
-                              </v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-dialog>
+                        <v-layout row="" wrap="">
+                          <v-flex xs12="">
+                            <h3 class="display-1">
+                              {{ detectedLecturer.name }}
+                            </h3>
+                          </v-flex>
+                        </v-layout>
+                        <v-layout v-if="!isAttendanceStarted" row="" wrap="">
+                          <v-flex xs12="">
+                            <v-dialog v-model="isConfirming" width="350">
+                              <template #activator="{ on }">
+                                <v-btn large="" v-on="on">Cancel</v-btn>
+                              </template>
+                              <v-card>
+                                <v-card-text>
+                                  <div class="body-2">
+                                    To cancel the lesson, please keep your face
+                                    away from the camera
+                                  </div>
+                                </v-card-text>
+                                <v-card-actions>
+                                  <v-spacer />
+                                  <v-btn
+                                    :loading="isLoading"
+                                    :disabled="isLoading"
+                                    flat=""
+                                    @click="isConfirming = false"
+                                  >
+                                    Cancel
+                                  </v-btn>
+                                  <v-btn
+                                    :loading="isLoading"
+                                    :disabled="isLoading"
+                                    color="primary"
+                                    flat=""
+                                    @click="onUnderstand"
+                                  >
+                                    I Understand
+                                  </v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
 
-                        <v-btn large="" color="primary" @click="onCustom">
-                          Custom
-                        </v-btn>
-                        <v-dialog
-                          v-model="isChoosingSchedule"
-                          width="1050"
-                          scrollable=""
-                        >
-                          <template #activator="{ on }">
-                            <v-btn large="" color="accent" v-on="on">
-                              Start
+                            <v-btn large="" color="primary" @click="onCustom">
+                              Custom
                             </v-btn>
-                          </template>
-                          <v-card>
-                            <v-toolbar card="" color="primary" dark="">
-                              <v-toolbar-title>Choose Schedule</v-toolbar-title>
-                              <v-spacer />
-                              <v-btn
-                                icon=""
-                                @click="isChoosingSchedule = false"
-                              >
-                                <v-icon>close</v-icon>
-                              </v-btn>
-                            </v-toolbar>
-                            <v-card-text>
-                              <v-container
-                                class="pa-0"
-                                fluid=""
-                                grid-list-xl=""
-                              >
-                                <v-data-iterator
-                                  :items="schedules"
-                                  :rows-per-page-items="rowsPerPageItems"
-                                  :pagination.sync="pagination"
-                                  :total-items="totalItems"
-                                  :loading="isLoading"
-                                  content-tag="v-layout"
-                                  row=""
-                                  wrap=""
-                                >
-                                  <template #item="{ item }">
-                                    <v-fade-transition>
-                                      <v-flex xs12="" sm6="" md4="">
-                                        <v-card
-                                          ripple=""
-                                          @click="onStart(item)"
-                                        >
-                                          <v-card-text>
-                                            <h4>Subject</h4>
-                                            <h5 class="subheading">
-                                              {{ item.subject.name }}
-                                            </h5>
+                            <v-dialog
+                              v-model="isChoosingSchedule"
+                              width="1050"
+                              scrollable=""
+                            >
+                              <template #activator="{ on }">
+                                <v-btn large="" color="accent" v-on="on">
+                                  Start
+                                </v-btn>
+                              </template>
+                              <v-card>
+                                <v-toolbar card="" color="primary" dark="">
+                                  <v-toolbar-title>
+                                    Choose Schedule
+                                  </v-toolbar-title>
+                                  <v-spacer />
+                                  <v-btn
+                                    icon=""
+                                    @click="isChoosingSchedule = false"
+                                  >
+                                    <v-icon>close</v-icon>
+                                  </v-btn>
+                                </v-toolbar>
+                                <v-card-text>
+                                  <v-container
+                                    class="pa-0"
+                                    fluid=""
+                                    grid-list-xl=""
+                                  >
+                                    <v-data-iterator
+                                      :items="schedules"
+                                      :rows-per-page-items="rowsPerPageItems"
+                                      :pagination.sync="pagination"
+                                      :total-items="totalItems"
+                                      :loading="isLoading"
+                                      content-tag="v-layout"
+                                      row=""
+                                      wrap=""
+                                    >
+                                      <template #item="{ item }">
+                                        <v-fade-transition>
+                                          <v-flex xs12="" sm6="" md4="">
+                                            <v-card
+                                              ripple=""
+                                              @click="onStart(item)"
+                                            >
+                                              <v-card-text>
+                                                <h4>Subject</h4>
+                                                <h5 class="subheading mb-1">
+                                                  {{ item.subject.name }}
+                                                </h5>
 
-                                            <h4>Grade</h4>
-                                            <h5 class="subheading">
-                                              {{ item.grade }}
-                                            </h5>
+                                                <h4>Grade</h4>
+                                                <h5 class="subheading mb-1">
+                                                  {{ item.grade }}
+                                                </h5>
 
-                                            <h4>Study Program</h4>
-                                            <h5 class="subheading">
-                                              {{ item.study_program.name }}
-                                            </h5>
+                                                <h4>Study Program</h4>
+                                                <h5 class="subheading mb-1">
+                                                  {{ item.study_program.name }}
+                                                </h5>
 
-                                            <h4>Major</h4>
-                                            <h5 class="subheading">
-                                              {{ item.major.name }}
-                                            </h5>
+                                                <h4>Major</h4>
+                                                <h5 class="subheading mb-1">
+                                                  {{ item.major.name }}
+                                                </h5>
 
-                                            <h4>Group</h4>
-                                            <h5 class="subheading">
-                                              {{ item.group.name }}
-                                            </h5>
-                                          </v-card-text>
-                                        </v-card>
-                                      </v-flex>
-                                    </v-fade-transition>
+                                                <h4>Group</h4>
+                                                <h5 class="subheading mb-1">
+                                                  {{ item.group.name }}
+                                                </h5>
+                                              </v-card-text>
+                                            </v-card>
+                                          </v-flex>
+                                        </v-fade-transition>
+                                      </template>
+                                    </v-data-iterator>
+                                  </v-container>
+                                </v-card-text>
+                                <v-divider />
+                                <v-card-actions>
+                                  <v-spacer />
+                                  <v-btn
+                                    large=""
+                                    flat=""
+                                    @click="isChoosingSchedule = false"
+                                  >
+                                    Cancel
+                                  </v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+                          </v-flex>
+                        </v-layout>
+                        <v-layout v-else="" row="" wrap="">
+                          <v-flex xs12="">
+                            <v-layout row="" wrap="">
+                              <v-flex xs12="">
+                                <h4>Subject</h4>
+                                <h5 class="subheading mb-1">
+                                  {{ attendance.schedule.subject.name }}
+                                </h5>
+
+                                <h4>Grade</h4>
+                                <h5 class="subheading mb-1">
+                                  {{ attendance.schedule.grade }}
+                                </h5>
+
+                                <h4>Study Program</h4>
+                                <h5 class="subheading mb-1">
+                                  {{ attendance.schedule.study_program.name }}
+                                </h5>
+
+                                <h4>Major</h4>
+                                <h5 class="subheading mb-1">
+                                  {{ attendance.schedule.major.name }}
+                                </h5>
+
+                                <h4>Group</h4>
+                                <h5 class="subheading mb-1">
+                                  {{ attendance.schedule.group.name }}
+                                </h5>
+                              </v-flex>
+                            </v-layout>
+                            <v-layout row="" wrap="">
+                              <v-flex xs12="">
+                                <v-dialog v-model="isStoping" width="350">
+                                  <template #activator="{ on }">
+                                    <v-btn color="accent" large="" v-on="on">
+                                      Stop
+                                    </v-btn>
                                   </template>
-                                </v-data-iterator>
-                              </v-container>
-                            </v-card-text>
-                            <v-divider />
-                            <v-card-actions>
-                              <v-spacer />
-                              <v-btn
-                                large=""
-                                flat=""
-                                @click="isChoosingSchedule = false"
-                              >
-                                Cancel
-                              </v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-dialog>
+                                  <v-card>
+                                    <v-card-text>
+                                      <div class="body-2">
+                                        Are you sure to stop the lesson?
+                                      </div>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                      <v-spacer />
+                                      <v-btn
+                                        :loading="isLoading"
+                                        :disabled="isLoading"
+                                        flat=""
+                                        @click="isConfirming = false"
+                                      >
+                                        Cancel
+                                      </v-btn>
+                                      <v-btn
+                                        :loading="isLoading"
+                                        :disabled="isLoading"
+                                        color="error"
+                                        flat=""
+                                        @click="onStop"
+                                      >
+                                        Stop
+                                      </v-btn>
+                                    </v-card-actions>
+                                  </v-card>
+                                </v-dialog>
+                              </v-flex>
+                            </v-layout>
+                          </v-flex>
+                        </v-layout>
                       </v-flex>
                     </v-layout>
                   </v-flex>
@@ -259,6 +339,106 @@
                     <h3 class="headline">
                       Point Your face at the camera to start the lesson
                     </h3>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+          </v-card>
+          <v-card>
+            <v-toolbar card="">
+              <v-toolbar-title>
+                <h2 class="headline">Presences</h2>
+              </v-toolbar-title>
+            </v-toolbar>
+            <v-card-text>
+              <v-container class="pa-0" fluid="" grid-list-xl="">
+                <v-layout row="" wrap="">
+                  <v-flex xs12="">
+                    <v-data-table
+                      :headers="headers"
+                      :items="presences"
+                      :rows-per-page-items="rowsPerPageItems"
+                      :pagination.sync="pagination"
+                      :total-items="totalItems"
+                      :loading="isLoading"
+                    >
+                      <template #items="{ item, index }">
+                        <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
+                          <td class="py-1">
+                            <app-avatar
+                              :name="item.student.name"
+                              :image="item.image"
+                              text-class="caption"
+                            />
+                          </td>
+                          <td class="py-1 body-2">
+                            {{ item.student.name }}
+                          </td>
+                          <td class="py-1 body-2 text-xs-center">
+                            <v-chip
+                              v-if="item.is_late"
+                              color="error"
+                              text-color="white"
+                            >
+                              <v-avatar class="error darken-3">
+                                <v-icon>close</v-icon>
+                              </v-avatar>
+                              <span>Late</span>
+                            </v-chip>
+                            <v-chip v-else="" color="info" text-color="white">
+                              <v-avatar class="info darken-3">
+                                <v-icon>check</v-icon>
+                              </v-avatar>
+                              <span>On Time</span>
+                            </v-chip>
+                          </td>
+                          <td class="py-1 body-2 text-xs-center">
+                            <v-chip
+                              :color="getStatusColor(item.status)"
+                              text-color="white"
+                            >
+                              <v-avatar
+                                :class="
+                                  `${getStatusColor(item.status)} darken-3`
+                                "
+                              >
+                                <v-icon>{{
+                                  getStatusIcon(item.status)
+                                }}</v-icon>
+                              </v-avatar>
+                              <span>{{ upperFirst(item.status) }}</span>
+                            </v-chip>
+                          </td>
+                          <td class="py-1 body-2">
+                            {{
+                              item.datetime
+                                ? $moment(item.datetime).format('llll')
+                                : ''
+                            }}
+                          </td>
+                          <td class="py-1 body-2">
+                            <v-btn
+                              color="info"
+                              @click="onTriggerEnlargeImage($event, item)"
+                            >
+                              Enlarge Image
+                            </v-btn>
+                            <v-btn
+                              color="primary"
+                              @click="onTrigger($event, item)"
+                            >
+                              Edit
+                            </v-btn>
+                            <v-btn
+                              color="error"
+                              @click="onTriggerRemoving(item)"
+                            >
+                              Delete
+                            </v-btn>
+                          </td>
+                        </tr>
+                      </template>
+                    </v-data-table>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -333,9 +513,12 @@
 </template>
 
 <script>
+/* eslint-disable camelcase */
+
 import { Howl } from 'howler'
 import toFormData from 'json-form-data'
 import prettyMs from 'pretty-ms'
+import upperFirst from 'lodash/fp/upperFirst'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {
   setIntervalAsync,
@@ -354,6 +537,7 @@ export default {
     return {
       isChoosingSchedule: false,
       isConfirming: false,
+      isStoping: false,
       isLoading: false,
       interval: null,
       selectedDevice: null,
@@ -362,18 +546,22 @@ export default {
       students: [],
       schedules: [],
       rooms: [],
-      rowsPerPageItems: [
-        12,
-        24,
-        36,
-        { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }
+      presences: [],
+      headers: [
+        { text: 'Image', value: 'image', sortable: false },
+        { text: 'Name', value: 'student.name' },
+        { text: 'Is late?', value: 'is_late', align: 'center' },
+        { text: 'Status', value: 'status' },
+        { text: 'Datetime', value: 'datetime' },
+        { text: 'Action', align: 'center', sortable: false }
       ],
+      rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: true,
+        descending: false,
         page: 1,
-        rowsPerPage: 12,
-        sortBy: 'created_at',
-        totalItems: 12
+        rowsPerPage: 25,
+        sortBy: '-datetime',
+        totalItems: 25
       },
       totalItems: 0,
       fps: 60,
@@ -405,12 +593,16 @@ export default {
     ...mapState('user', ['user']),
     ...mapState('camera', ['cameras']),
     ...mapState('detection', [
+      'attendance',
       'isLecturerDetecting',
       'isLecturerDetected',
+      'isStudentsDetecting',
+      'isStudentsDetected',
       'detectedLecturer'
     ]),
     ...mapState('device', ['device', 'room']),
     ...mapGetters('device', ['isConfigured']),
+    ...mapGetters('detection', ['isAttendanceStarted']),
     isConfiguring: {
       get() {
         return this.$store.state.device.isConfiguring
@@ -435,13 +627,50 @@ export default {
           selectedCamera
         )
       }
+    },
+    getStatusColor() {
+      return status => {
+        switch (status) {
+          case 'alpha':
+            return 'error'
+          case 'sick':
+            return 'info'
+          case 'present':
+            return 'success'
+          default:
+            return 'error'
+        }
+      }
+    },
+    getStatusIcon() {
+      return status => {
+        switch (status) {
+          case 'alpha':
+            return 'close'
+          case 'sick':
+            return 'priority_high'
+          case 'present':
+            return 'check'
+          default:
+            return 'error'
+        }
+      }
+    },
+    upperFirst() {
+      return string => {
+        if (!string) {
+          return ''
+        }
+        string = string.toString()
+        return upperFirst(string)
+      }
     }
   },
   watch: {
     selectedCamera(selectedCamera) {
       if (selectedCamera) {
         this.$store.commit(`device/${deviceTypes.SET_DEVICE}`, selectedCamera)
-        this.initCamera(selectedCamera)
+        this.initCamera({ deviceId: selectedCamera })
       }
     },
     isConfigured(isConfigured) {
@@ -486,7 +715,7 @@ export default {
   },
   async beforeMount() {
     await this.getModels()
-    await this.initFaceMatcher()
+    await this.initFaceMatcher(this.lecturers)
   },
   async mounted() {
     await this.init()
@@ -504,7 +733,7 @@ export default {
       this.initDevice()
       this.initSound()
       await this.getCameras()
-      await this.initCamera(this.selectedCamera)
+      await this.initCamera({ deviceId: this.selectedCamera })
     },
     initSound() {
       this.sound = new Howl({
@@ -526,9 +755,10 @@ export default {
           this.selectedDevice
         )
         this.$store.commit(`device/${deviceTypes.SET_ROOM}`, this.selectedRoom)
+        this.initCamera({ deviceId: this.selectedCamera })
       }
     },
-    async initCamera(deviceId) {
+    async initCamera({ deviceId, datasets = this.lecturers }) {
       try {
         const videoStream = await this.startCamera(deviceId)
         const videoEl = this.$refs.liveVideo
@@ -536,11 +766,11 @@ export default {
         const canvasCtx = canvasEl.getContext('2d')
         videoEl.srcObject = videoStream
         this.onResetPhoto()
-        await this.initLecturerFaceDetection({
+        await this.initFaceDetection({
           videoEl,
           canvasEl,
           canvasCtx,
-          datasets: this.lecturers
+          datasets
         })
       } catch (error) {
         this.$handleError(error)
@@ -552,70 +782,158 @@ export default {
       canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height)
       canvasCtx.beginPath()
     },
-    initFaceMatcher() {
-      this.getFaceMatcher({ datasets: this.lecturers })
+    initFaceMatcher(datasets = this.lecturers) {
+      console.log('initFaceMatcher', datasets)
+      this.getFaceMatcher({ datasets })
     },
-    async initLecturerFaceDetection({
-      videoEl,
-      canvasEl,
-      canvasCtx,
-      datasets
-    }) {
+    async initFaceDetection({ videoEl, canvasEl, canvasCtx, datasets }) {
       if (this.interval) {
         await clearIntervalAsync(this.interval)
       }
-      this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
       this.interval = setIntervalAsync(async () => {
         try {
           const t0 = performance.now()
           drawImage(canvasCtx, videoEl, 0, 0, 720, 514, { isFlip: true })
-          if (this.isLecturerDetecting && this.isConfigured) {
-            const options = {
-              isDetectionEnabled: this.selectedOptions.includes('detection'),
-              isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
-              isRecognitionEnabled: this.selectedOptions.includes(
-                'recognition'
-              ),
-              isExpressionEnabled: this.selectedOptions.includes('expression'),
-              isAgeGenderEnabled: this.selectedOptions.includes('agegender')
-            }
-            const detection = await this.getFaceDetections({
-              canvasEl,
-              options
-            })
-            if (detection) {
-              detection.recognition = await this.getBestMatch({
-                descriptor: detection.descriptor,
+          if (!this.isAttendanceStarted) {
+            this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
+            if (this.isLecturerDetecting && this.isConfigured) {
+              const options = {
+                isDetectionEnabled: this.selectedOptions.includes('detection'),
+                isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
+                isRecognitionEnabled: this.selectedOptions.includes(
+                  'recognition'
+                ),
+                isExpressionEnabled: this.selectedOptions.includes(
+                  'expression'
+                ),
+                isAgeGenderEnabled: this.selectedOptions.includes('agegender')
+              }
+              const detection = await this.getFaceDetections({
+                canvasEl,
                 options
               })
-              await (() => {
-                console.log(new Date().toISOString(), detection)
-                detection.detected = datasets.find(
-                  ({ id }) => id === detection.recognition.label
-                )
-                if (detection.detected) {
-                  this.drawBestMatch({
-                    canvasEl,
-                    canvasCtx,
-                    detection,
-                    options
+              console.log('LECTURER: DETECTION', detection)
+              if (detection) {
+                detection.recognition = await this.getBestMatch({
+                  descriptor: detection.descriptor,
+                  options
+                })
+                console.log('LECTURER: RECOGNITION', detection.recognition)
+                await (() => {
+                  detection.detected = datasets.find(
+                    ({ id }) => id === detection.recognition.label
+                  )
+                  console.log('LECTURER: DETECTED', detection.detected)
+                  if (detection.detected) {
+                    this.drawBestMatch({
+                      canvasEl,
+                      canvasCtx,
+                      detection,
+                      options
+                    })
+                    this.$store.commit(
+                      `detection/${detectionTypes.LECTURER_DETECTED}`
+                    )
+                    this.$store.commit(
+                      `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
+                      detection.detected
+                    )
+                    this.sound.play()
+                    this.clearFaceDetection()
+                    this.fetchSchedules({ lecturer_id: detection.detected.id })
+                  }
+                })()
+                const t1 = performance.now()
+                const diff = t1 - t0
+                this.duration = parseFloat(diff)
+                this.realFps = (1000 / diff).toFixed(2)
+              }
+            }
+          } else {
+            this.$store.commit(`detection/${detectionTypes.STUDENTS_DETECTING}`)
+            if (this.isStudentsDetecting && this.isConfigured) {
+              const options = {
+                isDetectionEnabled: this.selectedOptions.includes('detection'),
+                isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
+                isRecognitionEnabled: this.selectedOptions.includes(
+                  'recognition'
+                ),
+                isExpressionEnabled: this.selectedOptions.includes(
+                  'expression'
+                ),
+                isAgeGenderEnabled: this.selectedOptions.includes('agegender'),
+                isSingleFace: false
+              }
+              let detections = await this.getFaceDetections({
+                canvasEl,
+                options
+              })
+              await console.log('STUDENT: DETECTION', detections)
+
+              if (detections.length > 0) {
+                detections = await Promise.all(
+                  detections.map(async _detection => {
+                    const recognition = await this.getBestMatch({
+                      descriptor: _detection.descriptor,
+                      options
+                    })
+                    const detected = await datasets.find(
+                      ({ id }) => id === recognition.label
+                    )
+                    const detection = {
+                      ..._detection,
+                      recognition,
+                      detected
+                    }
+                    if (detected) {
+                      await this.drawBestMatch({
+                        canvasEl,
+                        canvasCtx,
+                        detection,
+                        options
+                      })
+                      await (() => {
+                        this.$store.commit(
+                          `detection/${detectionTypes.STUDENTS_DETECTED}`
+                        )
+                        this.$store.commit(
+                          `detection/${detectionTypes.SET_DETECTED_STUDENTS}`,
+                          detection.detected
+                        )
+                        this.sound.play()
+                      })()
+                    }
+                    return detection
                   })
-                  this.$store.commit(
-                    `detection/${detectionTypes.LECTURER_DETECTED}`
-                  )
-                  this.$store.commit(
-                    `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
-                    detection.detected
-                  )
-                  this.sound.play()
-                  this.clearFaceDetection()
-                  this.fetchSchedules({ lecturer_id: detection.detected.id })
-                }
-              })()
-              const t1 = performance.now()
-              const diff = t1 - t0
-              this.duration = parseFloat(diff)
-              this.realFps = (1000 / diff).toFixed(2)
+                )
+                await console.log('STUDENT: RECOGNITION', detections)
+                // await (() => {
+                // detection.detected = datasets.find(
+                //   ({ id }) => id === detection.recognition.label
+                // )
+                // if (detection.detected) {
+                // this.drawBestMatch({
+                //   canvasEl,
+                //   canvasCtx,
+                //   detection,
+                //   options
+                // })
+                // this.$store.commit(
+                //   `detection/${detectionTypes.STUDENTS_DETECTED}`
+                // )
+                // this.$store.commit(
+                //   `detection/${detectionTypes.SET_DETECTED_STUDENTS}`,
+                //   detection.detected
+                // )
+                // this.sound.play()
+                // this.clearFaceDetection()
+                // }
+                // })()
+                const t1 = performance.now()
+                const diff = t1 - t0
+                this.duration = parseFloat(diff)
+                this.realFps = (1000 / diff).toFixed(2)
+              }
             }
           }
         } catch (error) {
@@ -643,16 +961,139 @@ export default {
 
         const payload = toFormData({
           schedule_id: schedule.id,
-          room_id: this.user.profile.id,
+          room_id: this.room,
           is_active: true,
           image
         })
-        await this.$api.attendances.create(payload, {
-          lecturer_id: this.detectedLecturer.id
+        const { attendance: _attendance } = await this.$api.attendances.create(
+          payload,
+          {
+            lecturer_id: this.detectedLecturer.id
+          }
+        )
+        const { attendance } = await this.$api.attendances.fetch(
+          _attendance.id,
+          {
+            withRelated:
+              'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
+          }
+        )
+        const { students } = await this.$api.students.fetchPage({
+          orderBy: 'identifier',
+          study_program_id: attendance.schedule.study_program_id,
+          major_id: attendance.schedule.major_id,
+          group_id: attendance.schedule.group_id,
+          limit: -1,
+          withRelated: 'images.descriptor'
         })
+        if (students.length > 0) {
+          this.$store.commit(
+            `detection/${detectionTypes.SET_ATTENDANCE}`,
+            attendance
+          )
+          this.students = students
+          await Promise.all(
+            students.map(({ id }) =>
+              this.$api.presences.create({
+                presence: {
+                  student_id: id,
+                  attendance_id: attendance.id
+                }
+              })
+            )
+          )
+          const response = await this.fetchPresences({
+            attendance_id: attendance.id
+          })
+          if (response) {
+            const { presences } = response
+            this.presences = presences
+          }
+
+          await this.initFaceMatcher(this.students)
+          await this.initCamera({
+            deviceId: this.selectedCamera,
+            datasets: this.students
+          })
+        }
         await (() => {
           this.isChoosingSchedule = false
+          this.$notify({
+            kind: 'info',
+            message: `${schedule.subject.name} is started`
+          })
         })()
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async onStop() {
+      try {
+        this.isLoading = true
+        const payload = {
+          attendance: {
+            end_datetime: new Date().toISOString()
+          }
+        }
+        await this.$api.attendances.update(this.attendance.id, payload)
+        await (() => {
+          this.isStoping = false
+          this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
+          this.$store.commit(
+            `detection/${detectionTypes.SET_DETECTED_LECTURER}`
+          )
+          this.$store.commit(`detection/${detectionTypes.SET_ATTENDANCE}`)
+
+          this.init()
+        })()
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchPresences(
+      {
+        orderBy = this.pagination.sortBy,
+        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending = this.pagination.descending,
+        attendance_id = ''
+      } = {
+        orderBy: this.pagination.sortBy,
+        limit: this.pagination.rowsPerPage,
+        // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+        descending: this.pagination.descending,
+        attendance_id: ''
+      }
+    ) {
+      try {
+        this.isLoading = true
+        if (orderBy) {
+          if (orderBy.includes('.name')) {
+            orderBy = `${orderBy.replace('.name', '')}_id`
+          }
+        }
+        if (descending) {
+          orderBy = `-${orderBy}`
+        }
+        const {
+          rowCount,
+          presences,
+          ...filter
+        } = await this.$api.presences.fetchPage({
+          orderBy,
+          limit,
+          offset,
+          withRelated:
+            'student,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
+        })
+        this.filter = filter
+        this.totalItems = rowCount
+        this.presences = presences
       } catch (error) {
         this.$handleError(error)
       } finally {

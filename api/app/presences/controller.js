@@ -20,18 +20,20 @@ class PresenceController extends Controller {
 
       const trx = this._getTrx(res)
 
-      if (!file) {
-        throw new Error(`Image field shouldn't be empty`)
+      let payload = null
+      if (file) {
+        payload = { ...body }
+        const { path } = file
+
+        payload = {
+          image: path.replace('static', ''),
+          ...body
+        }
+
+        payload.is_late = boolean(payload.is_late)
+      } else {
+        payload = this._getPayload(req)
       }
-
-      const { path } = file
-
-      const payload = {
-        image: path.replace('static', ''),
-        ...body
-      }
-
-      payload.is_late = boolean(payload.is_late)
 
       const queryResult = await service.create(payload, {
         trx

@@ -23,14 +23,14 @@ router.get(
   '/students',
   createTransaction,
   jwtAuth.required,
-  handleRole([['admin'], ['room']]),
+  handleRole([['admin'], ['device']]),
   fetchPage
 )
 router.get(
   '/students/:id',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['device']]),
   fetch
 )
 router.put(
@@ -38,7 +38,7 @@ router.put(
   bodyParser.json(),
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['device']]),
   handleImage('static/uploads/images/profiles/students').single('image'),
   update
 )

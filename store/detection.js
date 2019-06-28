@@ -18,6 +18,12 @@ export const state = () => ({
   attendance: null
 })
 
+export const getters = {
+  isAttendanceStarted(state) {
+    return state.attendance !== null
+  }
+}
+
 export const mutations = {
   [types.LECTURER_DETECTING](state) {
     state.isLecturerDetecting = true
@@ -27,7 +33,7 @@ export const mutations = {
     state.isLecturerDetecting = false
     state.isLecturerDetected = true
   },
-  [types.SET_DETECTED_LECTURER](state, detectedLecturer) {
+  [types.SET_DETECTED_LECTURER](state, detectedLecturer = null) {
     state.detectedLecturer = detectedLecturer
   },
   [types.STUDENTS_DETECTING](state) {
@@ -38,10 +44,10 @@ export const mutations = {
     state.isStudentsDetecting = false
     state.isStudentsDetected = true
   },
-  [types.SET_DETECTED_STUDENTS](state, detectedStudents) {
-    state.detectedStudents = detectedStudents
+  [types.SET_DETECTED_STUDENTS](state, detectedStudents = []) {
+    state.detectedStudents.push(detectedStudents)
   },
-  [types.SET_ATTENDANCE](state, attendance) {
+  [types.SET_ATTENDANCE](state, attendance = null) {
     state.attendance = attendance
   }
 }
