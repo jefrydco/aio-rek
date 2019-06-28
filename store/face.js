@@ -75,7 +75,7 @@ export const actions = {
     if (!state.loading && !state.loaded) {
       commit(types.LOADING)
       await Promise.all([
-        faceapi.loadTinyFaceDetectorModel('/models'),
+        faceapi.loadSsdMobilenetv1Model('/models'),
         faceapi.loadFaceRecognitionModel('/models'),
         faceapi.loadFaceLandmarkModel('/models'),
         faceapi.loadFaceExpressionModel('/models'),
@@ -95,7 +95,7 @@ export const actions = {
       const { descriptor } = await faceapi
         .detectSingleFace(
           img,
-          new faceapi.TinyFaceDetectorOptions({
+          new faceapi.SsdMobilenetv1Options({
             scoreThreshold: state.scoreThreshold,
             inputSize: state.inputSize
           })

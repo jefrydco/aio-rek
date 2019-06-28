@@ -66,16 +66,6 @@ class AttendanceController extends Controller {
         }
       } else {
         payload = this._getPayload(req)
-
-        if (!payload.image) {
-          let oldPath = queryResult.get('image')
-          if (oldPath) {
-            oldPath = `static/${oldPath}`
-            if (fs.existsSync(oldPath)) {
-              fs.unlinkSync(oldPath)
-            }
-          }
-        }
       }
 
       payload.is_active = boolean(payload.is_active)
