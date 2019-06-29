@@ -13,7 +13,7 @@ class UserService extends Service {
     const role = user.get('role')
     let expiresIn = '1h'
     if (role === 'device') {
-      expiresIn = '10y'
+      expiresIn = '1y'
     }
     return jwt.sign(
       {

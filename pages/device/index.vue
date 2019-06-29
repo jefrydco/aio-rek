@@ -517,6 +517,56 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-dialog v-model="isEnlargingImageDialog" width="700" scrollable="">
+        <v-card>
+          <v-toolbar color="primary" dark="" card="">
+            <v-toolbar-title>
+              <h3 class="title">
+                Image
+              </h3>
+            </v-toolbar-title>
+            <v-spacer />
+            <v-btn icon="" @click="isEnlargingImageDialog = false">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-toolbar>
+          <v-card-text>
+            <v-container class="pa-0" fluid="" grid-list-xl="">
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-img :src="enlargedImage.url" :alt="enlargedImage.name">
+                    <template #placeholder="">
+                      <v-layout
+                        fill-height=""
+                        align-center=""
+                        justify-center=""
+                        ma-0=""
+                      >
+                        <v-progress-circular
+                          indeterminate=""
+                          color="grey lighten-5"
+                        />
+                      </v-layout>
+                    </template>
+                  </v-img>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-divider />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              :loading="isLoading"
+              :disabled="isLoading"
+              flat=""
+              @click="isEnlargingImageDialog = false"
+            >
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-flex>
   </v-layout>
 </template>
@@ -531,6 +581,7 @@ import prettyMs from 'pretty-ms'
 import cloneDeep from 'lodash/fp/cloneDeep'
 import upperFirst from 'lodash/fp/upperFirst'
 import { mapState, mapActions, mapGetters } from 'vuex'
+
 import {
   setIntervalAsync,
   clearIntervalAsync
@@ -541,6 +592,7 @@ import { types as faceTypes } from '~/store/face'
 import { types as detectionTypes } from '~/store/detection'
 import { types as cameraTypes } from '~/store/camera'
 import { types as deviceTypes } from '~/store/device'
+
 import string from '~/mixins/string'
 
 export default {
@@ -550,6 +602,7 @@ export default {
       isChoosingSchedule: false,
       isConfirming: false,
       isStoping: false,
+      isEnlargingImageDialog: false,
       isLoading: false,
       interval: null,
       selectedDevice: null,
@@ -561,7 +614,7 @@ export default {
       presences: [],
       headers: [
         { text: 'Image', value: 'image', sortable: false },
-        { text: 'Name', value: 'student.name' },
+        { text: 'Name', value: 'student.name', sortable: false },
         { text: 'Is late?', value: 'is_late', align: 'center' },
         { text: 'Status', value: 'status' },
         { text: 'Datetime', value: 'datetime' },
@@ -598,7 +651,12 @@ export default {
         'agegender'
       ],
       isDrawing: true,
-      sound: null
+      onTimeSound: null,
+      onLateSound: null,
+      enlargedImage: {
+        name: '',
+        url: ''
+      }
     }
   },
   computed: {
@@ -695,6 +753,27 @@ export default {
     }
   },
   watch: {
+    pagination: {
+      handler({ descending, page, rowsPerPage, sortBy }) {
+        if (this.isAttendanceStarted) {
+          if (sortBy) {
+            if (sortBy.includes('.name')) {
+              sortBy = `${sortBy.replace('.name', '')}_id`
+            }
+          }
+          if (descending) {
+            sortBy = `-${sortBy}`
+          }
+          this.fetchPresences({
+            orderBy: sortBy,
+            limit: rowsPerPage,
+            // Taken from: https://stackoverflow.com/a/3521002/7711812
+            offset: (page - 1) * rowsPerPage
+          })
+        }
+      },
+      deep: true
+    },
     selectedCamera(selectedCamera) {
       if (selectedCamera) {
         this.$store.commit(`device/${deviceTypes.SET_DEVICE}`, selectedCamera)
@@ -742,9 +821,7 @@ export default {
             })
           )
         )
-        await this.fetchPresences({
-          attendance_id: this.attendance.id
-        })
+        await this.fetchPresences()
         await this.initFaceMatcher()
         await this.init()
       } else {
@@ -771,7 +848,8 @@ export default {
   },
   async beforeMount() {
     await this.getModels()
-    await this.initFaceMatcher(this.lecturers)
+    await this.initFaceMatcher()
+    await this.initData()
   },
   mounted() {
     this.$nextTick(() => {
@@ -788,7 +866,6 @@ export default {
       'drawBestMatch'
     ]),
     async init() {
-      await this.initData()
       await this.initDevice()
       await this.initSound()
       await this.getCameras()
@@ -806,7 +883,11 @@ export default {
                 'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
             }
           )
-          this.attendance = attendance
+          await this.$store.commit(
+            `detection/${detectionTypes.SET_ATTENDANCE}`,
+            attendance
+          )
+          await this.fetchPresences()
         } catch (error) {
           if (error instanceof HTTPError) {
             const body = await error.response.json()
@@ -814,15 +895,17 @@ export default {
               localStorage.removeItem('attendance')
             }
           }
-          // this.$handleError(error)
         } finally {
           this.isLoading = false
         }
       }
     },
     initSound() {
-      this.sound = new Howl({
-        src: '/sounds/slow-spring-board.mp3'
+      this.onTimeSound = new Howl({
+        src: '/sounds/on-time.mp3'
+      })
+      this.onLateSound = new Howl({
+        src: '/sounds/on-late.mp3'
       })
     },
     initDevice() {
@@ -918,7 +1001,7 @@ export default {
                         `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
                         detection.detected
                       )
-                      this.sound.play()
+                      this.onTimeSound.play()
                       this.clearFaceDetection()
                       this.fetchSchedules({
                         lecturer_id: detection.detected.id
@@ -969,21 +1052,27 @@ export default {
                           detection,
                           options
                         })
+                        // If the difference between current time and attendance datetime is greater than 1 minutes, then it should be late
+                        const is_late =
+                          this.$moment().diff(
+                            this.$moment(this.attendance.start_datetime)
+                          ) > 60000
                         const canvas = this.$refs.liveCanvas
                         const image = await getImageFromCanvas(canvas)
                         const payload = toFormData({
                           image,
                           status: 'present',
-                          is_late:
-                            this.$moment().diff(
-                              this.$moment(this.attendance.start_datetime)
-                            ) > 60000 // If the difference between current time and attendance datetime is greater than 1 minutes, then it should be late
+                          is_late
                         })
                         await this.$api.presences.update(detected.id, payload, {
                           student_id: detected.student_id
                         })
                         await this.fetchPresences()
-                        await this.sound.play()
+                        if (!is_late) {
+                          await this.onTimeSound.play()
+                        } else {
+                          await this.onLateSound.play()
+                        }
                       }
                       return detection
                     }
@@ -1053,14 +1142,24 @@ export default {
           }
         }
         await this.$api.attendances.update(this.attendance.id, payload)
-        await localStorage.removeItem('attendance')
-        this.isStoping = false
-        await window.location.reload(true)
+        await (() => {
+          this.presences = []
+          this.$store.commit(`detection/${detectionTypes.RESET_DETECTION}`)
+          this.isStoping = false
+          localStorage.removeItem('attendance')
+        })()
+        await this.initFaceMatcher()
+        await this.init()
       } catch (error) {
         this.$handleError(error)
       } finally {
         this.isLoading = false
       }
+    },
+    onTriggerEnlargeImage(event, item) {
+      this.isEnlargingImageDialog = true
+      this.enlargedImage.name = item.student.name
+      this.enlargedImage.url = item.image
     },
     async fetchPresences(
       {
@@ -1068,14 +1167,14 @@ export default {
         limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
         descending = this.pagination.descending,
-        attendance_id = ''
+        attendance_id = this.attendance.id
       } = {
         orderBy: this.pagination.sortBy,
         limit: this.pagination.rowsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
         offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
         descending: this.pagination.descending,
-        attendance_id: ''
+        attendance_id: this.attendance.id
       }
     ) {
       try {
@@ -1096,6 +1195,7 @@ export default {
           orderBy,
           limit,
           offset,
+          attendance_id,
           withRelated:
             'student.images.descriptor,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
         })
@@ -1112,6 +1212,7 @@ export default {
         this.filter = filter
         this.totalItems = rowCount
         this.presences = presences
+        console.log('PRESENCES', presences)
       } catch (error) {
         this.$handleError(error)
       } finally {
