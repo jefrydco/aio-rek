@@ -52,7 +52,7 @@
                 </v-layout>
 
                 <v-layout row="" wrap="">
-                  <v-flex xs12="">
+                  <v-flex xs12="" class="pa-4">
                     <v-slider
                       v-model="minConfidence"
                       :max="0.99"

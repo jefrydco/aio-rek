@@ -11,17 +11,13 @@ class UserService extends Service {
   }
   generateJWT(user) {
     const role = user.get('role')
-    let expiresIn = '1h'
-    if (role === 'device') {
-      expiresIn = '1y'
-    }
     return jwt.sign(
       {
         id: user.id,
         role: [role]
       },
       config.get('privateKey'),
-      { algorithm: 'RS256', expiresIn }
+      { algorithm: 'RS256', expiresIn: role === 'device' ? '10y' : '1h' }
     )
   }
   getAuthJSON(user, token) {
