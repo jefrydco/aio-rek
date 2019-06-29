@@ -5,6 +5,9 @@
         <h2 class="headline">Departments</h2>
       </v-toolbar-title>
       <v-spacer />
+      <v-btn color="accent" @click="fetchDepartments">
+        Refresh
+      </v-btn>
       <v-btn color="primary" @click="onTrigger">
         Create Department
       </v-btn>

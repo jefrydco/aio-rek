@@ -5,6 +5,9 @@
         <h2 class="headline">Presences</h2>
       </v-toolbar-title>
       <v-spacer />
+      <v-btn color="accent" @click="fetchPresences">
+        Refresh
+      </v-btn>
       <v-btn color="primary" @click="onTrigger">
         Create Presence
       </v-btn>

@@ -5,6 +5,9 @@
         <h2 class="headline">Study Programs</h2>
       </v-toolbar-title>
       <v-spacer />
+      <v-btn color="accent" @click="fetchStudyPrograms">
+        Refresh
+      </v-btn>
       <v-btn color="primary" @click="onTrigger">
         Create Study Program
       </v-btn>

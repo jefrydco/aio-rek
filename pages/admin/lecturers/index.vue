@@ -4,6 +4,10 @@
       <v-toolbar-title>
         <h2 class="headline">Lecturers</h2>
       </v-toolbar-title>
+      <v-spacer />
+      <v-btn color="accent" @click="fetchLecturers">
+        Refresh
+      </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-data-table
