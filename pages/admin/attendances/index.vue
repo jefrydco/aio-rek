@@ -61,6 +61,9 @@
                   : '-'
               }}
             </td>
+            <td class="py-1 body-2">
+              {{ item.diff_datetime ? prettyMs(item.diff_datetime) : '-' }}
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-btn color="info" @click="onTriggerEnlargeImage($event, item)">
                 Enlarge Image
@@ -643,6 +646,7 @@
 /* eslint-disable camelcase */
 import toFormData from 'json-form-data'
 import cloneDeep from 'lodash/fp/cloneDeep'
+import prettyMs from 'pretty-ms'
 import { fileReader } from '~/utils/file'
 
 export default {
@@ -700,6 +704,7 @@ export default {
         { text: 'Is Active?', value: 'is_active', align: 'center' },
         { text: 'Start Datetime', value: 'start_time' },
         { text: 'End Datetime', value: 'end_time' },
+        { text: 'Duration', value: 'diff_datetime' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [25, 50, 75, 100],
@@ -781,6 +786,9 @@ export default {
         return ['1', '2']
       }
       return grades
+    },
+    prettyMs() {
+      return ms => prettyMs(ms)
     }
   },
   watch: {

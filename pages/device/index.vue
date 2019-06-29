@@ -54,6 +54,15 @@
                 <v-layout row="" wrap="">
                   <v-flex xs12="">
                     <v-slider
+                      v-model="minConfidence"
+                      :max="0.99"
+                      :min="0"
+                      :step="0.01"
+                      label="Min Confidence"
+                      thumb-label="always"
+                      ticks=""
+                    />
+                    <v-slider
                       v-model="fps"
                       :max="60"
                       :min="1"
@@ -515,9 +524,11 @@
 <script>
 /* eslint-disable camelcase */
 
+import { HTTPError } from 'ky-universal'
 import { Howl } from 'howler'
 import toFormData from 'json-form-data'
 import prettyMs from 'pretty-ms'
+import cloneDeep from 'lodash/fp/cloneDeep'
 import upperFirst from 'lodash/fp/upperFirst'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {
@@ -526,6 +537,7 @@ import {
 } from 'set-interval-async/dynamic'
 import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 
+import { types as faceTypes } from '~/store/face'
 import { types as detectionTypes } from '~/store/detection'
 import { types as cameraTypes } from '~/store/camera'
 import { types as deviceTypes } from '~/store/device'
@@ -590,19 +602,35 @@ export default {
     }
   },
   computed: {
+    ...mapState('face', ['isLoaded']),
     ...mapState('user', ['user']),
     ...mapState('camera', ['cameras']),
-    ...mapState('detection', [
-      'attendance',
-      'isLecturerDetecting',
-      'isLecturerDetected',
-      'isStudentsDetecting',
-      'isStudentsDetected',
-      'detectedLecturer'
-    ]),
+    ...mapState('detection', ['detectedLecturer']),
     ...mapState('device', ['device', 'room']),
     ...mapGetters('device', ['isConfigured']),
-    ...mapGetters('detection', ['isAttendanceStarted']),
+    ...mapGetters('detection', ['isAttendanceStarted', 'isLecturerDetected']),
+    minConfidence: {
+      get() {
+        return this.$store.state.face.minConfidence
+      },
+      set(minConfidence) {
+        this.$store.commit(
+          `face/${faceTypes.SET_MIN_CONFIDENCE}`,
+          minConfidence
+        )
+      }
+    },
+    attendance: {
+      get() {
+        return this.$store.state.detection.attendance
+      },
+      set(attendance) {
+        this.$store.commit(
+          `detection/${detectionTypes.SET_ATTENDANCE}`,
+          attendance
+        )
+      }
+    },
     isConfiguring: {
       get() {
         return this.$store.state.device.isConfiguring
@@ -670,8 +698,14 @@ export default {
     selectedCamera(selectedCamera) {
       if (selectedCamera) {
         this.$store.commit(`device/${deviceTypes.SET_DEVICE}`, selectedCamera)
-        this.initCamera({ deviceId: selectedCamera })
+        this.initCamera(selectedCamera)
       }
+    },
+    minConfidence(minConfidence) {
+      this.init()
+    },
+    fps(fps) {
+      this.init()
     },
     isConfigured(isConfigured) {
       if (this.isConfigured) {
@@ -694,6 +728,28 @@ export default {
         }
       },
       immediate: true
+    },
+    async isAttendanceStarted(isAttendanceStarted) {
+      if (isAttendanceStarted) {
+        await this.fetchStudents()
+        await Promise.all(
+          this.students.map(({ id }) =>
+            this.$api.presences.create({
+              presence: {
+                student_id: id,
+                attendance_id: this.attendance.id
+              }
+            })
+          )
+        )
+        await this.fetchPresences({
+          attendance_id: this.attendance.id
+        })
+        await this.initFaceMatcher()
+        await this.init()
+      } else {
+        await this.init()
+      }
     }
   },
   async asyncData({ app: { $api, $handleError } }) {
@@ -717,8 +773,10 @@ export default {
     await this.getModels()
     await this.initFaceMatcher(this.lecturers)
   },
-  async mounted() {
-    await this.init()
+  mounted() {
+    this.$nextTick(() => {
+      this.init()
+    })
   },
   methods: {
     ...mapActions('camera', ['startCamera', 'stopCamera', 'getCameras']),
@@ -730,10 +788,37 @@ export default {
       'drawBestMatch'
     ]),
     async init() {
-      this.initDevice()
-      this.initSound()
+      await this.initData()
+      await this.initDevice()
+      await this.initSound()
       await this.getCameras()
-      await this.initCamera({ deviceId: this.selectedCamera })
+      await this.initCamera(this.selectedCamera)
+    },
+    async initData(attendanceId = localStorage.getItem('attendance')) {
+      if (attendanceId) {
+        console.log('attendanceId', attendanceId)
+        try {
+          this.isLoading = true
+          const { attendance } = await this.$api.attendances.fetch(
+            attendanceId,
+            {
+              withRelated:
+                'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
+            }
+          )
+          this.attendance = attendance
+        } catch (error) {
+          if (error instanceof HTTPError) {
+            const body = await error.response.json()
+            if (body && body.errors.error.output.statusCode === 404) {
+              localStorage.removeItem('attendance')
+            }
+          }
+          // this.$handleError(error)
+        } finally {
+          this.isLoading = false
+        }
+      }
     },
     initSound() {
       this.sound = new Howl({
@@ -755,10 +840,10 @@ export default {
           this.selectedDevice
         )
         this.$store.commit(`device/${deviceTypes.SET_ROOM}`, this.selectedRoom)
-        this.initCamera({ deviceId: this.selectedCamera })
+        this.init()
       }
     },
-    async initCamera({ deviceId, datasets = this.lecturers }) {
+    async initCamera(deviceId) {
       try {
         const videoStream = await this.startCamera(deviceId)
         const videoEl = this.$refs.liveVideo
@@ -769,8 +854,7 @@ export default {
         await this.initFaceDetection({
           videoEl,
           canvasEl,
-          canvasCtx,
-          datasets
+          canvasCtx
         })
       } catch (error) {
         this.$handleError(error)
@@ -782,9 +866,12 @@ export default {
       canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height)
       canvasCtx.beginPath()
     },
-    initFaceMatcher(datasets = this.lecturers) {
-      console.log('initFaceMatcher', datasets)
-      this.getFaceMatcher({ datasets })
+    initFaceMatcher() {
+      if (!this.isAttendanceStarted) {
+        this.getFaceMatcher({ datasets: this.lecturers })
+      } else {
+        this.getFaceMatcher({ datasets: this.presences })
+      }
     },
     async initFaceDetection({ videoEl, canvasEl, canvasCtx, datasets }) {
       if (this.interval) {
@@ -794,20 +881,15 @@ export default {
         try {
           const t0 = performance.now()
           drawImage(canvasCtx, videoEl, 0, 0, 720, 514, { isFlip: true })
-          if (!this.isAttendanceStarted) {
-            this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
-            if (this.isLecturerDetecting && this.isConfigured) {
-              const options = {
-                isDetectionEnabled: this.selectedOptions.includes('detection'),
-                isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
-                isRecognitionEnabled: this.selectedOptions.includes(
-                  'recognition'
-                ),
-                isExpressionEnabled: this.selectedOptions.includes(
-                  'expression'
-                ),
-                isAgeGenderEnabled: this.selectedOptions.includes('agegender')
-              }
+          const options = {
+            isDetectionEnabled: this.selectedOptions.includes('detection'),
+            isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
+            isRecognitionEnabled: this.selectedOptions.includes('recognition'),
+            isExpressionEnabled: this.selectedOptions.includes('expression'),
+            isAgeGenderEnabled: this.selectedOptions.includes('agegender')
+          }
+          if (this.isLoaded) {
+            if (!this.isAttendanceStarted) {
               const detection = await this.getFaceDetections({
                 canvasEl,
                 options
@@ -818,58 +900,46 @@ export default {
                   descriptor: detection.descriptor,
                   options
                 })
-                console.log('LECTURER: RECOGNITION', detection.recognition)
-                await (() => {
-                  detection.detected = datasets.find(
+                if (detection.recognition) {
+                  console.log('LECTURER: RECOGNITION', detection.recognition)
+                  detection.detected = this.lecturers.find(
                     ({ id }) => id === detection.recognition.label
                   )
-                  console.log('LECTURER: DETECTED', detection.detected)
                   if (detection.detected) {
-                    this.drawBestMatch({
+                    console.log('LECTURER: DETECTED', detection.detected)
+                    await this.drawBestMatch({
                       canvasEl,
                       canvasCtx,
                       detection,
                       options
                     })
-                    this.$store.commit(
-                      `detection/${detectionTypes.LECTURER_DETECTED}`
-                    )
-                    this.$store.commit(
-                      `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
-                      detection.detected
-                    )
-                    this.sound.play()
-                    this.clearFaceDetection()
-                    this.fetchSchedules({ lecturer_id: detection.detected.id })
+                    await (() => {
+                      this.$store.commit(
+                        `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
+                        detection.detected
+                      )
+                      this.sound.play()
+                      this.clearFaceDetection()
+                      this.fetchSchedules({
+                        lecturer_id: detection.detected.id
+                      })
+                    })()
                   }
-                })()
+                }
                 const t1 = performance.now()
                 const diff = t1 - t0
                 this.duration = parseFloat(diff)
                 this.realFps = (1000 / diff).toFixed(2)
               }
-            }
-          } else {
-            this.$store.commit(`detection/${detectionTypes.STUDENTS_DETECTING}`)
-            if (this.isStudentsDetecting && this.isConfigured) {
-              const options = {
-                isDetectionEnabled: this.selectedOptions.includes('detection'),
-                isLandmarksEnabled: this.selectedOptions.includes('landmarks'),
-                isRecognitionEnabled: this.selectedOptions.includes(
-                  'recognition'
-                ),
-                isExpressionEnabled: this.selectedOptions.includes(
-                  'expression'
-                ),
-                isAgeGenderEnabled: this.selectedOptions.includes('agegender'),
-                isSingleFace: false
-              }
+            } else {
               let detections = await this.getFaceDetections({
                 canvasEl,
-                options
+                options: {
+                  ...options,
+                  isSingleFace: false
+                }
               })
               await console.log('STUDENT: DETECTION', detections)
-
               if (detections.length > 0) {
                 detections = await Promise.all(
                   detections.map(async _detection => {
@@ -877,58 +947,50 @@ export default {
                       descriptor: _detection.descriptor,
                       options
                     })
-                    const detected = await datasets.find(
-                      ({ id }) => id === recognition.label
-                    )
-                    const detection = {
-                      ..._detection,
-                      recognition,
-                      detected
+                    if (recognition) {
+                      console.log('STUDENT: RECOGNITION', recognition)
+                      let detection = {
+                        ..._detection,
+                        recognition
+                      }
+                      const detected = await this.presences.find(
+                        ({ id, status }) =>
+                          id === recognition.label && status === 'alpha'
+                      )
+                      if (detected) {
+                        console.log('STUDENT: DETECTED', detected)
+                        detection = {
+                          ...detection,
+                          detected
+                        }
+                        await this.drawBestMatch({
+                          canvasEl,
+                          canvasCtx,
+                          detection,
+                          options
+                        })
+                        const canvas = this.$refs.liveCanvas
+                        const image = await getImageFromCanvas(canvas)
+                        const payload = toFormData({
+                          image,
+                          status: 'present',
+                          is_late:
+                            this.$moment().diff(
+                              this.$moment(this.attendance.start_datetime)
+                            ) > 60000 // If the difference between current time and attendance datetime is greater than 1 minutes, then it should be late
+                        })
+                        await this.$api.presences.update(detected.id, payload, {
+                          student_id: detected.student_id
+                        })
+                        await this.fetchPresences()
+                        await this.sound.play()
+                      }
+                      return detection
                     }
-                    if (detected) {
-                      await this.drawBestMatch({
-                        canvasEl,
-                        canvasCtx,
-                        detection,
-                        options
-                      })
-                      await (() => {
-                        this.$store.commit(
-                          `detection/${detectionTypes.STUDENTS_DETECTED}`
-                        )
-                        this.$store.commit(
-                          `detection/${detectionTypes.SET_DETECTED_STUDENTS}`,
-                          detection.detected
-                        )
-                        this.sound.play()
-                      })()
-                    }
-                    return detection
+                    return _detection
                   })
                 )
                 await console.log('STUDENT: RECOGNITION', detections)
-                // await (() => {
-                // detection.detected = datasets.find(
-                //   ({ id }) => id === detection.recognition.label
-                // )
-                // if (detection.detected) {
-                // this.drawBestMatch({
-                //   canvasEl,
-                //   canvasCtx,
-                //   detection,
-                //   options
-                // })
-                // this.$store.commit(
-                //   `detection/${detectionTypes.STUDENTS_DETECTED}`
-                // )
-                // this.$store.commit(
-                //   `detection/${detectionTypes.SET_DETECTED_STUDENTS}`,
-                //   detection.detected
-                // )
-                // this.sound.play()
-                // this.clearFaceDetection()
-                // }
-                // })()
                 const t1 = performance.now()
                 const diff = t1 - t0
                 this.duration = parseFloat(diff)
@@ -946,7 +1008,6 @@ export default {
     },
     onUnderstand() {
       this.isConfirming = false
-      this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
       this.init()
     },
     onCustom() {},
@@ -965,57 +1026,11 @@ export default {
           is_active: true,
           image
         })
-        const { attendance: _attendance } = await this.$api.attendances.create(
-          payload,
-          {
-            lecturer_id: this.detectedLecturer.id
-          }
-        )
-        const { attendance } = await this.$api.attendances.fetch(
-          _attendance.id,
-          {
-            withRelated:
-              'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
-          }
-        )
-        const { students } = await this.$api.students.fetchPage({
-          orderBy: 'identifier',
-          study_program_id: attendance.schedule.study_program_id,
-          major_id: attendance.schedule.major_id,
-          group_id: attendance.schedule.group_id,
-          limit: -1,
-          withRelated: 'images.descriptor'
+        const { attendance } = await this.$api.attendances.create(payload, {
+          lecturer_id: this.detectedLecturer.id
         })
-        if (students.length > 0) {
-          this.$store.commit(
-            `detection/${detectionTypes.SET_ATTENDANCE}`,
-            attendance
-          )
-          this.students = students
-          await Promise.all(
-            students.map(({ id }) =>
-              this.$api.presences.create({
-                presence: {
-                  student_id: id,
-                  attendance_id: attendance.id
-                }
-              })
-            )
-          )
-          const response = await this.fetchPresences({
-            attendance_id: attendance.id
-          })
-          if (response) {
-            const { presences } = response
-            this.presences = presences
-          }
-
-          await this.initFaceMatcher(this.students)
-          await this.initCamera({
-            deviceId: this.selectedCamera,
-            datasets: this.students
-          })
-        }
+        await this.initData(attendance.id)
+        await localStorage.setItem('attendance', this.attendance.id)
         await (() => {
           this.isChoosingSchedule = false
           this.$notify({
@@ -1038,16 +1053,9 @@ export default {
           }
         }
         await this.$api.attendances.update(this.attendance.id, payload)
-        await (() => {
-          this.isStoping = false
-          this.$store.commit(`detection/${detectionTypes.LECTURER_DETECTING}`)
-          this.$store.commit(
-            `detection/${detectionTypes.SET_DETECTED_LECTURER}`
-          )
-          this.$store.commit(`detection/${detectionTypes.SET_ATTENDANCE}`)
-
-          this.init()
-        })()
+        await localStorage.removeItem('attendance')
+        this.isStoping = false
+        await window.location.reload(true)
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -1082,14 +1090,24 @@ export default {
         }
         const {
           rowCount,
-          presences,
+          presences: _presences,
           ...filter
         } = await this.$api.presences.fetchPage({
           orderBy,
           limit,
           offset,
           withRelated:
-            'student,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
+            'student.images.descriptor,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
+        })
+        const presences = _presences.map(_presence => {
+          const images = cloneDeep(_presence.student.images)
+          const name = _presence.student.name
+          delete _presence.student.images
+          return {
+            ..._presence,
+            images,
+            name
+          }
         })
         this.filter = filter
         this.totalItems = rowCount
@@ -1107,6 +1125,23 @@ export default {
           limit: -1
         })
         this.rooms = rooms
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchStudents() {
+      try {
+        this.isLoading = true
+        const { students } = await this.$api.students.fetchPage({
+          orderBy: 'identifier',
+          study_program_id: this.attendance.schedule.study_program_id,
+          major_id: this.attendance.schedule.major_id,
+          group_id: this.attendance.schedule.group_id,
+          limit: -1
+        })
+        this.students = students
       } catch (error) {
         this.$handleError(error)
       } finally {

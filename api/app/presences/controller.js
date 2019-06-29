@@ -75,6 +75,8 @@ class PresenceController extends Controller {
           image: path.replace('static', ''),
           ...body
         }
+
+        payload.is_late = boolean(payload.is_late)
       } else {
         payload = this._getPayload(req)
       }

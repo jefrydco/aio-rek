@@ -38,7 +38,7 @@ router.put(
   bodyParser.json(),
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['device']]),
   handleImage('static/uploads/images/presences').single('image'),
   update
 )

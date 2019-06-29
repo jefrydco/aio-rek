@@ -43,7 +43,7 @@ export const state = () => ({
   isLoading: false,
   isLoaded: false,
   faceMatcher: null,
-  minConfidence: 0.7
+  minConfidence: 0.99
 })
 
 export const mutations = {

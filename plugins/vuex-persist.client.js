@@ -6,7 +6,7 @@ export default ({ store }) => {
     new VuexPersistence({
       /* your options */
       key: 'ayo-rek',
-      modules: ['detection', 'device']
+      modules: ['device']
     }).plugin(store)
   })
 }
