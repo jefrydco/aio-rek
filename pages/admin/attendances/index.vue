@@ -5,6 +5,9 @@
         <h2 class="headline">Attendances</h2>
       </v-toolbar-title>
       <v-spacer />
+      <v-btn color="accent" @click="fetchAttendances">
+        Refresh
+      </v-btn>
       <v-btn color="primary" @click="onTrigger">
         Create Attendance
       </v-btn>

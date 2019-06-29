@@ -5,7 +5,7 @@ export default ({ store }) => {
   window.onNuxtReady(() => {
     new VuexPersistence({
       /* your options */
-      key: 'ayo-rek-detection',
+      key: 'ayo-rek',
       modules: ['detection', 'device']
     }).plugin(store)
   })

@@ -1,170 +1,170 @@
 [
-  {
-      "id": "ebe95a79-9d06-44d8-8805-14cf43a387ad",
-      "name": "Afrida Helen, S.T., M.Kom",
-      "identifier": "196501281997032001",
-      "image": "",
-      "is_active": true,
-      "user_id": "258eb119-a1ba-4e45-95ef-93aa5565f10b"
-  },
-  {
-      "id": "8f89dd32-5a67-4ab5-8e96-ba17a405a872",
-      "name": "Ahmad Syauqi Ahsan, S.Kom, MT.",
-      "identifier": "197505302003121001",
-      "image": "",
-      "is_active": true,
-      "user_id": "9f95f29a-f48a-4174-ab3a-92ba483a06e0"
-  },
-  {
-      "id": "5cf64dd7-f023-415f-900b-59bf2ff5b2dc",
-      "name": "Arif Basofi., S.Kom., MT. ",
-      "identifier": "197609212003121002",
-      "image": "",
-      "is_active": true,
-      "user_id": "c8656b8c-2e4b-4707-868e-980fd68e76e7"
-  },
-  {
-      "id": "17afca1a-2931-47dd-ac4d-a7847163f9ed",
-      "name": "Arna Fariza, S.Kom. M.Kom",
-      "identifier": "197107081999032001",
-      "image": "",
-      "is_active": true,
-      "user_id": "c1007136-b8ec-4b73-94d8-b9982afb62ef"
-  },
-  {
-      "id": "bc0de76a-eba8-4848-8667-8d62d2330e38",
-      "name": "Desy Intan Permatasari, S.Kom, M.Kom.",
-      "identifier": "198603232015042004",
-      "image": "",
-      "is_active": true,
-      "user_id": "39138059-e732-4638-9700-0a2e3397308d"
-  },
-  {
-      "id": "13c274dc-cb1d-4b29-a89f-1960a83986cc",
-      "name": "Dias Agata, S.S., M.Pd.",
-      "identifier": "198808242015042004",
-      "image": "",
-      "is_active": true,
-      "user_id": "3cc65e0a-ade1-4398-b835-7fbc3a562091"
-  },
-  {
-      "id": "47293ef5-2646-498e-a05f-c7c8b250f534",
-      "name": "Fadilah Fahrul H, S.ST., M. Kom.",
-      "identifier": "2000000061",
-      "image": "",
-      "is_active": true,
-      "user_id": "98141cf8-c6f0-4dc3-b8b4-40192f03a373"
-  },
-  {
-      "id": "31981bc3-53e8-4d9f-82f7-460cae1639f6",
-      "name": "Ferry Astika Saputra, S.T, M.Sc",
-      "identifier": "197708232001121002",
-      "image": "",
-      "is_active": true,
-      "user_id": "c6c19d95-0666-4387-a099-76cf35aabfd7"
-  },
-  {
-      "id": "8152181c-c50c-4dcf-b8f2-0628ffd0b1ff",
-      "name": "Hero Yudo Martono, ST., MT.",
-      "identifier": "197811032005011002",
-      "image": "",
-      "is_active": true,
-      "user_id": "f2e7ce4d-36d1-4ff0-bc63-ac93d18b714b"
-  },
-  {
-      "id": "ecf511b6-dccd-49bd-a838-1d88d69ef055",
-      "name": "Ira Prasetyaningrum, S.Si, M.T",
-      "identifier": " 198005292008122005",
-      "image": "",
-      "is_active": true,
-      "user_id": "fb8b36c1-4a55-4b24-9699-80e9bf5826ea"
-  },
-  {
-      "id": "e999c657-ec56-4e87-9b88-6ed4ffcf00dd",
-      "name": "Irma Wulandari, S.Si., M.Sc.",
-      "identifier": "198010032015042001",
-      "image": "",
-      "is_active": true,
-      "user_id": "04de22bd-a552-45fc-8a90-38788546c453"
-  },
-  {
-      "id": "26d57b48-be9f-4a0a-b1e7-a84ee177c610",
-      "name": "Isbat Uzzin Nadhori, S.Kom, MT",
-      "identifier": "197405052003121002",
-      "image": "",
-      "is_active": true,
-      "user_id": "01d5a118-b144-424d-8d7a-8498c96bcc6a"
-  },
-  {
-      "id": "c860b8a4-1245-43fd-9044-030781ab7879",
-      "name": "Muarifin, S.ST., M.T.",
-      "identifier": "2000000202",
-      "image": "/uploads/images/profiles/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/e6ae2895-de02-41d3-91d2-0c7f19d909c9.jpg",
-      "is_active": true,
-      "user_id": "7c713840-f664-4de7-909d-269e1e76df7e"
-  },
-  {
-      "id": "98e6f7a9-508b-4ffb-9fb7-7a8bb511a72a",
-      "name": "M. Udin Harun Al Rasyid, S.Kom, Ph.D",
-      "identifier": "198108082005011001",
-      "image": "",
-      "is_active": true,
-      "user_id": "ad6665a4-057c-4972-96d7-2eb9f3a9150a"
-  },
-  {
-      "id": "b3d6d435-8222-4d93-9e43-047cab02d38d",
-      "name": "Nana Ramadijanti, S.Kom, M.Kom",
-      "identifier": "197111091998022001",
-      "image": "",
-      "is_active": true,
-      "user_id": "7ddbea76-6918-4df4-8e9d-01186b9157f5"
-  },
-  {
-      "id": "403950bd-61c7-4790-bb36-e2cab46a01b7",
-      "name": "Nur Rosyid Mubtadai, S.Kom",
-      "identifier": "197403182001121005",
-      "image": "",
-      "is_active": true,
-      "user_id": "0782450c-16b9-4061-95c8-55ffc9a06481"
-  },
-  {
-      "id": "0f52399f-59c0-4e33-8ee8-6bc535e4ce46",
-      "name": "Rengga Asmara, S.Kom, OCA",
-      "identifier": "198105082005011002",
-      "image": "",
-      "is_active": true,
-      "user_id": "e91e2525-f56b-4761-86ac-d42bbdae9fb1"
-  },
-  {
-      "id": "3f82ae22-4603-47d4-8a70-9bd2a228f5b5",
-      "name": "Tri Hadiah Muliawati, S.ST, M.Kom.",
-      "identifier": "0012109201",
-      "image": "",
-      "is_active": true,
-      "user_id": "419dd332-b89b-41c5-99f5-53f78c0e63ce"
-  },
-  {
-      "id": "f190f706-8b83-4ec6-8485-72081a06e4db",
-      "name": "Umi Sa'adah, S.Kom",
-      "identifier": "197404162000032003",
-      "image": "",
-      "is_active": true,
-      "user_id": "c5613f71-2f21-400a-8c35-43f3c2caf00a"
-  },
-  {
-      "id": "b315354e-e9c7-4935-b467-dee91ced806c",
-      "name": "Wiratmoko Yuwono, ST",
-      "identifier": "197911212005011003",
-      "image": "",
-      "is_active": true,
-      "user_id": "8606223a-39c1-4da0-a9de-6c8b37ea1b1d"
-  },
-  {
-      "id": "138d4644-0192-40df-84c0-2a65c7dda681",
-      "name": "Yuliana Setiowati, S.Kom., M.Kom.",
-      "identifier": "197807062002122003",
-      "image": "",
-      "is_active": true,
-      "user_id": "1a1fe702-3686-4f6c-be3c-de2a7b4c87f8"
-  }
+    {
+        "id": "ebe95a79-9d06-44d8-8805-14cf43a387ad",
+        "name": "Afrida Helen, S.T., M.Kom",
+        "identifier": "196501281997032001",
+        "image": "",
+        "is_active": true,
+        "user_id": "258eb119-a1ba-4e45-95ef-93aa5565f10b"
+    },
+    {
+        "id": "8f89dd32-5a67-4ab5-8e96-ba17a405a872",
+        "name": "Ahmad Syauqi Ahsan, S.Kom, MT.",
+        "identifier": "197505302003121001",
+        "image": "",
+        "is_active": true,
+        "user_id": "9f95f29a-f48a-4174-ab3a-92ba483a06e0"
+    },
+    {
+        "id": "5cf64dd7-f023-415f-900b-59bf2ff5b2dc",
+        "name": "Arif Basofi., S.Kom., MT. ",
+        "identifier": "197609212003121002",
+        "image": "",
+        "is_active": true,
+        "user_id": "c8656b8c-2e4b-4707-868e-980fd68e76e7"
+    },
+    {
+        "id": "17afca1a-2931-47dd-ac4d-a7847163f9ed",
+        "name": "Arna Fariza, S.Kom. M.Kom",
+        "identifier": "197107081999032001",
+        "image": "",
+        "is_active": true,
+        "user_id": "c1007136-b8ec-4b73-94d8-b9982afb62ef"
+    },
+    {
+        "id": "bc0de76a-eba8-4848-8667-8d62d2330e38",
+        "name": "Desy Intan Permatasari, S.Kom, M.Kom.",
+        "identifier": "198603232015042004",
+        "image": "",
+        "is_active": true,
+        "user_id": "39138059-e732-4638-9700-0a2e3397308d"
+    },
+    {
+        "id": "13c274dc-cb1d-4b29-a89f-1960a83986cc",
+        "name": "Dias Agata, S.S., M.Pd.",
+        "identifier": "198808242015042004",
+        "image": "",
+        "is_active": true,
+        "user_id": "3cc65e0a-ade1-4398-b835-7fbc3a562091"
+    },
+    {
+        "id": "47293ef5-2646-498e-a05f-c7c8b250f534",
+        "name": "Fadilah Fahrul H, S.ST., M. Kom.",
+        "identifier": "2000000061",
+        "image": "",
+        "is_active": true,
+        "user_id": "98141cf8-c6f0-4dc3-b8b4-40192f03a373"
+    },
+    {
+        "id": "31981bc3-53e8-4d9f-82f7-460cae1639f6",
+        "name": "Ferry Astika Saputra, S.T, M.Sc",
+        "identifier": "197708232001121002",
+        "image": "",
+        "is_active": true,
+        "user_id": "c6c19d95-0666-4387-a099-76cf35aabfd7"
+    },
+    {
+        "id": "8152181c-c50c-4dcf-b8f2-0628ffd0b1ff",
+        "name": "Hero Yudo Martono, ST., MT.",
+        "identifier": "197811032005011002",
+        "image": "",
+        "is_active": true,
+        "user_id": "f2e7ce4d-36d1-4ff0-bc63-ac93d18b714b"
+    },
+    {
+        "id": "ecf511b6-dccd-49bd-a838-1d88d69ef055",
+        "name": "Ira Prasetyaningrum, S.Si, M.T",
+        "identifier": " 198005292008122005",
+        "image": "",
+        "is_active": true,
+        "user_id": "fb8b36c1-4a55-4b24-9699-80e9bf5826ea"
+    },
+    {
+        "id": "e999c657-ec56-4e87-9b88-6ed4ffcf00dd",
+        "name": "Irma Wulandari, S.Si., M.Sc.",
+        "identifier": "198010032015042001",
+        "image": "",
+        "is_active": true,
+        "user_id": "04de22bd-a552-45fc-8a90-38788546c453"
+    },
+    {
+        "id": "26d57b48-be9f-4a0a-b1e7-a84ee177c610",
+        "name": "Isbat Uzzin Nadhori, S.Kom, MT",
+        "identifier": "197405052003121002",
+        "image": "",
+        "is_active": true,
+        "user_id": "01d5a118-b144-424d-8d7a-8498c96bcc6a"
+    },
+    {
+        "id": "c860b8a4-1245-43fd-9044-030781ab7879",
+        "name": "Muarifin, S.ST., M.T.",
+        "identifier": "2000000202",
+        "image": "/uploads/images/profiles/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/4c08ca00-60b3-431b-8f3a-5ceb7cef6aca.jpg",
+        "is_active": true,
+        "user_id": "7c713840-f664-4de7-909d-269e1e76df7e"
+    },
+    {
+        "id": "98e6f7a9-508b-4ffb-9fb7-7a8bb511a72a",
+        "name": "M. Udin Harun Al Rasyid, S.Kom, Ph.D",
+        "identifier": "198108082005011001",
+        "image": "",
+        "is_active": true,
+        "user_id": "ad6665a4-057c-4972-96d7-2eb9f3a9150a"
+    },
+    {
+        "id": "b3d6d435-8222-4d93-9e43-047cab02d38d",
+        "name": "Nana Ramadijanti, S.Kom, M.Kom",
+        "identifier": "197111091998022001",
+        "image": "",
+        "is_active": true,
+        "user_id": "7ddbea76-6918-4df4-8e9d-01186b9157f5"
+    },
+    {
+        "id": "403950bd-61c7-4790-bb36-e2cab46a01b7",
+        "name": "Nur Rosyid Mubtadai, S.Kom",
+        "identifier": "197403182001121005",
+        "image": "",
+        "is_active": true,
+        "user_id": "0782450c-16b9-4061-95c8-55ffc9a06481"
+    },
+    {
+        "id": "0f52399f-59c0-4e33-8ee8-6bc535e4ce46",
+        "name": "Rengga Asmara, S.Kom, OCA",
+        "identifier": "198105082005011002",
+        "image": "",
+        "is_active": true,
+        "user_id": "e91e2525-f56b-4761-86ac-d42bbdae9fb1"
+    },
+    {
+        "id": "3f82ae22-4603-47d4-8a70-9bd2a228f5b5",
+        "name": "Tri Hadiah Muliawati, S.ST, M.Kom.",
+        "identifier": "0012109201",
+        "image": "",
+        "is_active": true,
+        "user_id": "419dd332-b89b-41c5-99f5-53f78c0e63ce"
+    },
+    {
+        "id": "f190f706-8b83-4ec6-8485-72081a06e4db",
+        "name": "Umi Sa'adah, S.Kom",
+        "identifier": "197404162000032003",
+        "image": "",
+        "is_active": true,
+        "user_id": "c5613f71-2f21-400a-8c35-43f3c2caf00a"
+    },
+    {
+        "id": "b315354e-e9c7-4935-b467-dee91ced806c",
+        "name": "Wiratmoko Yuwono, ST",
+        "identifier": "197911212005011003",
+        "image": "",
+        "is_active": true,
+        "user_id": "8606223a-39c1-4da0-a9de-6c8b37ea1b1d"
+    },
+    {
+        "id": "138d4644-0192-40df-84c0-2a65c7dda681",
+        "name": "Yuliana Setiowati, S.Kom., M.Kom.",
+        "identifier": "197807062002122003",
+        "image": "",
+        "is_active": true,
+        "user_id": "1a1fe702-3686-4f6c-be3c-de2a7b4c87f8"
+    }
 ]

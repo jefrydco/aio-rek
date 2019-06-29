@@ -31,10 +31,12 @@
               {{ item.student.name }}
             </td>
             <td class="py-1 body-2">
-              {{ item.attendance.schedule.lecturer.name }}
+              {{
+                item.attendance ? item.attendance.schedule.lecturer.name : ''
+              }}
             </td>
             <td class="py-1 body-2">
-              {{ item.attendance.room.name }}
+              {{ item.attendance ? item.attendance.room.name : '' }}
             </td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.is_late" color="error" text-color="white">

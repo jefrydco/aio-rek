@@ -1,15 +1,18 @@
+import includes from 'lodash/fp/includes'
+
 export const types = {
+  RESET_DETECTION: 'RESET_DETECTION',
   LECTURER_DETECTING: 'LECTURER_DETECTING',
   LECTURER_DETECTED: 'LECTURER_DETECTED',
   SET_DETECTED_LECTURER: 'SET_DETECTED_LECTURER',
   STUDENTS_DETECTING: 'STUDENTS_DETECTING',
   STUDENTS_DETECTED: 'STUDENTS_DETECTED',
-  SET_DETECTED_STUDENTS: 'SET_DETECTED_STUDENTS',
+  SET_DETECTED_STUDENT: 'SET_DETECTED_STUDENT',
   SET_ATTENDANCE: 'SET_ATTENDANCE'
 }
 
 export const state = () => ({
-  isLecturerDetecting: false,
+  isLecturerDetecting: true,
   isLecturerDetected: false,
   detectedLecturer: null,
   isStudentsDetecting: false,
@@ -44,10 +47,23 @@ export const mutations = {
     state.isStudentsDetecting = false
     state.isStudentsDetected = true
   },
-  [types.SET_DETECTED_STUDENTS](state, detectedStudents = []) {
-    state.detectedStudents.push(detectedStudents)
+  [types.SET_DETECTED_STUDENT](state, detectedStudent = null) {
+    if (detectedStudent) {
+      if (!includes(detectedStudent.id, state.detectedStudents)) {
+        state.detectedStudents.push(detectedStudent)
+      }
+    }
   },
   [types.SET_ATTENDANCE](state, attendance = null) {
     state.attendance = attendance
+  },
+  [types.RESET_DETECTION](state) {
+    state.isLecturerDetecting = true
+    state.isLecturerDetected = false
+    state.detectedLecturer = null
+    state.isStudentsDetecting = false
+    state.isStudentsDetected = false
+    state.detectedStudents = []
+    state.attendance = null
   }
 }

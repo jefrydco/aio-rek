@@ -16,7 +16,7 @@ const config = {
   },
 
   expressions: {
-    minConfidence: 0.5
+    minConfidence: 0.7
   },
 
   landmarks: {
@@ -35,8 +35,7 @@ export const types = {
   LOADED: 'LOADED',
   SET_FACES: 'SET_FACES',
   SET_FACE_MATCHER: 'SET_FACE_MATCHER',
-  SET_SCORE_THRESHOLD: 'SET_SCORE_THRESHOLD',
-  SET_INPUT_SIZE: 'SET_INPUT_SIZE'
+  SET_MIN_CONFIDENCE: 'SET_MIN_CONFIDENCE'
 }
 
 export const state = () => ({
@@ -44,8 +43,7 @@ export const state = () => ({
   isLoading: false,
   isLoaded: false,
   faceMatcher: null,
-  scoreThreshold: 0.3,
-  inputSize: 704
+  minConfidence: 0.7
 })
 
 export const mutations = {
@@ -62,11 +60,8 @@ export const mutations = {
   [types.SET_FACE_MATCHER](state, faceMatcher) {
     state.faceMatcher = faceMatcher
   },
-  [types.SET_SCORE_THRESHOLD](state, scoreThreshold) {
-    state.scoreThreshold = scoreThreshold
-  },
-  [types.SET_INPUT_SIZE](state, inputSize) {
-    state.inputSize = inputSize
+  [types.SET_MIN_CONFIDENCE](state, minConfidence) {
+    state.minConfidence = minConfidence
   }
 }
 
@@ -96,8 +91,7 @@ export const actions = {
         .detectSingleFace(
           img,
           new faceapi.SsdMobilenetv1Options({
-            scoreThreshold: state.scoreThreshold,
-            inputSize: state.inputSize
+            minConfidence: state.minConfidence
           })
         )
         .withFaceLandmarks()
@@ -157,9 +151,8 @@ export const actions = {
     if (isSingleFace) {
       let promise = faceapi.detectSingleFace(
         canvasEl,
-        new faceapi.TinyFaceDetectorOptions({
-          scoreThreshold: state.scoreThreshold,
-          inputSize: state.inputSize
+        new faceapi.SsdMobilenetv1Options({
+          minConfidence: state.minConfidence
         })
       )
       if (isLandmarksEnabled || isRecognitionEnabled) {
@@ -179,9 +172,8 @@ export const actions = {
     }
     let promise = faceapi.detectAllFaces(
       canvasEl,
-      new faceapi.TinyFaceDetectorOptions({
-        scoreThreshold: state.scoreThreshold,
-        inputSize: state.inputSize
+      new faceapi.SsdMobilenetv1Options({
+        minConfidence: state.minConfidence
       })
     )
     if (isLandmarksEnabled || isRecognitionEnabled) {
@@ -208,9 +200,10 @@ export const actions = {
       }
     }
   ) {
-    if (descriptor && isRecognitionEnabled) {
-      console.log('getBestMatch: store', descriptor)
+    if (descriptor && isRecognitionEnabled && state.faceMatcher) {
+      console.log('getBestMatch: store: descriptor', descriptor)
       const bestMatch = await state.faceMatcher.findBestMatch(descriptor)
+      console.log('getBestMatch: store: bestMatch', bestMatch)
       return bestMatch
     }
     return null
@@ -265,6 +258,13 @@ export const actions = {
           pointColor: config.detections.boxColor
         }).draw(canvasEl)
       }
+      if (isAgeGenderEnabled && detection.age && detection.gender) {
+        canvasCtx.fillText(
+          `${capitalize(detection.gender)}, Age: ${Math.round(detection.age)}`,
+          box.x + padText,
+          box.y + box.height + 3 * padText + config.detections.fontSize * 0.7
+        )
+      }
       if (isExpressionEnabled && detection.expressions) {
         const emotions = Object.keys(
           pickBy(
@@ -278,13 +278,6 @@ export const actions = {
           emotions,
           box.x + padText,
           box.y + box.height + 5 * padText + config.detections.fontSize * 0.7
-        )
-      }
-      if (isAgeGenderEnabled && detection.age && detection.gender) {
-        canvasCtx.fillText(
-          `${capitalize(detection.gender)}, Age: ${Math.round(detection.age)}`,
-          box.x + padText,
-          box.y + box.height + 3 * padText + config.detections.fontSize * 0.7
         )
       }
     }

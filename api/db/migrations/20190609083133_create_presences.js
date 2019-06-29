@@ -15,8 +15,9 @@ exports.up = function(knex, Promise) {
       .onDelete('SET NULL')
     table
       .uuid('attendance_id')
+      .notNullable()
       .references('attendances.id')
-      .onDelete('SET NULL')
+      .onDelete('CASCADE')
   })
 }
 

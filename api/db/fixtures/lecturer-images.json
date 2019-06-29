@@ -1,91 +1,19 @@
 [
     {
-        "id": "1973ca96-0789-4de3-8f32-e6ab1ec44be8",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/d3e6411f-b312-415f-a9d1-1b25e56c6e42.jpg",
+        "id": "be3c7fe5-f407-4852-8609-7010d13a3286",
+        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/11c4f5ce-e978-4910-a923-a9c491971378.jpg",
         "has_descriptor": true,
         "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
     },
     {
-        "id": "c4d17a9a-678d-48be-9e70-7889d637ca72",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/3225cabf-48d7-424d-bb22-96a99203251a.jpg",
+        "id": "033ef4d0-cd8f-4efa-b6b7-8c2ef5faff1d",
+        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/a6530886-0c3b-4b3e-94cc-6173f06f07aa.jpg",
         "has_descriptor": true,
         "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
     },
     {
-        "id": "06ebfda2-b029-4c13-b14f-72debe44fb22",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/51cd4a14-f2df-42a4-befb-47b7ebb2023f.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "37aff643-6b85-412f-9553-d6605da6faae",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/8b53c53c-f15e-4c59-a17b-2967f239dc1d.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "96be70ae-4a2d-4c5e-9969-d8ffb7eb238a",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/1af7f78e-6b31-41b7-ac44-cb5d1cb02b0f.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "6c1f9fbd-9c51-4b25-95ef-38e12cc84b4d",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/bc1174d6-93f5-4506-afb2-203292ea77de.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "2769c0d5-f983-4017-b2f2-1218d80283ee",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/f0395fba-1201-4829-9ad1-b4bb89d0fec5.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "7e3a2d3d-fab4-481f-969e-24da9363e31a",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/a2303da8-b1ac-4aa1-b70e-6a298873877e.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "b8783280-f86e-4265-92fa-2328ab93385b",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/92983bb3-b66d-4ef7-aed3-2f867d56ab1f.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "1197fefc-638e-422b-a10a-00a7bc8f6b9e",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/08e2ef04-e571-4902-bcad-3f245bdc8275.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "1408c6fd-d1ff-4a77-ac8b-15ea0d371154",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/4a99b446-992e-4be8-a1b7-1fb4a1de209a.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "8eca118b-9436-42fe-9d79-060c682600d8",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/00cfc1e4-b8b6-43e4-ad11-d2f9a1ab9d4b.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "463b0432-39b7-482d-9834-e7891ae4f9d1",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/13595eeb-d101-469c-b0d5-95e0c9fbdf8c.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "b9e32feb-cf21-4b20-8390-3781c684a2a0",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/6331ddd5-af90-41ae-83ec-d8ad4bc0caf4.jpg",
-        "has_descriptor": true,
-        "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
-    },
-    {
-        "id": "2e6c1dad-63ec-4431-9c64-91c05a471ec7",
-        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/8d314d10-0e47-42c5-9dc8-39993554c11c.jpg",
+        "id": "2fc95e8a-60ed-4a6b-ac81-46b34f65cf78",
+        "path": "/uploads/images/datasets/lecturers/c860b8a4-1245-43fd-9044-030781ab7879/51d50f36-a215-432c-9797-0ff9a475b273.jpg",
         "has_descriptor": true,
         "lecturer_id": "c860b8a4-1245-43fd-9044-030781ab7879"
     }

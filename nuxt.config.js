@@ -67,6 +67,24 @@ module.exports = {
   // https://nuxtjs.org/api/configuration-css
   css: ['~assets/styles/app', '~/assets/styles/main'],
 
+  // https://pwa.nuxtjs.org/modules/workbox.html
+  workbox: {
+    preCaching: [
+      '/models/ssd_mobilenetv1_model-weights_manifest.json',
+      '/models/face_recognition_model-weights_manifest.json',
+      '/models/face_landmark_68_model-weights_manifest.json',
+      '/models/face_expression_model-weights_manifest.json',
+      '/models/age_gender_model-weights_manifest.json',
+      '/models/ssd_mobilenetv1_model-shard1',
+      '/models/ssd_mobilenetv1_model-shard2',
+      '/models/face_recognition_model-shard1',
+      '/models/face_recognition_model-shard2',
+      '/models/face_landmark_68_model-shard1',
+      '/models/face_expression_model-shard1',
+      '/models/age_gender_model-shard1'
+    ]
+  },
+
   // serverMiddleware: ['~/api/index'],
 
   // https://nuxtjs.org/api/configuration-build

@@ -575,6 +575,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('face', ['isLoaded']),
     ...mapState('camera', ['cameras']),
     selectedCamera: {
       get() {
@@ -781,14 +782,18 @@ export default {
       this.$refs.images.click()
     },
     async computeImageDescriptors(image) {
-      const descriptor = await this.getFaceDescriptors({ image })
-      if (descriptor) {
-        await this.$api.lecturerDescriptors.create({
-          lecturerDescriptor: { lecturer_image_id: image.id, descriptor }
-        })
-        await this.$api.lecturerImages.update(image.id, {
-          lecturerImage: { has_descriptor: true }
-        })
+      if (this.isLoaded) {
+        const descriptor = await this.getFaceDescriptors({ image })
+        if (descriptor) {
+          await this.$api.lecturerDescriptors.create({
+            lecturerDescriptor: { lecturer_image_id: image.id, descriptor }
+          })
+          await this.$api.lecturerImages.update(image.id, {
+            lecturerImage: { has_descriptor: true }
+          })
+        }
+      } else {
+        await this.getModels()
       }
     },
     async onImagesSelected(event) {
