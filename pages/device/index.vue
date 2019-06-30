@@ -811,16 +811,19 @@ export default {
     async isAttendanceStarted(isAttendanceStarted) {
       if (isAttendanceStarted) {
         await this.fetchStudents()
-        await Promise.all(
-          this.students.map(({ id }) =>
-            this.$api.presences.create({
-              presence: {
-                student_id: id,
-                attendance_id: this.attendance.id
-              }
-            })
+        const attendanceId = localStorage.getItem('attendance')
+        if (!attendanceId) {
+          await Promise.all(
+            this.students.map(({ id }) =>
+              this.$api.presences.create({
+                presence: {
+                  student_id: id,
+                  attendance_id: this.attendance.id
+                }
+              })
+            )
           )
-        )
+        }
         await this.fetchPresences()
         await this.initFaceMatcher()
         await this.init()
@@ -886,6 +889,10 @@ export default {
           await this.$store.commit(
             `detection/${detectionTypes.SET_ATTENDANCE}`,
             attendance
+          )
+          await this.$store.commit(
+            `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
+            attendance.schedule.lecturer
           )
           await this.fetchPresences()
         } catch (error) {
@@ -1056,7 +1063,8 @@ export default {
                         const is_late =
                           this.$moment().diff(
                             this.$moment(this.attendance.start_datetime)
-                          ) > 60000
+                          ) >
+                          30 * 1000
                         const canvas = this.$refs.liveCanvas
                         const image = await getImageFromCanvas(canvas)
                         const payload = toFormData({
@@ -1084,6 +1092,21 @@ export default {
                 const diff = t1 - t0
                 this.duration = parseFloat(diff)
                 this.realFps = (1000 / diff).toFixed(2)
+              }
+              if (this.isAttendanceStarted) {
+                const add = this.$moment(this.attendance.start_datetime).add(
+                  1,
+                  'm'
+                )
+                const isTimeout = add.isBefore()
+                console.log(
+                  'STUDENT: IS TIME OUT',
+                  add.toISOString(),
+                  isTimeout
+                )
+                if (isTimeout) {
+                  await this.onStop()
+                }
               }
             }
           }
