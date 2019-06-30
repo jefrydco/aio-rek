@@ -665,10 +665,10 @@ import { types as deviceTypes } from '~/store/device'
 
 import string from '~/mixins/string'
 
-const MAXIMUM_IDLE = 2 // minutes
+const MAXIMUM_IDLE = 60 * 1000 // seconds
 const MAXIMUM_DETECTED_LECTURER_TIMEOUT = 15 * 1000 // seconds
 const MAXIMUM_STUDENT_LATE = 30 * 1000 // seconds
-const MAXIMUM_STUDENT_TIME_OUT = 1 // minutes
+const MAXIMUM_STUDENT_TIME_OUT = 60 * 1000 // minutes
 
 const randomCat = uniqueRandomArray([
   '/cats/cat-1.gif',
@@ -962,7 +962,7 @@ export default {
       this.init()
     },
     async init() {
-      this.idle = this.$moment().add(MAXIMUM_IDLE, 'm')
+      this.idle = this.$moment().add(MAXIMUM_IDLE, 'ms')
 
       await this.initDevice()
       await this.initSound()
@@ -1220,7 +1220,7 @@ export default {
 
                 const add = this.$moment(this.attendance.start_datetime).add(
                   MAXIMUM_STUDENT_TIME_OUT,
-                  'm'
+                  'ms'
                 )
                 const isTimeout = add.isBefore()
                 this.timeoutTime = this.prettyDuration(add.diff())
