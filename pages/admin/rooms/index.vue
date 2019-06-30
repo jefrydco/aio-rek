@@ -29,7 +29,7 @@
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.in_use" color="error" text-color="white">
                 <v-avatar class="error darken-3">
-                  <v-icon>check</v-icon>
+                  <v-icon>close</v-icon>
                 </v-avatar>
                 <span>Used</span>
               </v-chip>

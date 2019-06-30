@@ -55,6 +55,14 @@
                 <span>On Time</span>
               </v-chip>
             </td>
+            <td class="py-1 body-2 text-xs-center">
+              <v-chip :color="getStatusColor(item.status)" text-color="white">
+                <v-avatar :class="`${getStatusColor(item.status)} darken-3`">
+                  <v-icon>{{ getStatusIcon(item.status) }}</v-icon>
+                </v-avatar>
+                <span>{{ upperFirst(item.status) }}</span>
+              </v-chip>
+            </td>
             <td class="py-1 body-2">
               {{ item.datetime ? $moment(item.datetime).format('llll') : '' }}
             </td>
@@ -555,6 +563,7 @@
 /* eslint-disable camelcase */
 import toFormData from 'json-form-data'
 import cloneDeep from 'lodash/fp/cloneDeep'
+import upperFirst from 'lodash/fp/upperFirst'
 import { fileReader } from '~/utils/file'
 
 export default {
@@ -609,6 +618,7 @@ export default {
         { text: 'Lecturer', value: 'attendance.schedule.lecturer.name' },
         { text: 'Room', value: 'attendance.room.name' },
         { text: 'Is late?', value: 'is_late', align: 'center' },
+        { text: 'Status', value: 'status' },
         { text: 'Datetime', value: 'datetime' },
         { text: 'Action', align: 'center', sortable: false }
       ],
@@ -669,6 +679,43 @@ export default {
         return ['1', '2']
       }
       return grades
+    },
+    getStatusColor() {
+      return status => {
+        switch (status) {
+          case 'alpha':
+            return 'error'
+          case 'sick':
+            return 'info'
+          case 'present':
+            return 'success'
+          default:
+            return 'error'
+        }
+      }
+    },
+    getStatusIcon() {
+      return status => {
+        switch (status) {
+          case 'alpha':
+            return 'close'
+          case 'sick':
+            return 'priority_high'
+          case 'present':
+            return 'check'
+          default:
+            return 'error'
+        }
+      }
+    },
+    upperFirst() {
+      return string => {
+        if (!string) {
+          return ''
+        }
+        string = string.toString()
+        return upperFirst(string)
+      }
     }
   },
   watch: {

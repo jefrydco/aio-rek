@@ -1112,6 +1112,8 @@ export default {
                         this.$store.commit(
                           `detection/${detectionTypes.RESET_DETECTION}`
                         )
+                        this.schedules = []
+                        this.isChoosingSchedule = false
                         this.init()
                       }
                     }, MAXIMUM_DETECTED_LECTURER_TIMEOUT)
@@ -1238,6 +1240,8 @@ export default {
       await clearIntervalAsync(this.interval)
     },
     onUnderstand() {
+      this.$store.commit(`detection/${detectionTypes.RESET_DETECTION}`)
+      this.schedules = []
       this.isConfirming = false
       this.init()
     },
@@ -1257,9 +1261,17 @@ export default {
           is_active: true,
           image
         })
-        const { attendance } = await this.$api.attendances.create(payload, {
-          lecturer_id: this.detectedLecturer.id
-        })
+        // eslint-disable-next-line
+        const [{ attendance }, { room }] = await Promise.all([
+          this.$api.attendances.create(payload, {
+            lecturer_id: this.detectedLecturer.id
+          }),
+          this.$api.rooms.update(this.room, {
+            room: {
+              in_use: true
+            }
+          })
+        ])
         await this.initData(attendance.id)
         await localStorage.setItem('attendance', this.attendance.id)
         await (() => {
@@ -1283,7 +1295,14 @@ export default {
             end_datetime: new Date().toISOString()
           }
         }
-        await this.$api.attendances.update(this.attendance.id, payload)
+        await Promise.all([
+          this.$api.attendances.update(this.attendance.id, payload),
+          this.$api.rooms.update(this.room, {
+            room: {
+              in_use: false
+            }
+          })
+        ])
         await (() => {
           this.isStoping = false
           this.idleTime = 0

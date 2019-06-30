@@ -24,7 +24,7 @@ router.get(
   '/rooms/:id',
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['device']]),
   fetch
 )
 router.put(
@@ -32,7 +32,7 @@ router.put(
   bodyParser.json(),
   createTransaction,
   jwtAuth.required,
-  handleRole('admin'),
+  handleRole([['admin'], ['device']]),
   update
 )
 router.delete(
