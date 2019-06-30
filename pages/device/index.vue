@@ -625,6 +625,7 @@
                   </v-img>
                   <h2 class="headline mb-3">
                     Ayo Rek is in idle condition, please click this button below
+                    to start
                   </h2>
                   <v-btn color="primary" large="" @click="onAyoRek">
                     Ayo Rek
@@ -738,9 +739,9 @@ export default {
         url: ''
       },
       idle: null,
-      idleTime: null,
-      timeoutTime: null,
-      lateTime: null
+      idleTime: 0,
+      timeoutTime: 0,
+      lateTime: 0
     }
   },
   computed: {
@@ -1276,9 +1277,9 @@ export default {
         await this.$api.attendances.update(this.attendance.id, payload)
         await (() => {
           this.isStoping = false
-          this.idleTime = null
-          this.timeoutTime = null
-          this.lateTime = null
+          this.idleTime = 0
+          this.timeoutTime = 0
+          this.lateTime = 0
           this.presences = []
           this.$store.commit(`detection/${detectionTypes.RESET_DETECTION}`)
           localStorage.removeItem('attendance')

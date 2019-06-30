@@ -177,7 +177,7 @@ import cloneDeep from 'lodash/fp/cloneDeep'
 export default {
   head() {
     return {
-      title: 'Study Programs'
+      title: 'Majors'
     }
   },
   data() {
