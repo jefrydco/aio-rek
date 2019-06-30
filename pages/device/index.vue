@@ -365,7 +365,7 @@
                 <v-layout v-else="" row="" wrap="">
                   <v-flex xs12="" class="text-xs-center">
                     <h3 class="headline">
-                      Point Your face at the camera to start the lesson
+                      Please, point Your face at the camera to start the lesson
                     </h3>
                   </v-flex>
                 </v-layout>
@@ -1408,6 +1408,7 @@ export default {
           study_program_id: this.attendance.schedule.study_program_id,
           major_id: this.attendance.schedule.major_id,
           group_id: this.attendance.schedule.group_id,
+          grade: this.attendance.schedule.grade,
           limit: -1
         })
         this.students = students
