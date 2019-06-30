@@ -39,6 +39,7 @@
         v-model="isCreatingOrEditingDialog"
         scrollable=""
         width="350"
+        lazy=""
         @input="onClose"
       >
         <v-card>
@@ -103,6 +104,7 @@
         v-model="isRemovingDialog"
         width="350"
         scrollable=""
+        lazy=""
         @input="onCloseRemoving"
       >
         <v-card>

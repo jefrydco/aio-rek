@@ -8,6 +8,10 @@
               <v-toolbar-title>
                 <h2 class="headline">Camera</h2>
               </v-toolbar-title>
+              <v-spacer />
+              <v-chip label="" color="accent" text-color="white">
+                Idle: {{ idleTime }}
+              </v-chip>
             </v-toolbar>
             <v-card-text>
               <v-container class="pa-0" fluid="" grid-list-xl="">
@@ -46,7 +50,7 @@
                       Real FPS: {{ realFps }}
                     </v-chip>
                     <v-chip label="" color="accent" text-color="white">
-                      Duration: {{ prettyDuration }}
+                      Duration: {{ prettyDuration(duration) }}
                     </v-chip>
                   </v-flex>
                 </v-layout>
@@ -114,6 +118,10 @@
                   Start Lesson
                 </h2>
               </v-toolbar-title>
+              <v-spacer />
+              <v-chip label="" color="accent" text-color="white">
+                Timeout: {{ timeoutTime }}
+              </v-chip>
             </v-toolbar>
             <v-card-text>
               <v-container class="pa-0" fluid="" grid-list-xl="">
@@ -138,7 +146,12 @@
                         </v-layout>
                         <v-layout v-if="!isAttendanceStarted" row="" wrap="">
                           <v-flex xs12="">
-                            <v-dialog v-model="isConfirming" width="350">
+                            <v-dialog
+                              v-model="isConfirming"
+                              width="350"
+                              scrollable=""
+                              lazy=""
+                            >
                               <template #activator="{ on }">
                                 <v-btn large="" v-on="on">Cancel</v-btn>
                               </template>
@@ -179,6 +192,7 @@
                               v-model="isChoosingSchedule"
                               width="1050"
                               scrollable=""
+                              lazy=""
                             >
                               <template #activator="{ on }">
                                 <v-btn large="" color="accent" v-on="on">
@@ -301,7 +315,12 @@
                             </v-layout>
                             <v-layout row="" wrap="">
                               <v-flex xs12="">
-                                <v-dialog v-model="isStoping" width="350">
+                                <v-dialog
+                                  v-model="isStoping"
+                                  width="350"
+                                  scrollable=""
+                                  lazy=""
+                                >
                                   <template #activator="{ on }">
                                     <v-btn color="accent" large="" v-on="on">
                                       Stop
@@ -358,6 +377,10 @@
               <v-toolbar-title>
                 <h2 class="headline">Presences</h2>
               </v-toolbar-title>
+              <v-spacer />
+              <v-chip label="" color="accent" text-color="white">
+                Late: {{ lateTime }}
+              </v-chip>
             </v-toolbar>
             <v-card-text>
               <v-container class="pa-0" fluid="" grid-list-xl="">
@@ -455,7 +478,13 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <v-dialog v-model="isConfiguring" scrollable="" persistent="" width="350">
+      <v-dialog
+        v-model="isConfiguring"
+        scrollable=""
+        persistent=""
+        width="350"
+        lazy=""
+      >
         <v-card>
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
@@ -517,7 +546,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isEnlargingImageDialog" width="700" scrollable="">
+      <v-dialog v-model="isEnlargingImage" width="700" scrollable="" lazy="">
         <v-card>
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
@@ -526,7 +555,7 @@
               </h3>
             </v-toolbar-title>
             <v-spacer />
-            <v-btn icon="" @click="isEnlargingImageDialog = false">
+            <v-btn icon="" @click="isEnlargingImage = false">
               <v-icon>close</v-icon>
             </v-btn>
           </v-toolbar>
@@ -560,11 +589,50 @@
               :loading="isLoading"
               :disabled="isLoading"
               flat=""
-              @click="isEnlargingImageDialog = false"
+              @click="isEnlargingImage = false"
             >
               Cancel
             </v-btn>
           </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog
+        v-model="isIdling"
+        fullscreen=""
+        persistent=""
+        scrollable=""
+        lazy=""
+      >
+        <v-card>
+          <v-card-text class="fill-height">
+            <v-container fluid="" grid-list-xl="" fill-height="">
+              <v-layout row="" wrap="" align-center="" justify-center="">
+                <v-flex xs12="" sm4="" class="text-xs-center">
+                  <v-img :src="randomCat()" alt="Cat" class="mb-3">
+                    <template #placeholder="">
+                      <v-layout
+                        fill-height=""
+                        align-center=""
+                        justify-center=""
+                        ma-0=""
+                      >
+                        <v-progress-circular
+                          indeterminate=""
+                          color="grey lighten-5"
+                        />
+                      </v-layout>
+                    </template>
+                  </v-img>
+                  <h2 class="headline mb-3">
+                    Ayo Rek is in idle condition, please click this button below
+                  </h2>
+                  <v-btn color="primary" large="" @click="onAyoRek">
+                    Ayo Rek
+                  </v-btn>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
         </v-card>
       </v-dialog>
     </v-flex>
@@ -576,6 +644,7 @@
 
 import { HTTPError } from 'ky-universal'
 import { Howl } from 'howler'
+import uniqueRandomArray from 'unique-random-array'
 import toFormData from 'json-form-data'
 import prettyMs from 'pretty-ms'
 import cloneDeep from 'lodash/fp/cloneDeep'
@@ -595,14 +664,25 @@ import { types as deviceTypes } from '~/store/device'
 
 import string from '~/mixins/string'
 
+const MAXIMUM_IDLE = 2 // minutes
+const MAXIMUM_STUDENT_LATE = 30 * 1000 // seconds
+const MAXIMUM_STUDENT_TIME_OUT = 1 // minutes
+
+const randomCat = uniqueRandomArray([
+  '/others/cat-1.gif',
+  '/others/cat-2.gif',
+  '/others/cat-3.gif'
+])
+
 export default {
   mixins: [string],
   data() {
     return {
+      isIdling: false,
       isChoosingSchedule: false,
       isConfirming: false,
       isStoping: false,
-      isEnlargingImageDialog: false,
+      isEnlargingImage: false,
       isLoading: false,
       interval: null,
       selectedDevice: null,
@@ -656,7 +736,11 @@ export default {
       enlargedImage: {
         name: '',
         url: ''
-      }
+      },
+      idle: null,
+      idleTime: null,
+      timeoutTime: null,
+      lateTime: null
     }
   },
   computed: {
@@ -667,6 +751,9 @@ export default {
     ...mapState('device', ['device', 'room']),
     ...mapGetters('device', ['isConfigured']),
     ...mapGetters('detection', ['isAttendanceStarted', 'isLecturerDetected']),
+    randomCat() {
+      return () => randomCat()
+    },
     minConfidence: {
       get() {
         return this.$store.state.face.minConfidence
@@ -701,7 +788,7 @@ export default {
       }
     },
     prettyDuration() {
-      return prettyMs(this.duration, { separateMilliseconds: true })
+      return duration => prettyMs(duration, { separateMilliseconds: true })
     },
     selectedCamera: {
       get() {
@@ -868,7 +955,13 @@ export default {
       'getBestMatch',
       'drawBestMatch'
     ]),
+    onAyoRek() {
+      this.isIdling = false
+      this.init()
+    },
     async init() {
+      this.idle = this.$moment().add(MAXIMUM_IDLE, 'm')
+
       await this.initDevice()
       await this.initSound()
       await this.getCameras()
@@ -1003,23 +1096,31 @@ export default {
                       detection,
                       options
                     })
-                    await (() => {
-                      this.$store.commit(
-                        `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
-                        detection.detected
-                      )
-                      this.onTimeSound.play()
-                      this.clearFaceDetection()
-                      this.fetchSchedules({
-                        lecturer_id: detection.detected.id
-                      })
-                    })()
+                    await this.$store.commit(
+                      `detection/${detectionTypes.SET_DETECTED_LECTURER}`,
+                      detection.detected
+                    )
+                    await this.clearFaceDetection()
+                    await this.onTimeSound.play()
+                    await this.fetchSchedules({
+                      lecturer_id: detection.detected.id
+                    })
                   }
                 }
                 const t1 = performance.now()
                 const diff = t1 - t0
                 this.duration = parseFloat(diff)
                 this.realFps = (1000 / diff).toFixed(2)
+              }
+              if (this.idle !== null) {
+                const isIddle = this.idle.isBefore()
+                this.idleTime = this.prettyDuration(this.idle.diff())
+                console.log('LECTURER: IS IDDLE', this.idleTime, isIddle)
+                if (isIddle) {
+                  this.isIdling = true
+                  this.idle = null
+                  await this.clearFaceDetection()
+                }
               }
             } else {
               let detections = await this.getFaceDetections({
@@ -1030,6 +1131,12 @@ export default {
                 }
               })
               await console.log('STUDENT: DETECTION', detections)
+              // If the difference between current time and attendance datetime is greater than 1 minutes, then it should be late
+              const is_late =
+                this.$moment().diff(
+                  this.$moment(this.attendance.start_datetime)
+                ) > MAXIMUM_STUDENT_LATE
+
               if (detections.length > 0) {
                 detections = await Promise.all(
                   detections.map(async _detection => {
@@ -1059,12 +1166,7 @@ export default {
                           detection,
                           options
                         })
-                        // If the difference between current time and attendance datetime is greater than 1 minutes, then it should be late
-                        const is_late =
-                          this.$moment().diff(
-                            this.$moment(this.attendance.start_datetime)
-                          ) >
-                          30 * 1000
+
                         const canvas = this.$refs.liveCanvas
                         const image = await getImageFromCanvas(canvas)
                         const payload = toFormData({
@@ -1094,16 +1196,23 @@ export default {
                 this.realFps = (1000 / diff).toFixed(2)
               }
               if (this.isAttendanceStarted) {
+                const lateDuration = this.$moment().diff(
+                  this.$moment(this.attendance.start_datetime)
+                )
+                if (!is_late) {
+                  this.lateTime = this.prettyDuration(
+                    MAXIMUM_STUDENT_LATE - lateDuration
+                  )
+                  console.log('STUDENT: IS LATE', this.lateTime, is_late)
+                }
+
                 const add = this.$moment(this.attendance.start_datetime).add(
-                  1,
+                  MAXIMUM_STUDENT_TIME_OUT,
                   'm'
                 )
                 const isTimeout = add.isBefore()
-                console.log(
-                  'STUDENT: IS TIME OUT',
-                  add.toISOString(),
-                  isTimeout
-                )
+                this.timeoutTime = this.prettyDuration(add.diff())
+                console.log('STUDENT: IS TIME OUT', this.timeoutTime, isTimeout)
                 if (isTimeout) {
                   await this.onStop()
                 }
@@ -1166,9 +1275,12 @@ export default {
         }
         await this.$api.attendances.update(this.attendance.id, payload)
         await (() => {
+          this.isStoping = false
+          this.idleTime = null
+          this.timeoutTime = null
+          this.lateTime = null
           this.presences = []
           this.$store.commit(`detection/${detectionTypes.RESET_DETECTION}`)
-          this.isStoping = false
           localStorage.removeItem('attendance')
         })()
         await this.initFaceMatcher()
@@ -1180,7 +1292,7 @@ export default {
       }
     },
     onTriggerEnlargeImage(event, item) {
-      this.isEnlargingImageDialog = true
+      this.isEnlargingImage = true
       this.enlargedImage.name = item.student.name
       this.enlargedImage.url = item.image
     },

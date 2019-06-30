@@ -76,6 +76,7 @@
         v-model="isCreatingOrEditingDialog"
         scrollable=""
         width="700"
+        lazy=""
         @input="onClose"
       >
         <v-card>
@@ -449,6 +450,7 @@
         v-model="isRemovingDialog"
         width="350"
         scrollable=""
+        lazy=""
         @input="onCloseRemoving"
       >
         <v-card>
@@ -491,7 +493,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isEnlargingImageDialog" width="700" scrollable="">
+      <v-dialog v-model="isEnlargingImage" width="700" scrollable="" lazy="">
         <v-card>
           <v-toolbar color="primary" dark="" card="">
             <v-toolbar-title>
@@ -500,7 +502,7 @@
               </h3>
             </v-toolbar-title>
             <v-spacer />
-            <v-btn icon="" @click="isEnlargingImageDialog = false">
+            <v-btn icon="" @click="isEnlargingImage = false">
               <v-icon>close</v-icon>
             </v-btn>
           </v-toolbar>
@@ -538,7 +540,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               flat=""
-              @click="isEnlargingImageDialog = false"
+              @click="isEnlargingImage = false"
             >
               Cancel
             </v-btn>
@@ -567,7 +569,7 @@ export default {
       isStartTime: false,
       isEndDate: false,
       isEndTime: false,
-      isEnlargingImageDialog: false,
+      isEnlargingImage: false,
       isCreatingOrEditingDialog: false,
       isEditing: false,
       isRemovingDialog: false,
@@ -970,7 +972,7 @@ export default {
       }
     },
     async onTriggerEnlargeImage(event, item) {
-      this.isEnlargingImageDialog = true
+      this.isEnlargingImage = true
       this.presence = { ...item }
 
       this.enlargedImage.name = item.student.name

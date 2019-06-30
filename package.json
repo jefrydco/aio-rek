@@ -95,6 +95,7 @@
     "require-directory": "^2.1.1",
     "rimraf": "^2.6.3",
     "set-interval-async": "^1.0.23",
+    "unique-random-array": "^2.0.0",
     "uuid": "^3.3.2",
     "uuid-validate": "^0.0.3",
     "vee-validate": "^2.2.11",

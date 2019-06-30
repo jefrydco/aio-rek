@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" width="350" persistent="">
+  <v-dialog :value="value" width="350" persistent="" scrollable="" lazy="">
     <v-card>
       <v-card-text>
         <div class="body-2">
