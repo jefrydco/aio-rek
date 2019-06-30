@@ -666,13 +666,14 @@ import { types as deviceTypes } from '~/store/device'
 import string from '~/mixins/string'
 
 const MAXIMUM_IDLE = 2 // minutes
+const MAXIMUM_DETECTED_LECTURER_TIMEOUT = 15 * 1000 // seconds
 const MAXIMUM_STUDENT_LATE = 30 * 1000 // seconds
 const MAXIMUM_STUDENT_TIME_OUT = 1 // minutes
 
 const randomCat = uniqueRandomArray([
-  '/others/cat-1.gif',
-  '/others/cat-2.gif',
-  '/others/cat-3.gif'
+  '/cats/cat-1.gif',
+  '/cats/cat-2.gif',
+  '/cats/cat-3.gif'
 ])
 
 export default {
@@ -1106,6 +1107,12 @@ export default {
                     await this.fetchSchedules({
                       lecturer_id: detection.detected.id
                     })
+                    await setTimeout(() => {
+                      this.$store.commit(
+                        `detection/${detectionTypes.RESET_DETECTION}`
+                      )
+                      this.init()
+                    }, MAXIMUM_DETECTED_LECTURER_TIMEOUT)
                   }
                 }
                 const t1 = performance.now()
@@ -1256,7 +1263,7 @@ export default {
         await (() => {
           this.isChoosingSchedule = false
           this.$notify({
-            kind: 'info',
+            kind: 'success',
             message: `${schedule.subject.name} is started`
           })
         })()
@@ -1283,6 +1290,10 @@ export default {
           this.presences = []
           this.$store.commit(`detection/${detectionTypes.RESET_DETECTION}`)
           localStorage.removeItem('attendance')
+          this.$notify({
+            kind: 'success',
+            message: 'Lecture is stopped'
+          })
         })()
         await this.initFaceMatcher()
         await this.init()

@@ -23,8 +23,12 @@
       >
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
-            <td class="py-1 body-2">{{ item.identifier }}</td>
-            <td class="py-1 body-2">{{ item.name }}</td>
+            <td class="py-1 body-2">
+              {{ item.identifier }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.name }}
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-btn color="primary" @click="onTrigger($event, item)">
                 Edit

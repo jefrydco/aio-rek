@@ -95,6 +95,27 @@
                   />
                 </v-flex>
               </v-layout>
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-autocomplete
+                    v-model="major.study_program_id"
+                    v-validate="'required'"
+                    :error-messages="errors.collect('study_program_id')"
+                    :disabled="isLoading"
+                    :items="studyPrograms"
+                    item-value="id"
+                    item-text="name"
+                    label="Study Program"
+                    data-vv-name="study_program_id"
+                    data-vv-as="study program"
+                    name="study_program_id"
+                    required=""
+                    clearable=""
+                    outline=""
+                    data-vv-value-path="major.study_program_id"
+                  />
+                </v-flex>
+              </v-layout>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -183,18 +204,21 @@ export default {
   data() {
     return {
       departments: [],
+      studyPrograms: [],
       isCreatingOrEditingDialog: false,
       isEditing: false,
       isRemovingDialog: false,
       default: {
         id: null,
         name: null,
-        department_id: null
+        department_id: null,
+        study_program_id: null
       },
       major: {
         id: null,
         name: null,
-        department_id: null
+        department_id: null,
+        study_program_id: null
       },
       majors: [],
       filter: {
@@ -246,7 +270,8 @@ export default {
     try {
       const [
         { rowCount, majors, ...filter },
-        { departments }
+        { departments },
+        { studyPrograms }
       ] = await Promise.all([
         $api.majors.fetchPage({
           orderBy: 'name',
@@ -254,13 +279,15 @@ export default {
           offset: 0,
           withRelated: 'department'
         }),
-        $api.departments.fetchPage({ limit: -1 })
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.studyPrograms.fetchPage({ limit: -1 })
       ])
       return {
         filter,
         majors,
         totalItems: rowCount,
-        departments
+        departments,
+        studyPrograms
       }
     } catch ({ response }) {
       $handleError(response)
@@ -304,6 +331,19 @@ export default {
         this.filter = filter
         this.totalItems = rowCount
         this.majors = majors
+      } catch (error) {
+        this.$handleError(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchStudyPrograms() {
+      try {
+        this.isLoading = true
+        const { studyPrograms } = await this.$api.studyPrograms.fetchPage({
+          limit: -1
+        })
+        this.studyPrograms = studyPrograms
       } catch (error) {
         this.$handleError(error)
       } finally {

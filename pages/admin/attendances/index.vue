@@ -30,13 +30,27 @@
                 text-class="caption"
               />
             </td>
-            <td class="py-1 body-2">{{ item.schedule.subject.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.lecturer.name }}</td>
-            <td class="py-1 body-2">{{ item.room.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.grade }}</td>
-            <td class="py-1 body-2">{{ item.schedule.study_program.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.major.name }}</td>
-            <td class="py-1 body-2">{{ item.schedule.group.name }}</td>
+            <td class="py-1 body-2">
+              {{ item.schedule ? item.schedule.subject.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.schedule ? item.schedule.lecturer.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.room ? item.room.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.schedule ? item.schedule.grade : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.schedule ? item.schedule.study_program.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.schedule ? item.schedule.major.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.schedule ? item.schedule.group.name : '' }}
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
                 <v-avatar class="info darken-3">
@@ -52,7 +66,11 @@
               </v-chip>
             </td>
             <td class="py-1 body-2">
-              {{ $moment(item.start_datetime).format('llll') }}
+              {{
+                item.start_datetime
+                  ? $moment(item.start_datetime).format('llll')
+                  : '-'
+              }}
             </td>
             <td class="py-1 body-2">
               {{

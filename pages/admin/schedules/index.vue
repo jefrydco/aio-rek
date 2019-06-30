@@ -23,16 +23,36 @@
       >
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
-            <td class="py-1 body-2">{{ getDay(item.day) }}</td>
-            <td class="py-1 body-2">{{ item.subject.name }}</td>
-            <td class="py-1 body-2">{{ item.lecturer.name }}</td>
-            <td class="py-1 body-2">{{ item.room.name }}</td>
-            <td class="py-1 body-2">{{ item.grade }}</td>
-            <td class="py-1 body-2">{{ item.study_program.name }}</td>
-            <td class="py-1 body-2">{{ item.major.name }}</td>
-            <td class="py-1 body-2">{{ item.group.name }}</td>
-            <td class="py-1 body-2">{{ item.start_time }}</td>
-            <td class="py-1 body-2">{{ item.end_time }}</td>
+            <td class="py-1 body-2">
+              {{ getDay(item.day) }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.subject ? item.subject.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.lecturer ? item.lecturer.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.room ? item.room.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.grade }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.study_program ? item.study_program.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.major ? item.major.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.group ? item.group.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.start_time }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.end_time }}
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-btn color="primary" @click="onTrigger($event, item)">
                 Edit

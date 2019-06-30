@@ -27,11 +27,21 @@
                 text-class="caption"
               />
             </td>
-            <td class="py-1 body-2">{{ item.identifier }}</td>
-            <td class="py-1 body-2">{{ item.name }}</td>
-            <td class="py-1 body-2">{{ item.study_program.name }}</td>
-            <td class="py-1 body-2">{{ item.major.name }}</td>
-            <td class="py-1 body-2">{{ item.group.name }}</td>
+            <td class="py-1 body-2">
+              {{ item.identifier }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.name }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.study_program ? item.study_program.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.major ? item.major.name : '' }}
+            </td>
+            <td class="py-1 body-2">
+              {{ item.group ? item.group.name : '' }}
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
                 <v-avatar class="info darken-3">

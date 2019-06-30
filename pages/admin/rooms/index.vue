@@ -23,7 +23,9 @@
       >
         <template #items="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
-            <td class="py-1 body-2">{{ item.name }}</td>
+            <td class="py-1 body-2">
+              {{ item.name }}
+            </td>
             <td class="py-1 body-2 text-xs-center">
               <v-chip v-if="item.in_use" color="error" text-color="white">
                 <v-avatar class="error darken-3">
