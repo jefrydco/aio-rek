@@ -753,9 +753,6 @@ export default {
     ...mapState('device', ['device', 'room']),
     ...mapGetters('device', ['isConfigured']),
     ...mapGetters('detection', ['isAttendanceStarted', 'isLecturerDetected']),
-    randomCat() {
-      return () => randomCat()
-    },
     minConfidence: {
       get() {
         return this.$store.state.face.minConfidence
@@ -957,6 +954,9 @@ export default {
       'getBestMatch',
       'drawBestMatch'
     ]),
+    randomCat() {
+      return randomCat()
+    },
     onAyoRek() {
       this.isIdling = false
       this.init()
