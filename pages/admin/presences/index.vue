@@ -787,9 +787,6 @@ export default {
       $handleError(response)
     }
   },
-  async mounted() {
-    await this.fetchPresences()
-  },
   methods: {
     async fetchPresences(
       {

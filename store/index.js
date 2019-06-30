@@ -27,11 +27,6 @@ export const actions = {
 
           let profile
           if (user.role !== 'admin') {
-            if (user.role === 'room') {
-              profile = await $api.rooms
-                .fetchPage({ user_id: user.id })
-                .then(({ rooms }) => rooms[0])
-            }
             if (user.role === 'student') {
               profile = await $api.students
                 .fetchPage({ user_id: user.id })

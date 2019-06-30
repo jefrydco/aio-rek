@@ -1108,10 +1108,12 @@ export default {
                       lecturer_id: detection.detected.id
                     })
                     await setTimeout(() => {
-                      this.$store.commit(
-                        `detection/${detectionTypes.RESET_DETECTION}`
-                      )
-                      this.init()
+                      if (!this.isAttendanceStarted) {
+                        this.$store.commit(
+                          `detection/${detectionTypes.RESET_DETECTION}`
+                        )
+                        this.init()
+                      }
                     }, MAXIMUM_DETECTED_LECTURER_TIMEOUT)
                   }
                 }
