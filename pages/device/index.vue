@@ -338,7 +338,7 @@
                                         :loading="isLoading"
                                         :disabled="isLoading"
                                         flat=""
-                                        @click="isConfirming = false"
+                                        @click="isStoping = false"
                                       >
                                         Cancel
                                       </v-btn>
