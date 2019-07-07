@@ -29,7 +29,6 @@ describe('Admin - CRUD Majors', () => {
     cy.get('input[name="study_program_id"]')
       .clear()
       .type('D3{enter}')
-    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Edit Major', () => {
@@ -43,12 +42,10 @@ describe('Admin - CRUD Majors', () => {
     cy.get('input[name="study_program_id"]')
       .clear()
       .type('Pascasarjana{enter}')
-    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Delete Major', () => {
     cy.get('.aio-delete-a-major-2').click()
-    cy.screenshot()
     cy.get('.aio-remove').click()
   })
 })

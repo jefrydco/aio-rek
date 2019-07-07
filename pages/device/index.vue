@@ -672,7 +672,7 @@ import { types as deviceTypes } from '~/store/device'
 import string from '~/mixins/string'
 
 const MAXIMUM_IDLE = 60 * 1000 // seconds
-const MAXIMUM_DETECTED_LECTURER_TIMEOUT = 15 * 1000 // seconds
+const MAXIMUM_DETECTED_LECTURER_TIMEOUT = 60 * 1000 // seconds
 const MAXIMUM_STUDENT_LATE = 30 * 1000 // seconds
 const MAXIMUM_STUDENT_TIME_OUT = 60 * 1000 // minutes
 
