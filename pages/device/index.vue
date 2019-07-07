@@ -38,7 +38,7 @@
                 </v-layout>
                 <v-layout row="" wrap="">
                   <v-flex xs12="">
-                    <v-select
+                    <v-autocomplete
                       v-model="selectedCamera"
                       :items="cameras"
                       label="Camera"
@@ -518,7 +518,7 @@
               </v-layout>
               <v-layout row="" wrap="">
                 <v-flex xs12="">
-                  <v-select
+                  <v-autocomplete
                     v-model="selectedDevice"
                     v-validate="'required'"
                     :error-messages="errors.collect('camera')"
@@ -542,7 +542,13 @@
           <v-divider />
           <v-card-actions>
             <v-spacer />
-            <v-btn color="accent" @click="onSaveConfiguration">Save</v-btn>
+            <v-btn
+              class="aio-save-configuration"
+              color="accent"
+              @click="onSaveConfiguration"
+            >
+              Save
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

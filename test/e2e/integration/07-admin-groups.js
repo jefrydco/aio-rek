@@ -1,37 +1,41 @@
-describe('Admin - CRUD Study Programs', () => {
+describe('Admin - CRUD Groups', () => {
   it('Login', () => {
     cy.visit('/')
     cy.contains('.v-toolbar__title', 'Login')
-    cy.get('input[name="email"]').type('admin@gmail.com')
-    cy.get('input[name="password"]').type('admin123')
+    cy.get('input[name="email"]')
+      .clear()
+      .type('admin@gmail.com')
+    cy.get('input[name="password"]')
+      .clear()
+      .type('admin123')
     cy.get('.v-input__icon--append').click()
     cy.get('.v-input__icon--append').click()
     cy.get('button[type="submit"]').click()
     cy.url().should('include', 'admin')
   })
-  it('Navigate to Study Programs', () => {
+  it('Navigate to Groups', () => {
     cy.get('.aio-menu-datasets').click()
-    cy.get('.aio-menu-study-programs').click()
-    cy.url().should('include', 'study-programs')
+    cy.get('.aio-menu-groups').click()
+    cy.url().should('include', 'groups')
   })
-  it('Create Study Program', () => {
+  it('Create Group', () => {
     cy.get('.aio-create').click()
     cy.get('input[name="name"]')
       .clear()
-      .type('A Study Program 1')
+      .type('A Group 1')
     cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
-  it('Edit Study Program', () => {
-    cy.get('.aio-edit-a-study-program-1').click()
+  it('Edit Group', () => {
+    cy.get('.aio-edit-a-group-1').click()
     cy.get('input[name="name"]')
       .clear()
-      .type('A STUDY PROGRAM 2')
+      .type('A GROUP 2')
     cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
-  it('Delete Study Program', () => {
-    cy.get('.aio-delete-a-study-program-2').click()
+  it('Delete Group', () => {
+    cy.get('.aio-delete-a-group-2').click()
     cy.screenshot()
     cy.get('.aio-remove').click()
   })
