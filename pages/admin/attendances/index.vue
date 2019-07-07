@@ -744,12 +744,12 @@ export default {
       lecturers: [],
       rooms: [],
       scheduleFilter: {
-        study_program_id: '2bd55595-0bbb-4c3d-b44c-a9349b515c83',
-        department_id: 'f015862b-3012-49f1-8086-84e4dc64f6d8',
-        major_id: '49bf282d-0aaf-4a94-9e0a-800d544c1748',
-        group_id: '17f6f98c-37ec-4d4f-99f6-d0dcc9f3df46',
-        grade: '3',
-        lecturer_id: 'c860b8a4-1245-43fd-9044-030781ab7879'
+        study_program_id: null,
+        department_id: null,
+        major_id: null,
+        group_id: null,
+        grade: null,
+        lecturer_id: null
       },
       start: {
         date: datetime.format('YYYY-MM-DD'),
