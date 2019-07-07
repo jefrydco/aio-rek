@@ -1,0 +1,35 @@
+describe('Admin - CRUD Departments', () => {
+  it('Login', () => {
+    cy.visit('/')
+    cy.contains('.v-toolbar__title', 'Login')
+    cy.get('input[name="email"]').type('admin@gmail.com')
+    cy.get('input[name="password"]').type('admin123')
+    cy.get('.v-input__icon--append').click()
+    cy.get('.v-input__icon--append').click()
+    cy.get('button[type="submit"]').click()
+    cy.url().should('include', 'admin')
+  })
+  it('Navigate to Departments', () => {
+    cy.get('.aio-menu-datasets').click()
+    cy.get('.aio-menu-departments').click()
+    cy.url().should('include', 'departments')
+  })
+  it('Create Department', () => {
+    cy.get('.aio-create').click()
+    cy.get('input[name="name"]')
+      .clear()
+      .type('A Department 1')
+    cy.get('.aio-edit-save').click()
+  })
+  it('Edit Department', () => {
+    cy.get('.aio-edit-a-department-1').click()
+    cy.get('input[name="name"]')
+      .clear()
+      .type('A DEPARTMENT 2')
+    cy.get('.aio-edit-save').click()
+  })
+  it('Delete Department', () => {
+    cy.get('.aio-delete-a-department-2').click()
+    cy.get('.aio-remove').click()
+  })
+})

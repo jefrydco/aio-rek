@@ -5,7 +5,7 @@
         <h2 class="headline">Lecturers</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn color="accent" @click="fetchLecturers">
+      <v-btn class="aio-refresh" color="accent" @click="fetchLecturers">
         Refresh
       </v-btn>
     </v-toolbar>
@@ -52,11 +52,17 @@
                 color="primary"
                 nuxt=""
                 exact=""
+                :class="`aio-edit-${kebabCase(item.name)}`"
                 :to="{ name: 'admin-lecturers-id', params: { id: item.id } }"
               >
                 Edit
               </v-btn>
-              <v-btn color="error">Delete</v-btn>
+              <v-btn
+                :class="`aio-delete-${kebabCase(item.name)}`"
+                color="error"
+              >
+                Delete
+              </v-btn>
             </td>
           </tr>
         </template>

@@ -19,6 +19,7 @@
               required=""
               clearable=""
               outline=""
+              name="email"
               autofocus=""
               data-vv-value-path="credential.email"
             />
@@ -39,6 +40,7 @@
               required=""
               clearable=""
               outline=""
+              name="password"
               data-vv-value-path="credential.password"
               @click:append="() => (isPassword = !isPassword)"
             />

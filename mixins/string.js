@@ -1,4 +1,5 @@
 import pluralize from 'pluralize'
+import kebabCase from 'lodash/fp/kebabCase'
 
 export default {
   methods: {
@@ -15,6 +16,13 @@ export default {
       }
       string = string.toString()
       return string.split(',')[0]
+    },
+    kebabCase(string) {
+      if (!string) {
+        return null
+      }
+      string = string.toString()
+      return kebabCase(string)
     }
   }
 }

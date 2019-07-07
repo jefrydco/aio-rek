@@ -23,7 +23,7 @@
             bottom=""
           >
             <template #activator="{ on }">
-              <v-btn flat="" v-on="on">
+              <v-btn flat="" :class="menu.id" v-on="on">
                 <span>{{ menu.text }}</span>
                 <v-icon dark>arrow_drop_down</v-icon>
               </v-btn>
@@ -35,6 +35,7 @@
                 ripple=""
                 nuxt=""
                 exact=""
+                :class="menuSub.id"
                 :to="menuSub.to"
               >
                 <v-list-tile-content>
@@ -59,7 +60,7 @@
       <v-toolbar-items>
         <v-menu offset-y="">
           <template #activator="{ on }">
-            <v-btn flat="" v-on="on">
+            <v-btn class="aio-menu-account" flat="" v-on="on">
               <app-avatar
                 :name="avatarName"
                 :image="user.image"
@@ -80,7 +81,7 @@
                 <v-list-tile-title>Settings</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile ripple="" @click="onLogout">
+            <v-list-tile class="aio-menu-logout" ripple="" @click="onLogout">
               <v-list-tile-content>
                 <v-list-tile-title>Logout</v-list-tile-title>
               </v-list-tile-content>
@@ -146,26 +147,72 @@ export default {
         return [{ text: 'Home', to: { name: 'device' } }]
       }
       return [
-        { text: 'Home', to: { name: 'admin' } },
+        { id: 'aio-menu-home', text: 'Home', to: { name: 'admin' } },
         {
+          id: 'aio-menu-datasets',
           text: 'Datasets',
           subMenus: [
-            { text: 'Students', to: { name: 'admin-students' } },
-            { text: 'Lecturers', to: { name: 'admin-lecturers' } },
-            { text: 'Rooms', to: { name: 'admin-rooms' } },
-            { text: 'Subjects', to: { name: 'admin-subjects' } },
-            { text: 'Departments', to: { name: 'admin-departments' } },
-            { text: 'Study Programs', to: { name: 'admin-study-programs' } },
-            { text: 'Majors', to: { name: 'admin-majors' } },
-            { text: 'Groups', to: { name: 'admin-groups' } },
-            { text: 'Schedules', to: { name: 'admin-schedules' } }
+            {
+              id: 'aio-menu-students',
+              text: 'Students',
+              to: { name: 'admin-students' }
+            },
+            {
+              id: 'aio-menu-lecturers',
+              text: 'Lecturers',
+              to: { name: 'admin-lecturers' }
+            },
+            {
+              id: 'aio-menu-rooms',
+              text: 'Rooms',
+              to: { name: 'admin-rooms' }
+            },
+            {
+              id: 'aio-menu-subjects',
+              text: 'Subjects',
+              to: { name: 'admin-subjects' }
+            },
+            {
+              id: 'aio-menu-departments',
+              text: 'Departments',
+              to: { name: 'admin-departments' }
+            },
+            {
+              id: 'aio-menu-study-programs',
+              text: 'Study Programs',
+              to: { name: 'admin-study-programs' }
+            },
+            {
+              id: 'aio-menu-majors',
+              text: 'Majors',
+              to: { name: 'admin-majors' }
+            },
+            {
+              id: 'aio-menu-groups',
+              text: 'Groups',
+              to: { name: 'admin-groups' }
+            },
+            {
+              id: 'aio-menu-schedules',
+              text: 'Schedules',
+              to: { name: 'admin-schedules' }
+            }
           ]
         },
         {
+          id: 'aio-menu-attendance',
           text: 'Attendance',
           subMenus: [
-            { text: 'Attendances', to: { name: 'admin-attendances' } },
-            { text: 'Presences', to: { name: 'admin-presences' } }
+            {
+              id: 'aio-menu-attendances',
+              text: 'Attendances',
+              to: { name: 'admin-attendances' }
+            },
+            {
+              id: 'aio-menu-presences',
+              text: 'Presences',
+              to: { name: 'admin-presences' }
+            }
           ]
         }
       ]

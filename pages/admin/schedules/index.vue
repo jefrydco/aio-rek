@@ -5,10 +5,10 @@
         <h2 class="headline">Schedules</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn color="accent" @click="fetchSchedules">
+      <v-btn class="aio-refresh" color="accent" @click="fetchSchedules">
         Refresh
       </v-btn>
-      <v-btn color="primary" @click="onTrigger">
+      <v-btn class="aio-create" color="primary" @click="onTrigger">
         Create Schedule
       </v-btn>
     </v-toolbar>
@@ -54,10 +54,26 @@
               {{ item.end_time }}
             </td>
             <td class="py-1 body-2 text-xs-center">
-              <v-btn color="primary" @click="onTrigger($event, item)">
+              <v-btn
+                :class="
+                  `aio-edit-${kebabCase(item.subject.name)}-${kebabCase(
+                    item.room.name
+                  )}-${kebabCase(item.start_time)}`
+                "
+                color="primary"
+                @click="onTrigger($event, item)"
+              >
                 Edit
               </v-btn>
-              <v-btn color="error" @click="onTriggerRemoving(item)">
+              <v-btn
+                :class="
+                  `aio-delete-${kebabCase(item.subject.name)}-${kebabCase(
+                    item.room.name
+                  )}-${kebabCase(item.start_time)}`
+                "
+                color="error"
+                @click="onTriggerRemoving(item)"
+              >
                 Delete
               </v-btn>
             </td>
@@ -312,6 +328,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               flat=""
+              class="aio-cancel-edit-save"
               @click="onClose"
             >
               Cancel
@@ -321,6 +338,7 @@
               :disabled="isLoading"
               color="primary"
               flat=""
+              class="aio-edit-save"
               @click="onCreateOrEdit"
             >
               {{ isEditing ? 'Edit' : 'Save' }}
@@ -359,6 +377,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               flat=""
+              class="aio-cancel-delete"
               @click="onCloseRemoving"
             >
               Cancel
@@ -368,6 +387,7 @@
               :disabled="isLoading"
               color="error"
               flat=""
+              class="aio-remove"
               @click="onRemove(schedule)"
             >
               Remove
@@ -381,6 +401,7 @@
 
 <script>
 import cloneDeep from 'lodash/fp/cloneDeep'
+import string from '~/mixins/string'
 
 export default {
   head() {
@@ -388,6 +409,7 @@ export default {
       title: 'Schedules'
     }
   },
+  mixins: [string],
   data() {
     return {
       isCreatingOrEditingDialog: false,

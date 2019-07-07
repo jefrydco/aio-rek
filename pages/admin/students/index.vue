@@ -5,7 +5,7 @@
         <h2 class="headline">Students</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn color="accent" @click="fetchStudents">
+      <v-btn class="aio-refresh" color="accent" @click="fetchStudents">
         Refresh
       </v-btn>
     </v-toolbar>
@@ -58,6 +58,7 @@
             </td>
             <td class="py-1 body-2 text-xs-center">
               <v-btn
+                :class="`aio-edit-${kebabCase(item.name)}`"
                 color="primary"
                 nuxt=""
                 exact=""
@@ -65,7 +66,12 @@
               >
                 Edit
               </v-btn>
-              <v-btn color="error">Delete</v-btn>
+              <v-btn
+                :class="`aio-delete-${kebabCase(item.name)}`"
+                color="error"
+              >
+                Delete
+              </v-btn>
             </td>
           </tr>
         </template>
@@ -75,12 +81,15 @@
 </template>
 
 <script>
+import string from '~/mixins/string'
+
 export default {
   head() {
     return {
       title: 'Students'
     }
   },
+  mixins: [string],
   data() {
     return {
       default: {

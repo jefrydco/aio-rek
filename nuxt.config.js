@@ -11,9 +11,9 @@ module.exports = {
   head: {
     titleTemplate(title) {
       if (title) {
-        return `${title} - Ayo Rek`
+        return `${title} - AIO Rek`
       }
-      return 'Ayo Rek'
+      return 'AIO Rek'
     }
   },
 

@@ -5,10 +5,10 @@
         <h2 class="headline">Groups</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn color="accent" @click="fetchGroups">
+      <v-btn class="aio-refresh" color="accent" @click="fetchGroups">
         Refresh
       </v-btn>
-      <v-btn color="primary" @click="onTrigger">
+      <v-btn class="aio-create" color="primary" @click="onTrigger">
         Create Group
       </v-btn>
     </v-toolbar>
@@ -27,10 +27,18 @@
               {{ item.name }}
             </td>
             <td class="py-1 body-2 text-xs-center">
-              <v-btn color="primary" @click="onTrigger($event, item)">
+              <v-btn
+                :class="`aio-edit-${kebabCase(item.name)}`"
+                color="primary"
+                @click="onTrigger($event, item)"
+              >
                 Edit
               </v-btn>
-              <v-btn color="error" @click="onTriggerRemoving(item)">
+              <v-btn
+                :class="`aio-delete-${kebabCase(item.name)}`"
+                color="error"
+                @click="onTriggerRemoving(item)"
+              >
                 Delete
               </v-btn>
             </td>
@@ -84,6 +92,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               flat=""
+              class="aio-cancel-edit-save"
               @click="onClose"
             >
               Cancel
@@ -93,6 +102,7 @@
               :disabled="isLoading"
               color="primary"
               flat=""
+              class="aio-edit-save"
               @click="onCreateOrEdit"
             >
               {{ isEditing ? 'Edit' : 'Save' }}
@@ -131,6 +141,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               flat=""
+              class="aio-cancel-delete"
               @click="onCloseRemoving"
             >
               Cancel
@@ -140,6 +151,7 @@
               :disabled="isLoading"
               color="error"
               flat=""
+              class="aio-remove"
               @click="onRemove(group)"
             >
               Remove
@@ -153,6 +165,7 @@
 
 <script>
 import cloneDeep from 'lodash/fp/cloneDeep'
+import string from '~/mixins/string'
 
 export default {
   head() {
@@ -160,6 +173,7 @@ export default {
       title: 'Groups'
     }
   },
+  mixins: [string],
   data() {
     return {
       isCreatingOrEditingDialog: false,
