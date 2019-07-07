@@ -302,7 +302,7 @@
                     :disabled="isLoading"
                     :items="attendances"
                     item-value="id"
-                    item-text="name"
+                    item-text="schedule.lecturer.name"
                     label="Attendance"
                     data-vv-name="attendance_id"
                     data-vv-as="attendance"
