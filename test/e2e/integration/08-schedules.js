@@ -49,6 +49,7 @@ describe('Admin - CRUD Schedules', () => {
     cy.get('input[name="grade"]')
       .clear()
       .type('3{enter}')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Edit Schedule', () => {
@@ -86,10 +87,12 @@ describe('Admin - CRUD Schedules', () => {
     cy.get('input[name="grade"]')
       .clear()
       .type('4{enter}')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Delete Schedule', () => {
     cy.get('.aio-delete-keamanan-jaringan-a-302-12-00-00').click()
+    cy.screenshot()
     cy.get('.aio-remove').click()
   })
 })

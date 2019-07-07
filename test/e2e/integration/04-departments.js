@@ -19,6 +19,7 @@ describe('Admin - CRUD Departments', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A Department 1')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Edit Department', () => {
@@ -26,10 +27,12 @@ describe('Admin - CRUD Departments', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A DEPARTMENT 2')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Delete Department', () => {
     cy.get('.aio-delete-a-department-2').click()
+    cy.screenshot()
     cy.get('.aio-remove').click()
   })
 })

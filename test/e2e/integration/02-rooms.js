@@ -19,6 +19,7 @@ describe('Admin - CRUD Rooms', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A Room 1')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Edit Room', () => {
@@ -26,10 +27,12 @@ describe('Admin - CRUD Rooms', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A ROOM 2')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Delete Room', () => {
     cy.get('.aio-delete-a-room-2').click()
+    cy.screenshot()
     cy.get('.aio-remove').click()
   })
 })

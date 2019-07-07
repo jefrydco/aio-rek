@@ -19,6 +19,7 @@ describe('Admin - CRUD Study Programs', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A Study Program 1')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Edit Study Program', () => {
@@ -26,10 +27,12 @@ describe('Admin - CRUD Study Programs', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A STUDY PROGRAM 2')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Delete Study Program', () => {
     cy.get('.aio-delete-a-study-program-2').click()
+    cy.screenshot()
     cy.get('.aio-remove').click()
   })
 })

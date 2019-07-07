@@ -19,6 +19,7 @@ describe('Admin - CRUD Groups', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A Group 1')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Edit Group', () => {
@@ -26,10 +27,12 @@ describe('Admin - CRUD Groups', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A GROUP 2')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Delete Group', () => {
     cy.get('.aio-delete-a-group-2').click()
+    cy.screenshot()
     cy.get('.aio-remove').click()
   })
 })

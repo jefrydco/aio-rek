@@ -22,6 +22,7 @@ describe('Admin - CRUD Subjects', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A Subject 1')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Edit Subject', () => {
@@ -32,10 +33,12 @@ describe('Admin - CRUD Subjects', () => {
     cy.get('input[name="name"]')
       .clear()
       .type('A SUBJECT 2')
+    cy.screenshot()
     cy.get('.aio-edit-save').click()
   })
   it('Delete Subject', () => {
     cy.get('.aio-delete-a-subject-2').click()
+    cy.screenshot()
     cy.get('.aio-remove').click()
   })
 })
