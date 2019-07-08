@@ -2,7 +2,7 @@
   <v-card>
     <v-toolbar card="">
       <v-toolbar-title>
-        <h2 class="headline">Groups</h2>
+        <h2 class="headline">Rooms</h2>
       </v-toolbar-title>
       <v-spacer />
       <v-btn class="aio-refresh" color="accent" @click="fetchRooms">
