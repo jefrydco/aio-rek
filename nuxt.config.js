@@ -39,11 +39,11 @@ module.exports = {
 
   http: {
     // proxy: true
-    baseURL: 'http://localhost:3001/api'
+    baseURL: 'http://0.0.0.0:3001/api'
   },
 
   proxy: {
-    // '/api': 'http://localhost:3001'
+    // '/api': 'http://0.0.0.0:3001'
   },
 
   loading: {

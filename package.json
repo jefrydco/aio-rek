@@ -29,11 +29,12 @@
     "url": "https://jefrydco.id"
   },
   "scripts": {
-    "api": "cross-env NODE_ENV=development nodemon api/start.js | pino-pretty",
+    "build": "nuxt build",
+    "api": "cross-env NODE_ENV=development HOST=0.0.0.0 nodemon api/start.js | pino-pretty",
     "coverage": "codecov",
-    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server nuxt.config.js",
+    "dev": "cross-env NODE_ENV=development HOST=0.0.0.0 nodemon server/index.js --watch server nuxt.config.js",
     "generate": "nuxt generate",
-    "start": "nuxt start",
+    "start": "cross-env NODE_ENV=production HOST=0.0.0.0 nuxt start",
     "test": "npm run test:unit",
     "test:e2e": "cypress run",
     "test:e2e:open": "cypress open",
