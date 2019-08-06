@@ -101,7 +101,7 @@
     "uuid-validate": "^0.0.3",
     "vee-validate": "^2.2.11",
     "vue-directive-long-press": "^1.1.0",
-    "vuetify": "^1.5.16",
+    "vuetify": "^2.0.5",
     "vuetify-loader": "^1.2.2",
     "vuex-persist": "^2.0.1"
   },
