@@ -99,7 +99,7 @@
     "unique-random-array": "^2.0.0",
     "uuid": "^3.3.2",
     "uuid-validate": "^0.0.3",
-    "vee-validate": "^2.2.11",
+    "vee-validate": "^3.2.5",
     "vue-directive-long-press": "^1.1.0",
     "vuetify": "^1.5.16",
     "vuetify-loader": "^1.2.2",
