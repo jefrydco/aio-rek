@@ -92,7 +92,7 @@
     "pretty-ms": "^5.0.0",
     "qs": "^6.7.0",
     "rate-limiter-flexible": "^1.0.2",
-    "redis": "^2.8.0",
+    "redis": "^3.0.2",
     "require-directory": "^2.1.1",
     "rimraf": "^2.6.3",
     "set-interval-async": "^1.0.23",
