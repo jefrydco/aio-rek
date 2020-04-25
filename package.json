@@ -149,7 +149,6 @@
   },
   "lint-staged": {
     "*.{js,vue}": [
-      "prettier --write",
       "eslint --fix"
     ]
   }
