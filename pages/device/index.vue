@@ -1,7 +1,7 @@
 <template>
-  <v-layout row="" wrap="">
+  <v-layout wrap="">
     <v-flex xs12="">
-      <v-layout row="" wrap="">
+      <v-layout wrap="">
         <v-flex xs12="" md6="">
           <v-card>
             <v-toolbar card="">
@@ -15,7 +15,7 @@
             </v-toolbar>
             <v-card-text>
               <v-container class="pa-0" fluid="" grid-list-xl="">
-                <v-layout style="display: none" row="" wrap="">
+                <v-layout style="display: none;" wrap="">
                   <v-flex xs12="">
                     <video
                       id="live-video"
@@ -26,7 +26,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <canvas
                       id="live-canvas"
@@ -36,7 +36,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-autocomplete
                       v-model="selectedCamera"
@@ -55,7 +55,7 @@
                   </v-flex>
                 </v-layout>
 
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="" class="pa-4">
                     <v-slider
                       v-model="minConfidence"
@@ -76,7 +76,7 @@
                       ticks=""
                     />
                     <v-item-group v-model="selectedOptions" multiple="">
-                      <v-layout row="" wrap="">
+                      <v-layout wrap="">
                         <v-flex
                           v-for="(option, i) in options"
                           :key="`option_${i}`"
@@ -92,7 +92,7 @@
                                 ripple=""
                                 @click="toggle"
                               >
-                                <v-card-text class="text-xs-center">
+                                <v-card-text class="text-center">
                                   <v-icon>{{ option.icon }}</v-icon>
                                   <h3 class="subheading">
                                     {{ option.text }}
@@ -125,9 +125,9 @@
             </v-toolbar>
             <v-card-text>
               <v-container class="pa-0" fluid="" grid-list-xl="">
-                <v-layout v-if="isLecturerDetected" row="" wrap="">
+                <v-layout v-if="isLecturerDetected" wrap="">
                   <v-flex xs12="">
-                    <v-layout row="" wrap="">
+                    <v-layout wrap="">
                       <v-flex xs12="" sm3="">
                         <app-avatar
                           :name="removeTitle(detectedLecturer.name)"
@@ -137,14 +137,14 @@
                         />
                       </v-flex>
                       <v-flex xs12="" sm9="">
-                        <v-layout row="" wrap="">
+                        <v-layout wrap="">
                           <v-flex xs12="">
                             <h3 class="display-1">
                               {{ detectedLecturer.name }}
                             </h3>
                           </v-flex>
                         </v-layout>
-                        <v-layout v-if="!isAttendanceStarted" row="" wrap="">
+                        <v-layout v-if="!isAttendanceStarted" wrap="">
                           <v-flex xs12="">
                             <v-dialog
                               v-model="isConfirming"
@@ -283,9 +283,9 @@
                             </v-dialog>
                           </v-flex>
                         </v-layout>
-                        <v-layout v-else="" row="" wrap="">
+                        <v-layout v-else="" wrap="">
                           <v-flex xs12="">
-                            <v-layout row="" wrap="">
+                            <v-layout wrap="">
                               <v-flex xs12="">
                                 <h4>Subject</h4>
                                 <h5 class="subheading mb-1">
@@ -313,7 +313,7 @@
                                 </h5>
                               </v-flex>
                             </v-layout>
-                            <v-layout row="" wrap="">
+                            <v-layout wrap="">
                               <v-flex xs12="">
                                 <v-dialog
                                   v-model="isStoping"
@@ -362,8 +362,8 @@
                     </v-layout>
                   </v-flex>
                 </v-layout>
-                <v-layout v-else="" row="" wrap="">
-                  <v-flex xs12="" class="text-xs-center">
+                <v-layout v-else="" wrap="">
+                  <v-flex xs12="" class="text-center">
                     <h3 class="headline">
                       Please, point Your face at the camera to start the lesson
                     </h3>
@@ -384,7 +384,7 @@
             </v-toolbar>
             <v-card-text>
               <v-container class="pa-0" fluid="" grid-list-xl="">
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-data-table
                       :headers="headers"
@@ -406,7 +406,7 @@
                           <td class="py-1 body-2">
                             {{ item.student.name }}
                           </td>
-                          <td class="py-1 body-2 text-xs-center">
+                          <td class="py-1 body-2 text-center">
                             <v-chip
                               v-if="item.is_late"
                               color="error"
@@ -424,15 +424,15 @@
                               <span>On Time</span>
                             </v-chip>
                           </td>
-                          <td class="py-1 body-2 text-xs-center">
+                          <td class="py-1 body-2 text-center">
                             <v-chip
                               :color="getStatusColor(item.status)"
                               text-color="white"
                             >
                               <v-avatar
-                                :class="
-                                  `${getStatusColor(item.status)} darken-3`
-                                "
+                                :class="`${getStatusColor(
+                                  item.status
+                                )} darken-3`"
                               >
                                 <v-icon>{{
                                   getStatusIcon(item.status)
@@ -495,7 +495,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-autocomplete
                     v-model="selectedRoom"
@@ -516,7 +516,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-autocomplete
                     v-model="selectedDevice"
@@ -567,7 +567,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-img :src="enlargedImage.url" :alt="enlargedImage.name">
                     <template #placeholder="">
@@ -612,8 +612,8 @@
         <v-card>
           <v-card-text class="fill-height">
             <v-container fluid="" grid-list-xl="" fill-height="">
-              <v-layout row="" wrap="" align-center="" justify-center="">
-                <v-flex xs12="" sm4="" class="text-xs-center">
+              <v-layout wrap="" align-center="" justify-center="">
+                <v-flex xs12="" sm4="" class="text-center">
                   <v-img :src="randomCat()" alt="Cat" class="mb-3">
                     <template #placeholder="">
                       <v-layout
@@ -649,7 +649,6 @@
 <script>
 /* eslint-disable camelcase */
 
-import { HTTPError } from 'ky-universal'
 import { Howl } from 'howler'
 import uniqueRandomArray from 'unique-random-array'
 import toFormData from 'json-form-data'
@@ -662,6 +661,7 @@ import {
   setIntervalAsync,
   clearIntervalAsync
 } from 'set-interval-async/dynamic'
+import { HTTPError } from '~/utils/error'
 import { getImageFromCanvas, drawImage } from '~/utils/canvas'
 
 import { types as faceTypes } from '~/store/face'
@@ -793,7 +793,7 @@ export default {
       }
     },
     prettyDuration() {
-      return duration => prettyMs(duration, { separateMilliseconds: true })
+      return (duration) => prettyMs(duration, { separateMilliseconds: true })
     },
     selectedCamera: {
       get() {
@@ -807,7 +807,7 @@ export default {
       }
     },
     getStatusColor() {
-      return status => {
+      return (status) => {
         switch (status) {
           case 'alpha':
             return 'error'
@@ -821,7 +821,7 @@ export default {
       }
     },
     getStatusIcon() {
-      return status => {
+      return (status) => {
         switch (status) {
           case 'alpha':
             return 'close'
@@ -835,7 +835,7 @@ export default {
       }
     },
     upperFirst() {
-      return string => {
+      return (string) => {
         if (!string) {
           return ''
         }
@@ -1157,7 +1157,7 @@ export default {
 
               if (detections.length > 0) {
                 detections = await Promise.all(
-                  detections.map(async _detection => {
+                  detections.map(async (_detection) => {
                     const recognition = await this.getBestMatch({
                       descriptor: _detection.descriptor,
                       options
@@ -1373,7 +1373,7 @@ export default {
           withRelated:
             'student.images.descriptor,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
         })
-        const presences = _presences.map(_presence => {
+        const presences = _presences.map((_presence) => {
           const images = cloneDeep(_presence.student.images)
           const name = _presence.student.name
           delete _presence.student.images

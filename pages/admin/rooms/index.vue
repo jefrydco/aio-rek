@@ -26,7 +26,7 @@
             <td class="py-1 body-2">
               {{ item.name }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip v-if="item.in_use" color="error" text-color="white">
                 <v-avatar class="error darken-3">
                   <v-icon>close</v-icon>
@@ -40,7 +40,7 @@
                 <span>Not used</span>
               </v-chip>
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
                 :class="`aio-edit-${kebabCase(item.name)}`"
                 color="primary"
@@ -78,7 +78,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-text-field
                     v-model="room.name"
@@ -98,7 +98,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-switch v-model="room.in_use" label="Is room in use?" />
                 </v-flex>
@@ -189,12 +189,23 @@ import cloneDeep from 'lodash/fp/cloneDeep'
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Rooms'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const { rowCount, rooms, ...filter } = await $api.rooms.fetchPage({
+        orderBy: 'name',
+        limit: 25,
+        offset: 0
+      })
+      return {
+        filter,
+        rooms,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
-  mixins: [string],
   data() {
     return {
       isCreatingOrEditingDialog: false,
@@ -253,22 +264,6 @@ export default {
         })
       },
       deep: true
-    }
-  },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const { rowCount, rooms, ...filter } = await $api.rooms.fetchPage({
-        orderBy: 'name',
-        limit: 25,
-        offset: 0
-      })
-      return {
-        filter,
-        rooms,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
     }
   },
   methods: {
@@ -410,6 +405,11 @@ export default {
       } catch (error) {
         this.$handleError(error)
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Rooms'
     }
   }
 }

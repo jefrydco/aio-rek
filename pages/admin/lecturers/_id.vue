@@ -1,7 +1,7 @@
 <template>
-  <v-layout row="" wrap="">
+  <v-layout wrap="">
     <v-flex xs12="">
-      <v-layout row="" wrap="" justify-end="">
+      <v-layout wrap="" justify-end="">
         <v-flex xs12="" sm3="">
           <v-autocomplete
             v-model="selectedLecturer"
@@ -13,7 +13,7 @@
           />
         </v-flex>
       </v-layout>
-      <v-layout row="" wrap="">
+      <v-layout wrap="">
         <v-flex xs12="" md4="">
           <form @submit.prevent="onCreateOrEdit">
             <v-card>
@@ -23,7 +23,7 @@
                 </v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-text-field
                       v-model="editedLecturer.name"
@@ -42,7 +42,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-text-field
                       v-model="editedLecturer.identifier"
@@ -60,7 +60,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-switch
                       v-model="editedLecturer.is_active"
@@ -69,8 +69,8 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="" class="text-xs-center">
+                <v-layout wrap="">
+                  <v-flex xs12="" class="text-center">
                     <v-hover>
                       <template #default="{ hover }">
                         <app-avatar
@@ -84,7 +84,7 @@
                               v-if="hover"
                               fluid=""
                               fill-height=""
-                              style="background-color: rgba(0, 0, 0, .5)"
+                              style="background-color: rgba(0, 0, 0, 0.5);"
                             >
                               <v-layout
                                 fill-height=""
@@ -107,11 +107,11 @@
                     </v-hover>
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <input
                       ref="avatarImage"
-                      style="display: none"
+                      style="display: none;"
                       type="file"
                       name="image"
                       accept="image/jpeg,image/jpg"
@@ -157,7 +157,7 @@
               </v-tabs>
               <v-tabs-items v-model="currentTab">
                 <v-tab-item value="capture">
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="" md6="">
                       <video
                         id="live-video"
@@ -176,7 +176,7 @@
                       />
                     </v-flex>
                   </v-layout>
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="" md6="">
                       <v-select
                         v-model="selectedCamera"
@@ -216,7 +216,7 @@
                   </v-layout>
                 </v-tab-item>
                 <v-tab-item value="file-upload">
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="" md6="">
                       <v-img
                         src="/examples/images/tony-stark.jpg"
@@ -284,11 +284,11 @@
                       </ol>
                     </v-flex>
                   </v-layout>
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="">
                       <input
                         ref="images"
-                        style="display: none"
+                        style="display: none;"
                         type="file"
                         name="image"
                         accept="image/jpeg,image/jpg"
@@ -311,7 +311,7 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <v-layout row="" wrap="">
+      <v-layout wrap="">
         <v-flex xs12="">
           <v-card>
             <v-toolbar card="">
@@ -367,10 +367,11 @@
                                     v-if="removingImages.includes(item.id)"
                                     fluid=""
                                     fill-height=""
-                                    style="background-color: rgba(0, 0, 0, .5)"
+                                    style="
+                                      background-color: rgba(0, 0, 0, 0.5);
+                                    "
                                   >
                                     <v-layout
-                                      row=""
                                       wrap=""
                                       fill-height=""
                                       align-center=""
@@ -392,10 +393,11 @@
                                     v-if="hover"
                                     fluid=""
                                     fill-height=""
-                                    style="background-color: rgba(0, 0, 0, .5)"
+                                    style="
+                                      background-color: rgba(0, 0, 0, 0.5);
+                                    "
                                   >
                                     <v-layout
-                                      row=""
                                       wrap=""
                                       fill-height=""
                                       align-center=""
@@ -511,11 +513,6 @@ export default {
     return uuidValidate(id, 4)
   },
   mixins: [string],
-  head() {
-    return {
-      title: `Edit Lecturer - ${this.lecturer.name}`
-    }
-  },
   data() {
     return {
       selectedLecturer: null,
@@ -574,6 +571,11 @@ export default {
       isLongPressed: false
     }
   },
+  head() {
+    return {
+      title: `Edit Lecturer - ${this.lecturer.name}`
+    }
+  },
   computed: {
     ...mapState('face', ['isLoaded']),
     ...mapState('camera', ['cameras']),
@@ -597,7 +599,7 @@ export default {
         this.stopCamera()
       }
     },
-    'avatarImage.file': async function(file) {
+    async 'avatarImage.file'(file) {
       await this.onCreateOrEdit(null, {
         ...this.editedLecturer,
         image: file
@@ -808,7 +810,7 @@ export default {
           payload.append('has_descriptor', false)
           // Taken from: https://stackoverflow.com/a/40902462/7711812
           const filesArray = Array.from(files)
-          filesArray.forEach(file => {
+          filesArray.forEach((file) => {
             payload.append('images', file)
           })
           const { lecturerImages } = await this.$api.lecturerImages.create(
@@ -818,7 +820,7 @@ export default {
             }
           )
           await Promise.all(
-            lecturerImages.map(image => this.computeImageDescriptors(image))
+            lecturerImages.map((image) => this.computeImageDescriptors(image))
           )
           await Promise.all([
             this.fetchImages(),
@@ -907,7 +909,7 @@ export default {
     onTriggerSelecting(id) {
       if (this.removingImages.includes(id)) {
         const removingId = this.removingImages.findIndex(
-          imageId => imageId === id
+          (imageId) => imageId === id
         )
         this.removingImages.splice(removingId, 1)
       } else {
@@ -926,7 +928,7 @@ export default {
         this.isLoading = true
         if (removingImages.length > 0) {
           await Promise.all(
-            removingImages.map(id => this.$api.lecturerImages.destroy(id))
+            removingImages.map((id) => this.$api.lecturerImages.destroy(id))
           )
           await Promise.all([
             this.fetchImages(),

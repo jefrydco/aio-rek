@@ -53,24 +53,20 @@
             <td class="py-1 body-2">
               {{ item.end_time }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
-                :class="
-                  `aio-edit-${kebabCase(item.subject.name)}-${kebabCase(
-                    item.room.name
-                  )}-${kebabCase(item.start_time)}`
-                "
+                :class="`aio-edit-${kebabCase(item.subject.name)}-${kebabCase(
+                  item.room.name
+                )}-${kebabCase(item.start_time)}`"
                 color="primary"
                 @click="onTrigger($event, item)"
               >
                 Edit
               </v-btn>
               <v-btn
-                :class="
-                  `aio-delete-${kebabCase(item.subject.name)}-${kebabCase(
-                    item.room.name
-                  )}-${kebabCase(item.start_time)}`
-                "
+                :class="`aio-delete-${kebabCase(item.subject.name)}-${kebabCase(
+                  item.room.name
+                )}-${kebabCase(item.start_time)}`"
                 color="error"
                 @click="onTriggerRemoving(item)"
               >
@@ -101,7 +97,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="schedule.day"
@@ -140,7 +136,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="schedule.subject_id"
@@ -180,7 +176,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-text-field
                     v-model="schedule.start_time"
@@ -216,7 +212,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="schedule.study_program_id"
@@ -256,7 +252,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="schedule.major_id"
@@ -297,7 +293,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="schedule.grade"
@@ -404,12 +400,48 @@ import cloneDeep from 'lodash/fp/cloneDeep'
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Schedules'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const [
+        { rowCount, schedules, ...filter },
+        { studyPrograms },
+        { departments },
+        { groups },
+        { rooms },
+        { subjects },
+        { lecturers }
+      ] = await Promise.all([
+        $api.schedules.fetchPage({
+          orderBy: 'day',
+          limit: 25,
+          offset: 0,
+          withRelated:
+            'study_program,major.department,group,room,subject,lecturer'
+        }),
+        $api.studyPrograms.fetchPage({ limit: -1 }),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.groups.fetchPage({ limit: -1 }),
+        $api.rooms.fetchPage({ limit: -1 }),
+        $api.subjects.fetchPage({ limit: -1 }),
+        $api.lecturers.fetchPage({ limit: -1 })
+      ])
+
+      return {
+        filter,
+        schedules,
+        studyPrograms,
+        departments,
+        groups,
+        rooms,
+        subjects,
+        lecturers,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
-  mixins: [string],
   data() {
     return {
       isCreatingOrEditingDialog: false,
@@ -592,11 +624,11 @@ export default {
   },
   computed: {
     getDay() {
-      return _day => {
+      return (_day) => {
         if (!_day) {
           return ''
         }
-        const { text } = this.days.find(day => day.value === _day)
+        const { text } = this.days.find((day) => day.value === _day)
         if (text) {
           return text
         }
@@ -634,7 +666,7 @@ export default {
       deep: true
     },
     // eslint-disable-next-line
-    'schedule.study_program_id': function(study_program_id) {
+    'schedule.study_program_id': function (study_program_id) {
       // eslint-disable-next-line
       if (study_program_id && this.selectedDepartment) {
         this.fetchMajors({
@@ -654,47 +686,6 @@ export default {
       } else {
         this.majors = []
       }
-    }
-  },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const [
-        { rowCount, schedules, ...filter },
-        { studyPrograms },
-        { departments },
-        { groups },
-        { rooms },
-        { subjects },
-        { lecturers }
-      ] = await Promise.all([
-        $api.schedules.fetchPage({
-          orderBy: 'day',
-          limit: 25,
-          offset: 0,
-          withRelated:
-            'study_program,major.department,group,room,subject,lecturer'
-        }),
-        $api.studyPrograms.fetchPage({ limit: -1 }),
-        $api.departments.fetchPage({ limit: -1 }),
-        $api.groups.fetchPage({ limit: -1 }),
-        $api.rooms.fetchPage({ limit: -1 }),
-        $api.subjects.fetchPage({ limit: -1 }),
-        $api.lecturers.fetchPage({ limit: -1 })
-      ])
-
-      return {
-        filter,
-        schedules,
-        studyPrograms,
-        departments,
-        groups,
-        rooms,
-        subjects,
-        lecturers,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
     }
   },
   methods: {
@@ -891,6 +882,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Schedules'
     }
   }
 }

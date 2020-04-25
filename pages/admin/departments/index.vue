@@ -26,7 +26,7 @@
             <td class="py-1 body-2">
               {{ item.name }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
                 :class="`aio-edit-${kebabCase(item.name)}`"
                 color="primary"
@@ -66,7 +66,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container fluid="" grid-list-xl="" class="pa-0">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-text-field
                     v-model="department.name"
@@ -170,12 +170,27 @@ import cloneDeep from 'lodash/fp/cloneDeep'
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Departments'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const {
+        rowCount,
+        departments,
+        ...filter
+      } = await $api.departments.fetchPage({
+        orderBy: 'name',
+        limit: 25,
+        offset: 0
+      })
+      return {
+        filter,
+        departments,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
-  mixins: [string],
   data() {
     return {
       isCreatingOrEditingDialog: false,
@@ -231,26 +246,6 @@ export default {
         })
       },
       deep: true
-    }
-  },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const {
-        rowCount,
-        departments,
-        ...filter
-      } = await $api.departments.fetchPage({
-        orderBy: 'name',
-        limit: 25,
-        offset: 0
-      })
-      return {
-        filter,
-        departments,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
     }
   },
   methods: {
@@ -385,6 +380,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Departments'
     }
   }
 }

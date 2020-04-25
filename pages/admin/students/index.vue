@@ -42,7 +42,7 @@
             <td class="py-1 body-2">
               {{ item.group ? item.group.name : '' }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
                 <v-avatar class="info darken-3">
                   <v-icon>check</v-icon>
@@ -56,7 +56,7 @@
                 <span>Inactive</span>
               </v-chip>
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
                 :class="`aio-edit-${kebabCase(item.name)}`"
                 color="primary"
@@ -84,12 +84,24 @@
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Students'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const { rowCount, students, ...filter } = await $api.students.fetchPage({
+        orderBy: 'identifier',
+        limit: 25,
+        offset: 0,
+        withRelated: 'study_program,major,group'
+      })
+      return {
+        filter,
+        students,
+        totalItems: rowCount
+      }
+    } catch (error) {
+      $handleError(error)
     }
   },
-  mixins: [string],
   data() {
     return {
       default: {
@@ -163,23 +175,6 @@ export default {
       deep: true
     }
   },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const { rowCount, students, ...filter } = await $api.students.fetchPage({
-        orderBy: 'identifier',
-        limit: 25,
-        offset: 0,
-        withRelated: 'study_program,major,group'
-      })
-      return {
-        filter,
-        students,
-        totalItems: rowCount
-      }
-    } catch (error) {
-      $handleError(error)
-    }
-  },
   methods: {
     async fetchStudents(
       {
@@ -214,6 +209,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Students'
     }
   }
 }

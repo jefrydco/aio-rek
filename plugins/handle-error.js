@@ -1,10 +1,10 @@
 'use strict'
-import { HTTPError } from 'ky-universal'
+import { HTTPError } from '~/utils/error'
 import { types as userTypes } from '~/store/user'
 import { types as notificationTypes } from '~/store/notification'
 
 export default ({ app: { $http }, store: { commit }, redirect }, inject) => {
-  const handleError = async error => {
+  const handleError = async (error) => {
     if (error instanceof HTTPError) {
       console.log(await error.response.json())
       const {

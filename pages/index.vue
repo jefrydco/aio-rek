@@ -5,7 +5,7 @@
         <v-toolbar-title>Login</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
-        <v-layout row="" wrap="">
+        <v-layout wrap="">
           <v-flex xs12="">
             <v-text-field
               v-model="credential.email"
@@ -25,7 +25,7 @@
             />
           </v-flex>
         </v-layout>
-        <v-layout row="" wrap="">
+        <v-layout wrap="">
           <v-flex xs12="">
             <v-text-field
               v-model="credential.password"
@@ -77,11 +77,6 @@ export default {
   components: {
     AppNotification
   },
-  head() {
-    return {
-      title: 'Login'
-    }
-  },
   data() {
     return {
       isPassword: true,
@@ -114,6 +109,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Login'
     }
   }
 }

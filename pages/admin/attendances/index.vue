@@ -51,7 +51,7 @@
             <td class="py-1 body-2">
               {{ item.schedule ? item.schedule.group.name : '' }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
                 <v-avatar class="info darken-3">
                   <v-icon>priority_high</v-icon>
@@ -82,7 +82,7 @@
             <td class="py-1 body-2">
               {{ item.diff_datetime ? prettyMs(item.diff_datetime) : '-' }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn color="info" @click="onTriggerEnlargeImage($event, item)">
                 Enlarge Image
               </v-btn>
@@ -117,7 +117,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-menu
                     ref="startDate"
@@ -211,7 +211,7 @@
                   </v-menu>
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-menu
                     ref="endDate"
@@ -303,7 +303,7 @@
                   </v-menu>
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="scheduleFilter.study_program_id"
@@ -343,7 +343,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="scheduleFilter.major_id"
@@ -384,7 +384,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="scheduleFilter.grade"
@@ -426,7 +426,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="attendance.schedule_id"
@@ -445,7 +445,7 @@
                     hint="Please choose the study program, department, major, group, grade and lecturer first"
                     data-vv-value-path="attendance.schedule_id"
                   >
-                    <template #selection="{ item, selected }">
+                    <template #selection="{ item }">
                       {{ item.subject.name }}
                     </template>
                     <template #item="{ item }">
@@ -487,7 +487,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-switch
                     v-model="attendance.is_active"
@@ -499,7 +499,7 @@
                   <div>
                     <input
                       ref="image"
-                      style="display: none"
+                      style="display: none;"
                       type="file"
                       name="image"
                       accept="image/jpeg,image/jpg"
@@ -619,7 +619,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-img
                     v-if="attendance.image"
@@ -670,9 +670,41 @@ import prettyMs from 'pretty-ms'
 import { fileReader } from '~/utils/file'
 
 export default {
-  head() {
-    return {
-      title: 'Attendances'
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const [
+        { rowCount, attendances, ...filter },
+        { studyPrograms },
+        { departments },
+        { groups },
+        { rooms },
+        { lecturers }
+      ] = await Promise.all([
+        $api.attendances.fetchPage({
+          orderBy: '-start_datetime',
+          limit: 25,
+          offset: 0,
+          withRelated:
+            'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
+        }),
+        $api.studyPrograms.fetchPage({ limit: -1 }),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.groups.fetchPage({ limit: -1 }),
+        $api.rooms.fetchPage({ limit: -1 }),
+        $api.lecturers.fetchPage({ limit: -1 })
+      ])
+      return {
+        filter,
+        attendances,
+        studyPrograms,
+        departments,
+        groups,
+        rooms,
+        lecturers,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
   data() {
@@ -808,7 +840,7 @@ export default {
       return grades
     },
     prettyMs() {
-      return ms => prettyMs(ms)
+      return (ms) => prettyMs(ms)
     }
   },
   watch: {
@@ -892,52 +924,15 @@ export default {
       },
       deep: true
     },
-    'image.file': function(file) {
+    'image.file'(file) {
       this.attendance.image = file
     },
-    'end.time': function(time) {
+    'end.time'(time) {
       if (time !== null) {
         this.attendance.is_active = false
       } else {
         this.attendance.is_active = true
       }
-    }
-  },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const [
-        { rowCount, attendances, ...filter },
-        { studyPrograms },
-        { departments },
-        { groups },
-        { rooms },
-        { lecturers }
-      ] = await Promise.all([
-        $api.attendances.fetchPage({
-          orderBy: '-start_datetime',
-          limit: 25,
-          offset: 0,
-          withRelated:
-            'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
-        }),
-        $api.studyPrograms.fetchPage({ limit: -1 }),
-        $api.departments.fetchPage({ limit: -1 }),
-        $api.groups.fetchPage({ limit: -1 }),
-        $api.rooms.fetchPage({ limit: -1 }),
-        $api.lecturers.fetchPage({ limit: -1 })
-      ])
-      return {
-        filter,
-        attendances,
-        studyPrograms,
-        departments,
-        groups,
-        rooms,
-        lecturers,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
     }
   },
   methods: {
@@ -1257,6 +1252,11 @@ export default {
         url: '',
         file: null
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Attendances'
     }
   }
 }

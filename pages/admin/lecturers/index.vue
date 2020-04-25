@@ -33,7 +33,7 @@
             <td class="py-1 body-2">
               {{ item.name }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
                 <v-avatar class="info darken-3">
                   <v-icon>check</v-icon>
@@ -47,7 +47,7 @@
                 <span>Inactive</span>
               </v-chip>
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
                 color="primary"
                 nuxt=""
@@ -75,12 +75,25 @@
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Lecturers'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const { rowCount, lecturers, ...filter } = await $api.lecturers.fetchPage(
+        {
+          orderBy: 'name',
+          limit: 25,
+          offset: 0
+        }
+      )
+      return {
+        filter,
+        lecturers,
+        totalItems: rowCount
+      }
+    } catch (error) {
+      $handleError(error)
     }
   },
-  mixins: [string],
   data() {
     return {
       lecturers: [],
@@ -130,24 +143,6 @@ export default {
       deep: true
     }
   },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const { rowCount, lecturers, ...filter } = await $api.lecturers.fetchPage(
-        {
-          orderBy: 'name',
-          limit: 25,
-          offset: 0
-        }
-      )
-      return {
-        filter,
-        lecturers,
-        totalItems: rowCount
-      }
-    } catch (error) {
-      $handleError(error)
-    }
-  },
   methods: {
     async fetchLecturers(
       {
@@ -179,6 +174,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Lecturers'
     }
   }
 }

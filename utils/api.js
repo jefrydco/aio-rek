@@ -1,6 +1,6 @@
 const qs = require('qs')
 
-export default $http => resource => ({
+export default ($http) => (resource) => ({
   create(attributes, filter, options) {
     const queryString = qs.stringify(filter)
     return $http.$post(`${resource}?${queryString}`, attributes, options)

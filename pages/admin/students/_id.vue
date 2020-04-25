@@ -1,7 +1,7 @@
 <template>
-  <v-layout row="" wrap="">
+  <v-layout wrap="">
     <v-flex xs12="">
-      <v-layout row="" wrap="" justify-end="">
+      <v-layout wrap="" justify-end="">
         <v-flex xs12="" sm3="">
           <v-autocomplete
             v-model="selectedStudent"
@@ -13,7 +13,7 @@
           />
         </v-flex>
       </v-layout>
-      <v-layout row="" wrap="">
+      <v-layout wrap="">
         <v-flex xs12="" md4="">
           <form @submit.prevent="onCreateOrEdit">
             <v-card>
@@ -23,7 +23,7 @@
                 </v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-text-field
                       v-model="editedStudent.name"
@@ -42,7 +42,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-text-field
                       v-model="editedStudent.identifier"
@@ -60,7 +60,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-autocomplete
                       v-model="editedStudent.study_program_id"
@@ -81,7 +81,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-autocomplete
                       v-model="selectedDepartment"
@@ -102,7 +102,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-autocomplete
                       v-model="editedStudent.major_id"
@@ -124,7 +124,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="" sm6="">
                     <v-autocomplete
                       v-model="editedStudent.group_id"
@@ -165,7 +165,7 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <v-switch
                       v-model="editedStudent.is_active"
@@ -174,8 +174,8 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="" class="text-xs-center">
+                <v-layout wrap="">
+                  <v-flex xs12="" class="text-center">
                     <v-hover>
                       <template #default="{ hover }">
                         <app-avatar
@@ -189,7 +189,7 @@
                               v-if="hover"
                               fluid=""
                               fill-height=""
-                              style="background-color: rgba(0, 0, 0, .5)"
+                              style="background-color: rgba(0, 0, 0, 0.5);"
                             >
                               <v-layout
                                 fill-height=""
@@ -212,11 +212,11 @@
                     </v-hover>
                   </v-flex>
                 </v-layout>
-                <v-layout row="" wrap="">
+                <v-layout wrap="">
                   <v-flex xs12="">
                     <input
                       ref="avatarImage"
-                      style="display: none"
+                      style="display: none;"
                       type="file"
                       name="image"
                       accept="image/jpeg,image/jpg"
@@ -262,7 +262,7 @@
               </v-tabs>
               <v-tabs-items v-model="currentTab">
                 <v-tab-item value="capture">
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="" md6="">
                       <video
                         id="live-video"
@@ -281,7 +281,7 @@
                       />
                     </v-flex>
                   </v-layout>
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="" md6="">
                       <v-select
                         v-model="selectedCamera"
@@ -320,7 +320,7 @@
                   </v-layout>
                 </v-tab-item>
                 <v-tab-item value="file-upload">
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="" md6="">
                       <v-img
                         src="/examples/images/tony-stark.jpg"
@@ -388,11 +388,11 @@
                       </ol>
                     </v-flex>
                   </v-layout>
-                  <v-layout row="" wrap="">
+                  <v-layout wrap="">
                     <v-flex xs12="">
                       <input
                         ref="images"
-                        style="display: none"
+                        style="display: none;"
                         type="file"
                         name="image"
                         accept="image/jpeg,image/jpg"
@@ -415,7 +415,7 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <v-layout row="" wrap="">
+      <v-layout wrap="">
         <v-flex xs12="">
           <v-card>
             <v-toolbar card="">
@@ -471,10 +471,11 @@
                                     v-if="removingImages.includes(item.id)"
                                     fluid=""
                                     fill-height=""
-                                    style="background-color: rgba(0, 0, 0, .5)"
+                                    style="
+                                      background-color: rgba(0, 0, 0, 0.5);
+                                    "
                                   >
                                     <v-layout
-                                      row=""
                                       wrap=""
                                       fill-height=""
                                       align-center=""
@@ -496,10 +497,11 @@
                                     v-if="hover"
                                     fluid=""
                                     fill-height=""
-                                    style="background-color: rgba(0, 0, 0, .5)"
+                                    style="
+                                      background-color: rgba(0, 0, 0, 0.5);
+                                    "
                                   >
                                     <v-layout
-                                      row=""
                                       wrap=""
                                       fill-height=""
                                       align-center=""
@@ -614,11 +616,6 @@ export default {
   validate({ params: { id = '' } }) {
     return uuidValidate(id, 4)
   },
-  head() {
-    return {
-      title: `Edit Student - ${this.student.name}`
-    }
-  },
   mixins: [string],
   data() {
     return {
@@ -731,6 +728,11 @@ export default {
       isLongPressed: false
     }
   },
+  head() {
+    return {
+      title: `Edit Student - ${this.student.name}`
+    }
+  },
   computed: {
     ...mapState('face', ['isLoaded']),
     ...mapState('camera', ['cameras']),
@@ -770,14 +772,14 @@ export default {
         this.stopCamera()
       }
     },
-    'avatarImage.file': async function(file) {
+    async 'avatarImage.file'(file) {
       await this.onCreateOrEdit(null, {
         ...this.editedStudent,
         image: file
       })
     },
     // eslint-disable-next-line
-    'editedStudent.study_program_id': function(study_program_id) {
+    'editedStudent.study_program_id': function (study_program_id) {
       // eslint-disable-next-line
       if (study_program_id && this.selectedDepartment) {
         this.fetchMajors({
@@ -1097,7 +1099,7 @@ export default {
           payload.append('has_descriptor', false)
           // Taken from: https://stackoverflow.com/a/40902462/7711812
           const filesArray = Array.from(files)
-          filesArray.forEach(file => {
+          filesArray.forEach((file) => {
             payload.append('images', file)
           })
           const { studentImages } = await this.$api.studentImages.create(
@@ -1107,7 +1109,7 @@ export default {
             }
           )
           await Promise.all(
-            studentImages.map(image => this.computeImageDescriptors(image))
+            studentImages.map((image) => this.computeImageDescriptors(image))
           )
           await Promise.all([
             this.fetchImages(),
@@ -1196,7 +1198,7 @@ export default {
     onTriggerSelecting(id) {
       if (this.removingImages.includes(id)) {
         const removingId = this.removingImages.findIndex(
-          imageId => imageId === id
+          (imageId) => imageId === id
         )
         this.removingImages.splice(removingId, 1)
       } else {
@@ -1215,7 +1217,7 @@ export default {
         this.isLoading = true
         if (removingImages.length > 0) {
           await Promise.all(
-            removingImages.map(id => this.$api.studentImages.destroy(id))
+            removingImages.map((id) => this.$api.studentImages.destroy(id))
           )
           await Promise.all([
             this.fetchImages(),

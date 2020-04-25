@@ -8,9 +8,9 @@ export const getImageFromCanvas = (
 ) => {
   const [, extension] = mime.split('/')
   filename = `${filename}.${extension}`
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     canvas.toBlob(resolve, mime, quality)
-  }).then(blob => {
+  }).then((blob) => {
     return new File([blob], filename, {
       type: blob.type
     })

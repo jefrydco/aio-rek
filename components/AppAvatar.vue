@@ -23,12 +23,12 @@ export default {
     name: {
       default: '',
       required: true,
-      validator: prop => typeof prop === 'string' || prop === null
+      validator: (prop) => typeof prop === 'string' || prop === null
     },
     image: {
       default: null,
       required: true,
-      validator: prop => typeof prop === 'string' || prop === null
+      validator: (prop) => typeof prop === 'string' || prop === null
     },
     size: {
       type: [String, Number],
@@ -60,7 +60,7 @@ export default {
       return ''
     },
     getInitials() {
-      return string => getInitials(string)
+      return (string) => getInitials(string)
     }
   }
 }

@@ -41,7 +41,7 @@
             <td class="py-1 body-2">
               {{ item.attendance ? item.attendance.room.name : '' }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_late" color="error" text-color="white">
                 <v-avatar class="error darken-3">
                   <v-icon>close</v-icon>
@@ -55,7 +55,7 @@
                 <span>On Time</span>
               </v-chip>
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip :color="getStatusColor(item.status)" text-color="white">
                 <v-avatar :class="`${getStatusColor(item.status)} darken-3`">
                   <v-icon>{{ getStatusIcon(item.status) }}</v-icon>
@@ -101,7 +101,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="scheduleFilter.study_program_id"
@@ -141,7 +141,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="scheduleFilter.major_id"
@@ -182,7 +182,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="scheduleFilter.grade"
@@ -224,7 +224,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="attendanceFilter.schedule_id"
@@ -243,7 +243,7 @@
                     hint="Please choose the study program, department, major, group, grade and lecturer first"
                     data-vv-value-path="attendanceFilter.schedule_id"
                   >
-                    <template #selection="{ item, selected }">
+                    <template #selection="{ item }">
                       {{ item.subject.name }}
                     </template>
                     <template #item="{ item }">
@@ -293,7 +293,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <v-autocomplete
                     v-model="presence.attendance_id"
@@ -391,12 +391,12 @@
                   </v-autocomplete>
                 </v-flex>
               </v-layout>
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="" sm6="">
                   <div>
                     <input
                       ref="image"
-                      style="display: none"
+                      style="display: none;"
                       type="file"
                       name="image"
                       accept="image/jpeg,image/jpg"
@@ -516,7 +516,7 @@
           </v-toolbar>
           <v-card-text>
             <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
+              <v-layout wrap="">
                 <v-flex xs12="">
                   <v-img
                     v-if="presence.image"
@@ -567,9 +567,41 @@ import upperFirst from 'lodash/fp/upperFirst'
 import { fileReader } from '~/utils/file'
 
 export default {
-  head() {
-    return {
-      title: 'Presences'
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const [
+        { rowCount, presences, ...filter },
+        { studyPrograms },
+        { departments },
+        { groups },
+        { rooms },
+        { lecturers }
+      ] = await Promise.all([
+        $api.presences.fetchPage({
+          orderBy: '-datetime',
+          limit: 25,
+          offset: 0,
+          withRelated:
+            'student,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
+        }),
+        $api.studyPrograms.fetchPage({ limit: -1 }),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.groups.fetchPage({ limit: -1 }),
+        $api.rooms.fetchPage({ limit: -1 }),
+        $api.lecturers.fetchPage({ limit: -1 })
+      ])
+      return {
+        filter,
+        presences,
+        studyPrograms,
+        departments,
+        groups,
+        rooms,
+        lecturers,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
   data() {
@@ -681,7 +713,7 @@ export default {
       return grades
     },
     getStatusColor() {
-      return status => {
+      return (status) => {
         switch (status) {
           case 'alpha':
             return 'error'
@@ -695,7 +727,7 @@ export default {
       }
     },
     getStatusIcon() {
-      return status => {
+      return (status) => {
         switch (status) {
           case 'alpha':
             return 'close'
@@ -709,7 +741,7 @@ export default {
       }
     },
     upperFirst() {
-      return string => {
+      return (string) => {
         if (!string) {
           return ''
         }
@@ -793,45 +825,8 @@ export default {
       },
       deep: true
     },
-    'image.file': function(file) {
+    'image.file'(file) {
       this.presence.image = file
-    }
-  },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const [
-        { rowCount, presences, ...filter },
-        { studyPrograms },
-        { departments },
-        { groups },
-        { rooms },
-        { lecturers }
-      ] = await Promise.all([
-        $api.presences.fetchPage({
-          orderBy: '-datetime',
-          limit: 25,
-          offset: 0,
-          withRelated:
-            'student,attendance.schedule.major,attendance.schedule.lecturer,attendance.room'
-        }),
-        $api.studyPrograms.fetchPage({ limit: -1 }),
-        $api.departments.fetchPage({ limit: -1 }),
-        $api.groups.fetchPage({ limit: -1 }),
-        $api.rooms.fetchPage({ limit: -1 }),
-        $api.lecturers.fetchPage({ limit: -1 })
-      ])
-      return {
-        filter,
-        presences,
-        studyPrograms,
-        departments,
-        groups,
-        rooms,
-        lecturers,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
     }
   },
   methods: {
@@ -1187,6 +1182,11 @@ export default {
         url: '',
         file: null
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Presences'
     }
   }
 }

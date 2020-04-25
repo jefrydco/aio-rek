@@ -32,7 +32,7 @@ export const mutations = {
   },
   [types.STOP](state) {
     if (state.videoStream) {
-      state.videoStream.getTracks().forEach(track => track.stop())
+      state.videoStream.getTracks().forEach((track) => track.stop())
       state.videoStream = null
     }
   },
@@ -68,7 +68,7 @@ export const actions = {
     if (isCameraSupported()) {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices()
-        const cameras = devices.filter(device => device.kind === 'videoinput')
+        const cameras = devices.filter((device) => device.kind === 'videoinput')
         if (cameras.length > 0) {
           // const [{ deviceId }] = cameras
           commit(types.SET_CAMERAS, cameras)
