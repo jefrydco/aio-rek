@@ -2850,6 +2850,13 @@ body-parser@1.19.0, body-parser@^1.19.0:
     raw-body "2.4.0"
     type-is "~1.6.17"
 
+bookshelf-virtuals-plugin@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/bookshelf-virtuals-plugin/-/bookshelf-virtuals-plugin-0.1.1.tgz#cdd8c1609a4558a581ee684b5eadcf295afcf8ac"
+  integrity sha512-MFFjtzLoyWaGD7eMT2UZ8H00CHNk7M5WuSTxi+82gLJqbq0TyQdSQsKS5/NHfQjqd3wZKEV+yEbzpck2oBGe2A==
+  dependencies:
+    lodash "^4.17.15"
+
 bookshelf@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/bookshelf/-/bookshelf-1.1.1.tgz#afa1e15871438bdb1b2d7b3adb654dac4f641c90"
@@ -8683,6 +8690,11 @@ no-case@^2.2.0:
 nocache@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/nocache/-/nocache-2.1.0.tgz#120c9ffec43b5729b1d5de88cd71aa75a0ba491f"
+  integrity sha512-0L9FvHG3nfnnmaEQPjT9xhfN4ISk0A8/2j4M37Np4mcDesJjHgEUfgPhdCyZuFI954tjokaIj/A3NdpFNdEh4Q==
+
+nocache@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/nocache/-/nocache-2.1.0.tgz#120c9ffec43b5729b1d5de88cd71aa75a0ba491f"
   integrity sha512-0L9FvHG3nfnnmaEQPjT9xhfN4ISk0A8/2j4M37Np4mcDesJjHgEUfgPhdCyZuFI954tjokaIj/A3NdpFNdEh4Q==
 
 node-addon-api@^2.0.0:
