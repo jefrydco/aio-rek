@@ -1,8 +1,8 @@
-/* eslint-disable nuxt/no-cjs-in-config */
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+const colors = require('vuetify/es5/util/colors').default
 
 const isDev = process.env.NODE_ENV !== 'production'
 
+// eslint-disable-next-line
 module.exports = {
   // https://nuxtjs.org/api/configuration-modern
   modern: !isDev,
@@ -52,11 +52,32 @@ module.exports = {
     failedColor: '#F44336'
   },
 
+  buildModules: [
+    // Simple usage
+    '@nuxtjs/vuetify'
+  ],
+
+  vuetify: {
+    theme: {
+      themes: {
+        light: {
+          primary: colors.cyan.base,
+          secondary: colors.cyan.darken2,
+          accent: colors.deepOrange.base,
+          error: colors.red.base,
+          info: colors.blue.base,
+          success: colors.green.base,
+          warning: colors.amber.base
+        }
+      }
+    }
+  },
+
   // https://nuxtjs.org/api/configuration-plugins
   plugins: [
     '~plugins/components',
-    '~plugins/vuetify',
-    '~plugins/vee-validate',
+    // '~plugins/vuetify',
+    // '~plugins/vee-validate',
     '~plugins/api',
     '~plugins/notify',
     '~plugins/handle-error',
@@ -90,13 +111,7 @@ module.exports = {
   // https://nuxtjs.org/api/configuration-build
   build: {
     extractCSS: !isDev,
-    transpile: ['vuetify/lib'],
-    plugins: [new VuetifyLoaderPlugin()],
-    loaders: {
-      stylus: {
-        import: ['~assets/styles/variables.styl']
-      }
-    },
+    transpile: ['vee-validate/dist/rules'],
     extend(config, { isDev, isClient }) {
       if (isClient) {
         config.node = {
