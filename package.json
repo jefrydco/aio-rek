@@ -2,26 +2,23 @@
   "name": "aio-rek",
   "version": "1.0.0",
   "private": true,
-  "description": "Nuxt.js + PWA + Vuetify.js starter project",
+  "description": "Face recognition based attendance system",
   "keywords": [
     "nuxt",
-    "nuxt pwa",
-    "nuxt.js",
-    "nuxtjs",
     "vue",
-    "vue pwa",
-    "vue ssr",
-    "vue universal",
-    "vue.js",
-    "vuejs",
     "vuetify",
-    "vuetify.js",
-    "vuetifyjs"
+    "vuetifyjs",
+    "face-recognition",
+    "javascript",
+    "tensorflow",
+    "tfjs",
+    "face-detection",
+    "tensorflowjs"
   ],
-  "homepage": "https://github.com/jefrydco/nuxt-pwa-vuetify-starter#readme",
+  "homepage": "https://github.com/jefrydco/aio-rek#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jefrydco/nuxt-pwa-vuetify-starter"
+    "url": "git+https://github.com/jefrydco/aio-rek"
   },
   "license": "MIT",
   "author": {
@@ -141,7 +138,7 @@
     "vue-jest": "^3.0.5"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.20.1"
   },
   "husky": {
     "hooks": {
