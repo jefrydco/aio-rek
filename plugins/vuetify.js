@@ -5,7 +5,7 @@ import colors from 'vuetify/es5/util/colors'
 
 Vue.use(Vuetify, {
   options: {
-    minifyTheme: css =>
+    minifyTheme: (css) =>
       process.env.NODE_ENV === 'production'
         ? css.replace(/[\s|\r\n|\r|\n]/g, '')
         : css,

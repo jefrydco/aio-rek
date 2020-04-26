@@ -1,27 +1,29 @@
 <template>
   <v-card>
-    <v-toolbar card="">
+    <v-app-bar flat="">
       <v-toolbar-title>
         <h2 class="headline">Attendances</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn color="accent" @click="fetchAttendances">
+      <v-btn class="ma-1" color="accent" @click="fetchAttendances">
         Refresh
       </v-btn>
-      <v-btn color="primary" @click="onTrigger">
+      <v-btn class="ma-1" color="primary" @click="onTrigger">
         Create Attendance
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <v-card-text>
       <v-data-table
         :headers="headers"
         :items="attendances"
-        :rows-per-page-items="rowsPerPageItems"
-        :pagination.sync="pagination"
-        :total-items="totalItems"
+        :footer-props="{
+          'items-per-page-options': rowsPerPageItems
+        }"
+        :options.sync="pagination"
+        :server-items-length="totalItems"
         :loading="isLoading"
       >
-        <template #items="{ item, index }">
+        <template #item="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1">
               <app-avatar
@@ -51,15 +53,15 @@
             <td class="py-1 body-2">
               {{ item.schedule ? item.schedule.group.name : '' }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
-                <v-avatar class="info darken-3">
+                <v-avatar left="" class="info darken-3">
                   <v-icon>priority_high</v-icon>
                 </v-avatar>
                 <span>Active</span>
               </v-chip>
               <v-chip v-else="" color="success" text-color="white">
-                <v-avatar class="success darken-3">
+                <v-avatar left="" class="success darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
                 <span>Finished</span>
@@ -82,14 +84,26 @@
             <td class="py-1 body-2">
               {{ item.diff_datetime ? prettyMs(item.diff_datetime) : '-' }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
-              <v-btn color="info" @click="onTriggerEnlargeImage($event, item)">
+            <td class="py-1 body-2 text-center">
+              <v-btn
+                class="ma-1"
+                color="info"
+                @click="onTriggerEnlargeImage($event, item)"
+              >
                 Enlarge Image
               </v-btn>
-              <v-btn color="primary" @click="onTrigger($event, item)">
+              <v-btn
+                class="ma-1"
+                color="primary"
+                @click="onTrigger($event, item)"
+              >
                 Edit
               </v-btn>
-              <v-btn color="error" @click="onTriggerRemoving(item)">
+              <v-btn
+                class="ma-1"
+                color="error"
+                @click="onTriggerRemoving(item)"
+              >
                 Delete
               </v-btn>
             </td>
@@ -100,11 +114,10 @@
         v-model="isCreatingOrEditingDialog"
         scrollable=""
         width="700"
-        lazy=""
         @input="onClose"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 {{ isEditing ? 'Edit' : 'Create' }} Attendance
@@ -114,11 +127,11 @@
             <v-btn icon="" @click="onClose">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
                   <v-menu
                     ref="startDate"
                     v-model="isStartDate"
@@ -127,33 +140,37 @@
                     :close-on-content-click="false"
                   >
                     <template #activator="{on}">
-                      <v-text-field
-                        v-validate="'required'"
-                        :value="startDate"
-                        :error-messages="errors.collect('start_date')"
-                        :disabled="isLoading"
-                        label="Start Date"
-                        data-vv-name="start_date"
-                        data-vv-as="start date"
-                        name="start_date"
-                        required=""
-                        clearable=""
-                        outline=""
-                        readonly=""
-                        data-vv-delay="1000"
-                        v-on="on"
-                        @click:clear="
-                          () => {
-                            start.date = null
-                          }
-                        "
-                      />
+                      <validation-observer>
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Start Date"
+                          rules="required"
+                        >
+                          <v-text-field
+                            :value="startDate"
+                            :error-messages="errors"
+                            :disabled="isLoading"
+                            label="Start Date"
+                            name="start_date"
+                            required=""
+                            clearable=""
+                            outlined=""
+                            readonly=""
+                            v-on="on"
+                            @click:clear="
+                              () => {
+                                start.date = null
+                              }
+                            "
+                          />
+                        </validation-provider>
+                      </validation-observer>
                     </template>
                     <v-date-picker v-model="start.date" scrollable="">
                       <v-spacer />
-                      <v-btn flat="" @click="isStartDate = false">Cancel</v-btn>
+                      <v-btn text="" @click="isStartDate = false">Cancel</v-btn>
                       <v-btn
-                        flat=""
+                        text=""
                         color="primary"
                         @click="$refs.startDate.save(start.date)"
                       >
@@ -161,8 +178,8 @@
                       </v-btn>
                     </v-date-picker>
                   </v-menu>
-                </v-flex>
-                <v-flex xs12="" sm6="">
+                </v-col>
+                <v-col cols="12" sm="6">
                   <v-menu
                     ref="startTime"
                     v-model="isStartTime"
@@ -171,27 +188,31 @@
                     :close-on-content-click="false"
                   >
                     <template #activator="{on}">
-                      <v-text-field
-                        v-validate="'required'"
-                        :value="startTime"
-                        :error-messages="errors.collect('start_time')"
-                        :disabled="isLoading"
-                        label="Start Time"
-                        data-vv-name="start_time"
-                        data-vv-as="start time"
-                        name="start_time"
-                        required=""
-                        clearable=""
-                        outline=""
-                        readonly=""
-                        data-vv-delay="1000"
-                        v-on="on"
-                        @click:clear="
-                          () => {
-                            start.time = null
-                          }
-                        "
-                      />
+                      <validation-observer>
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Start Time"
+                          rules="required"
+                        >
+                          <v-text-field
+                            :value="startTime"
+                            :error-messages="errors"
+                            :disabled="isLoading"
+                            label="Start Time"
+                            name="start_datetime"
+                            required=""
+                            clearable=""
+                            outlined=""
+                            readonly=""
+                            v-on="on"
+                            @click:clear="
+                              () => {
+                                start.time = null
+                              }
+                            "
+                          />
+                        </validation-provider>
+                      </validation-observer>
                     </template>
                     <v-time-picker
                       v-model="start.time"
@@ -199,9 +220,9 @@
                       :max="end.time"
                     >
                       <v-spacer />
-                      <v-btn flat="" @click="isStartTime = false">Cancel</v-btn>
+                      <v-btn text="" @click="isStartTime = false">Cancel</v-btn>
                       <v-btn
-                        flat=""
+                        text=""
                         color="primary"
                         @click="$refs.startTime.save(start.time)"
                       >
@@ -209,10 +230,10 @@
                       </v-btn>
                     </v-time-picker>
                   </v-menu>
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
                   <v-menu
                     ref="endDate"
                     v-model="isEndDate"
@@ -221,27 +242,31 @@
                     :close-on-content-click="false"
                   >
                     <template #activator="{on}">
-                      <v-text-field
-                        v-validate="'required'"
-                        :value="endDate"
-                        :error-messages="errors.collect('end_date')"
-                        :disabled="isLoading"
-                        label="End Date"
-                        data-vv-name="end_date"
-                        data-vv-as="end date"
-                        name="end_date"
-                        required=""
-                        clearable=""
-                        outline=""
-                        readonly=""
-                        data-vv-delay="1000"
-                        v-on="on"
-                        @click:clear="
-                          () => {
-                            end.date = null
-                          }
-                        "
-                      />
+                      <validation-observer>
+                        <validation-provider
+                          #default="{ errors }"
+                          name="End Date"
+                          rules="required"
+                        >
+                          <v-text-field
+                            :value="endDate"
+                            :error-messages="errors"
+                            :disabled="isLoading"
+                            label="End Date"
+                            name="end_date"
+                            required=""
+                            clearable=""
+                            outlined=""
+                            readonly=""
+                            v-on="on"
+                            @click:clear="
+                              () => {
+                                end.date = null
+                              }
+                            "
+                          />
+                        </validation-provider>
+                      </validation-observer>
                     </template>
                     <v-date-picker
                       v-model="end.date"
@@ -249,9 +274,9 @@
                       :min="start.date"
                     >
                       <v-spacer />
-                      <v-btn flat="" @click="isEndDate = false">Cancel</v-btn>
+                      <v-btn text="" @click="isEndDate = false">Cancel</v-btn>
                       <v-btn
-                        flat=""
+                        text=""
                         color="primary"
                         @click="$refs.endDate.save(end.date)"
                       >
@@ -259,8 +284,8 @@
                       </v-btn>
                     </v-date-picker>
                   </v-menu>
-                </v-flex>
-                <v-flex xs12="" sm6="">
+                </v-col>
+                <v-col cols="12" sm="6">
                   <v-menu
                     ref="endTime"
                     v-model="isEndTime"
@@ -273,9 +298,9 @@
                         :value="endTime"
                         :disabled="isLoading"
                         label="End Time"
-                        name="end_time"
+                        name="end_datetime"
                         clearable=""
-                        outline=""
+                        outlined=""
                         readonly=""
                         v-on="on"
                         @click:clear="
@@ -291,9 +316,9 @@
                       :min="start.time"
                     >
                       <v-spacer />
-                      <v-btn flat="" @click="isEndTime = false">Cancel</v-btn>
+                      <v-btn text="" @click="isEndTime = false">Cancel</v-btn>
                       <v-btn
-                        flat=""
+                        text=""
                         color="primary"
                         @click="$refs.endTime.save(end.time)"
                       >
@@ -301,205 +326,241 @@
                       </v-btn>
                     </v-time-picker>
                   </v-menu>
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.study_program_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('study_program_id')"
-                    :disabled="isLoading"
-                    :items="studyPrograms"
-                    item-text="name"
-                    item-value="id"
-                    label="Study Program"
-                    data-vv-name="study_program_id"
-                    data-vv-as="study program"
-                    name="study_program_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="scheduleFilter.study_program_id"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.department_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('department')"
-                    :disabled="isLoading"
-                    :items="departments"
-                    item-text="name"
-                    item-value="id"
-                    label="Department"
-                    data-vv-name="department"
-                    data-vv-as="department"
-                    name="department"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="scheduleFilter.department_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.major_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('major_id')"
-                    :disabled="isLoading"
-                    :items="majors"
-                    item-text="name"
-                    item-value="id"
-                    label="Major"
-                    data-vv-name="major_id"
-                    data-vv-as="major"
-                    name="major_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program and department first"
-                    data-vv-value-path="scheduleFilter.major_id"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.group_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('group_id')"
-                    :disabled="isLoading"
-                    :items="groups"
-                    item-text="name"
-                    item-value="id"
-                    label="Group"
-                    data-vv-name="group_id"
-                    data-vv-as="group"
-                    name="group_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="scheduleFilter.group_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.grade"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('grade')"
-                    :disabled="isLoading"
-                    :items="grades"
-                    item-text="name"
-                    item-value="id"
-                    label="Grade"
-                    data-vv-name="grade"
-                    data-vv-as="grade"
-                    name="grade"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program first"
-                    data-vv-value-path="scheduleFilter.grade"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.lecturer_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('lecturer_id')"
-                    :disabled="isLoading"
-                    :items="lecturers"
-                    item-text="name"
-                    item-value="id"
-                    label="Lecturer"
-                    data-vv-name="lecturer_id"
-                    data-vv-as="lecturer"
-                    name="lecturer_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program first"
-                    data-vv-value-path="scheduleFilter.lecturer_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="attendance.schedule_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('schedule_id')"
-                    :disabled="isLoading"
-                    :items="schedules"
-                    item-value="id"
-                    label="Schedule"
-                    data-vv-name="schedule_id"
-                    data-vv-as="schedule"
-                    name="schedule_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program, department, major, group, grade and lecturer first"
-                    data-vv-value-path="attendance.schedule_id"
-                  >
-                    <template #selection="{ item, selected }">
-                      {{ item.subject.name }}
-                    </template>
-                    <template #item="{ item }">
-                      <v-list-tile-content>
-                        <v-list-tile-title>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Study Program"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.study_program_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="studyPrograms"
+                        item-text="name"
+                        item-value="id"
+                        label="Study Program"
+                        name="study_program_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Department"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.department_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="departments"
+                        item-text="name"
+                        item-value="id"
+                        label="Department"
+                        name="department"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Major"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.major_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="majors"
+                        item-text="name"
+                        item-value="id"
+                        label="Major"
+                        name="major_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program and department first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Group"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.group_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="groups"
+                        item-text="name"
+                        item-value="id"
+                        label="Group"
+                        name="group_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Grade"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.grade"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="grades"
+                        item-text="name"
+                        item-value="id"
+                        label="Grade"
+                        name="grade"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Lecturer"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.lecturer_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="lecturers"
+                        item-text="name"
+                        item-value="id"
+                        label="Lecturer"
+                        name="lecturer_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Schedule"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="attendance.schedule_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="schedules"
+                        item-value="id"
+                        label="Schedule"
+                        name="schedule_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program, department, major, group, grade and lecturer first"
+                      >
+                        <template #selection="{ item }">
                           {{ item.subject.name }}
-                        </v-list-tile-title>
-                        <v-list-tile-sub-title>
-                          {{ item.room.name }} -
-                          {{
-                            $moment(item.start_time, 'HH:mm:ss').format('HH:mm')
-                          }}
-                          -
-                          {{
-                            $moment(item.end_time, 'HH:mm:ss').format('HH:mm')
-                          }}
-                        </v-list-tile-sub-title>
-                      </v-list-tile-content>
-                    </template>
-                  </v-autocomplete>
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="attendance.room_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('room_id')"
-                    :disabled="isLoading"
-                    :items="rooms"
-                    item-value="id"
-                    item-text="name"
-                    label="Room"
-                    data-vv-name="room_id"
-                    data-vv-as="room"
-                    name="room_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="attendance.room_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
+                        </template>
+                        <template #item="{ item }">
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ item.subject.name }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                              {{ item.room.name }} -
+                              {{
+                                $moment(item.start_time, 'HH:mm:ss').format(
+                                  'HH:mm'
+                                )
+                              }}
+                              -
+                              {{
+                                $moment(item.end_time, 'HH:mm:ss').format(
+                                  'HH:mm'
+                                )
+                              }}
+                            </v-list-item-subtitle>
+                          </v-list-item-content>
+                        </template>
+                      </v-autocomplete>
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Room"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="attendance.room_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="rooms"
+                        item-value="id"
+                        item-text="name"
+                        label="Room"
+                        name="room_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
                   <v-switch
                     v-model="attendance.is_active"
                     class="ma-0"
                     label="Is attendance active?"
                   />
-                </v-flex>
-                <v-flex xs12="" sm6="">
+                </v-col>
+                <v-col cols="12" sm="6">
                   <div>
                     <input
                       ref="image"
-                      style="display: none"
+                      class="d-none"
                       type="file"
                       name="image"
                       accept="image/jpeg,image/jpg"
@@ -509,6 +570,7 @@
                       :disabled="isLoading"
                       :loading="isLoading"
                       color="primary"
+                      class="ma-1"
                       @click="onSelectImage"
                     >
                       Select Image
@@ -517,21 +579,20 @@
                   </div>
                   <v-img alt="Image" :src="image.url">
                     <template #placeholder="">
-                      <v-layout
-                        fill-height=""
-                        align-center=""
-                        justify-center=""
-                        ma-0=""
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
                       >
                         <v-progress-circular
                           indeterminate=""
                           color="grey lighten-5"
                         />
-                      </v-layout>
+                      </v-row>
                     </template>
                   </v-img>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -540,7 +601,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="onClose"
             >
               Cancel
@@ -549,7 +610,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="primary"
-              flat=""
+              text=""
               @click="onCreateOrEdit"
             >
               {{ isEditing ? 'Edit' : 'Save' }}
@@ -561,11 +622,10 @@
         v-model="isRemovingDialog"
         width="350"
         scrollable=""
-        lazy=""
         @input="onCloseRemoving"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Delete Confirmation
@@ -575,8 +635,8 @@
             <v-btn icon="" @click="onCloseRemoving">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
+          </v-app-bar>
+          <v-card-text class="pt-5">
             <div class="body-2">
               Are you sure you want to remove {{ attendance.name }}?
             </div>
@@ -587,7 +647,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="onCloseRemoving"
             >
               Cancel
@@ -596,7 +656,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="error"
-              flat=""
+              text=""
               @click="onRemove(attendance)"
             >
               Remove
@@ -604,9 +664,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isEnlargingImage" width="700" scrollable="" lazy="">
+      <v-dialog v-model="isEnlargingImage" width="700" scrollable="">
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Image
@@ -616,32 +676,31 @@
             <v-btn icon="" @click="isEnlargingImage = false">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12">
                   <v-img
                     v-if="attendance.image"
                     :src="enlargedImage.url"
                     :alt="enlargedImage.name"
                   >
                     <template #placeholder="">
-                      <v-layout
-                        fill-height=""
-                        align-center=""
-                        justify-center=""
-                        ma-0=""
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
                       >
                         <v-progress-circular
                           indeterminate=""
                           color="grey lighten-5"
                         />
-                      </v-layout>
+                      </v-row>
                     </template>
                   </v-img>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -650,7 +709,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="isEnlargingImage = false"
             >
               Cancel
@@ -664,15 +723,48 @@
 
 <script>
 /* eslint-disable camelcase */
+import { validate } from 'vee-validate'
 import toFormData from 'json-form-data'
 import cloneDeep from 'lodash/fp/cloneDeep'
 import prettyMs from 'pretty-ms'
 import { fileReader } from '~/utils/file'
 
 export default {
-  head() {
-    return {
-      title: 'Attendances'
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const [
+        { rowCount, attendances, ...filter },
+        { studyPrograms },
+        { departments },
+        { groups },
+        { rooms },
+        { lecturers }
+      ] = await Promise.all([
+        $api.attendances.fetchPage({
+          orderBy: '-start_datetime',
+          limit: 25,
+          offset: 0,
+          withRelated:
+            'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
+        }),
+        $api.studyPrograms.fetchPage({ limit: -1 }),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.groups.fetchPage({ limit: -1 }),
+        $api.rooms.fetchPage({ limit: -1 }),
+        $api.lecturers.fetchPage({ limit: -1 })
+      ])
+      return {
+        filter,
+        attendances,
+        studyPrograms,
+        departments,
+        groups,
+        rooms,
+        lecturers,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
   data() {
@@ -722,18 +814,17 @@ export default {
         { text: 'Major', value: 'schedule.major.name' },
         { text: 'Group', value: 'schedule.group.name' },
         { text: 'Is Active?', value: 'is_active', align: 'center' },
-        { text: 'Start Datetime', value: 'start_time' },
-        { text: 'End Datetime', value: 'end_time' },
+        { text: 'Start Datetime', value: 'start_datetime' },
+        { text: 'End Datetime', value: 'end_datetime' },
         { text: 'Duration', value: 'diff_datetime' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: '-start_datetime',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['-start_datetime']
       },
       totalItems: 0,
       schedules: [],
@@ -808,25 +899,17 @@ export default {
       return grades
     },
     prettyMs() {
-      return ms => prettyMs(ms)
+      return (ms) => prettyMs(ms)
     }
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
-        if (sortBy) {
-          if (sortBy.includes('.name')) {
-            sortBy = `${sortBy.replace('.name', '')}_id`
-          }
-        }
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchAttendances({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * itemsPerPage
         })
       },
       deep: true
@@ -892,10 +975,10 @@ export default {
       },
       deep: true
     },
-    'image.file': function(file) {
+    'image.file'(file) {
       this.attendance.image = file
     },
-    'end.time': function(time) {
+    'end.time'(time) {
       if (time !== null) {
         this.attendance.is_active = false
       } else {
@@ -903,66 +986,30 @@ export default {
       }
     }
   },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const [
-        { rowCount, attendances, ...filter },
-        { studyPrograms },
-        { departments },
-        { groups },
-        { rooms },
-        { lecturers }
-      ] = await Promise.all([
-        $api.attendances.fetchPage({
-          orderBy: '-start_datetime',
-          limit: 25,
-          offset: 0,
-          withRelated:
-            'room,schedule.study_program,schedule.major.department,schedule.group,schedule.room,schedule.subject,schedule.lecturer'
-        }),
-        $api.studyPrograms.fetchPage({ limit: -1 }),
-        $api.departments.fetchPage({ limit: -1 }),
-        $api.groups.fetchPage({ limit: -1 }),
-        $api.rooms.fetchPage({ limit: -1 }),
-        $api.lecturers.fetchPage({ limit: -1 })
-      ])
-      return {
-        filter,
-        attendances,
-        studyPrograms,
-        departments,
-        groups,
-        rooms,
-        lecturers,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
-    }
-  },
   methods: {
     async fetchAttendances(
       {
         orderBy = this.pagination.sortBy,
-        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending = this.pagination.descending
+        limit = this.pagination.itemsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc
       } = {
         orderBy: this.pagination.sortBy,
-        limit: this.pagination.rowsPerPage,
+        limit: this.pagination.itemsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending: this.pagination.descending
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
         if (orderBy) {
           if (orderBy.includes('.name')) {
             orderBy = `${orderBy.replace('.name', '')}_id`
           }
         }
-        if (descending) {
+        if (sortDesc[0]) {
           orderBy = `-${orderBy}`
         }
         const {
@@ -1130,7 +1177,7 @@ export default {
     onClose() {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
-      this.$validator.reset()
+
       this.attendance = { ...this.default }
     },
     async onCreateOrEdit(
@@ -1141,14 +1188,19 @@ export default {
       }
     ) {
       try {
-        const valid = await this.$validator.validate()
-        if (valid) {
+        const valids = await Promise.all(
+          Object.keys(this.attendances)
+            .filter((i) => i !== 'id')
+            .map((i) => validate(this.attendances[i], 'required'))
+        )
+        if (valids.every(({ valid }) => valid)) {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
 
           delete payload.room
           delete payload.schedule
+          delete payload.diff_datetime
 
           if (this.isEditing) {
             payload = {
@@ -1203,7 +1255,7 @@ export default {
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
-      this.$validator.reset()
+
       this.attendance = { ...this.default }
     },
     async onRemove(item) {
@@ -1257,6 +1309,11 @@ export default {
         url: '',
         file: null
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Attendances'
     }
   }
 }

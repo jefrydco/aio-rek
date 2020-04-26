@@ -8,6 +8,7 @@ class AttendanceService extends Service {
   constructor(app) {
     super(AttendanceService.name, app)
   }
+
   toJSON(model, additionalFilter = []) {
     let json = model.toJSON()
     const startDatetime = moment(json.start_datetime)
@@ -21,4 +22,4 @@ class AttendanceService extends Service {
   }
 }
 
-module.exports = app => new AttendanceService(app)
+module.exports = (app) => new AttendanceService(app)

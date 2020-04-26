@@ -1,181 +1,209 @@
 <template>
-  <v-layout row="" wrap="">
-    <v-flex xs12="">
-      <v-layout row="" wrap="" justify-end="">
-        <v-flex xs12="" sm3="">
+  <v-row class="flex-wrap">
+    <v-col cols="12">
+      <v-row class="flex-wrap" justify="end">
+        <v-col cols="12" sm="3">
           <v-autocomplete
             v-model="selectedStudent"
             label="Students"
             item-text="name"
             item-value="id"
             :items="students"
-            outline=""
+            outlined=""
           />
-        </v-flex>
-      </v-layout>
-      <v-layout row="" wrap="">
-        <v-flex xs12="" md4="">
+        </v-col>
+      </v-row>
+      <v-row class="flex-wrap">
+        <v-col cols="12" md="4">
           <form @submit.prevent="onCreateOrEdit">
             <v-card>
-              <v-toolbar card="">
+              <v-app-bar flat="">
                 <v-toolbar-title>
                   <h2 class="headline">{{ student.name }}</h2>
                 </v-toolbar-title>
-              </v-toolbar>
+              </v-app-bar>
               <v-card-text>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-text-field
-                      v-model="editedStudent.name"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('name')"
-                      :disabled="isLoading"
-                      label="Name"
-                      data-vv-name="name"
-                      data-vv-as="name"
-                      name="name"
-                      required=""
-                      clearable=""
-                      outline=""
-                      autofocus=""
-                      data-vv-value-path="editedStudent.name"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-text-field
-                      v-model="editedStudent.identifier"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('identifier')"
-                      :disabled="isLoading"
-                      label="Identifier"
-                      data-vv-name="identifier"
-                      data-vv-as="identifier"
-                      name="identifier"
-                      required=""
-                      clearable=""
-                      outline=""
-                      data-vv-value-path="editedStudent.identifier"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-autocomplete
-                      v-model="editedStudent.study_program_id"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('study_program_id')"
-                      :disabled="isLoading"
-                      :items="studyPrograms"
-                      item-value="id"
-                      item-text="name"
-                      label="Study Program"
-                      data-vv-name="study_program_id"
-                      data-vv-as="study program"
-                      name="study_program_id"
-                      required=""
-                      clearable=""
-                      outline=""
-                      data-vv-value-path="editedStudent.study_program_id"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-autocomplete
-                      v-model="selectedDepartment"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('selectedDepartment')"
-                      :disabled="isLoading"
-                      :items="departments"
-                      item-value="id"
-                      item-text="name"
-                      label="Department"
-                      data-vv-name="selectedDepartment"
-                      data-vv-as="department"
-                      name="selectedDepartment"
-                      required=""
-                      clearable=""
-                      outline=""
-                      data-vv-value-path="selectedDepartment"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
-                    <v-autocomplete
-                      v-model="editedStudent.major_id"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('major_id')"
-                      :disabled="isLoading"
-                      :items="majors"
-                      item-value="id"
-                      item-text="name"
-                      label="Major"
-                      data-vv-name="major_id"
-                      data-vv-as="major"
-                      name="major_id"
-                      required=""
-                      clearable=""
-                      outline=""
-                      hint="Please choose the study program and department first"
-                      data-vv-value-path="editedStudent.major_id"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="" sm6="">
-                    <v-autocomplete
-                      v-model="editedStudent.group_id"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('group_id')"
-                      :disabled="isLoading"
-                      :items="groups"
-                      item-value="id"
-                      item-text="name"
-                      label="Group"
-                      data-vv-name="group_id"
-                      data-vv-as="Group"
-                      name="group_id"
-                      required=""
-                      clearable=""
-                      outline=""
-                      data-vv-value-path="editedStudent.group_id"
-                    />
-                  </v-flex>
-                  <v-flex xs12="" sm6="">
-                    <v-autocomplete
-                      v-model="editedStudent.grade"
-                      v-validate="'required'"
-                      :error-messages="errors.collect('grade')"
-                      :disabled="isLoading"
-                      :items="grades"
-                      item-text="name"
-                      item-value="id"
-                      label="Grade"
-                      data-vv-name="grade"
-                      data-vv-as="grade"
-                      name="grade"
-                      required=""
-                      clearable=""
-                      outline=""
-                      hint="Please choose the study program first"
-                      data-vv-value-path="editedStudent.grade"
-                    />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
+                    <validation-observer>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Name"
+                        rules="required"
+                      >
+                        <v-text-field
+                          v-model="editedStudent.name"
+                          :error-messages="errors"
+                          :disabled="isLoading"
+                          label="Name"
+                          name="name"
+                          required=""
+                          clearable=""
+                          outlined=""
+                          autofocus=""
+                        />
+                      </validation-provider>
+                    </validation-observer>
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
+                    <validation-observer>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Identifier"
+                        rules="required"
+                      >
+                        <v-text-field
+                          v-model="editedStudent.identifier"
+                          :error-messages="errors"
+                          :disabled="isLoading"
+                          label="Identifier"
+                          name="identifier"
+                          required=""
+                          clearable=""
+                          outlined=""
+                        />
+                      </validation-provider>
+                    </validation-observer>
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
+                    <validation-observer>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Study Program"
+                        rules="required"
+                      >
+                        <v-autocomplete
+                          v-model="editedStudent.study_program_id"
+                          :error-messages="errors"
+                          :disabled="isLoading"
+                          :items="studyPrograms"
+                          item-value="id"
+                          item-text="name"
+                          label="Study Program"
+                          name="study_program_id"
+                          required=""
+                          clearable=""
+                          outlined=""
+                        />
+                      </validation-provider>
+                    </validation-observer>
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
+                    <validation-observer>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Department"
+                        rules="required"
+                      >
+                        <v-autocomplete
+                          v-model="selectedDepartment"
+                          :error-messages="errors"
+                          :disabled="isLoading"
+                          :items="departments"
+                          item-value="id"
+                          item-text="name"
+                          label="Department"
+                          name="selectedDepartment"
+                          required=""
+                          clearable=""
+                          outlined=""
+                        />
+                      </validation-provider>
+                    </validation-observer>
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
+                    <validation-observer>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Major"
+                        rules="required"
+                      >
+                        <v-autocomplete
+                          v-model="editedStudent.major_id"
+                          :error-messages="errors"
+                          :disabled="isLoading"
+                          :items="majors"
+                          item-value="id"
+                          item-text="name"
+                          label="Major"
+                          name="major_id"
+                          required=""
+                          clearable=""
+                          outlined=""
+                          hint="Please choose the study program and department first"
+                        />
+                      </validation-provider>
+                    </validation-observer>
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12" sm="6">
+                    <validation-observer>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Group"
+                        rules="required"
+                      >
+                        <v-autocomplete
+                          v-model="editedStudent.group_id"
+                          :error-messages="errors"
+                          :disabled="isLoading"
+                          :items="groups"
+                          item-value="id"
+                          item-text="name"
+                          label="Group"
+                          name="group_id"
+                          required=""
+                          clearable=""
+                          outlined=""
+                        />
+                      </validation-provider>
+                    </validation-observer>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <validation-observer>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Grade"
+                        rules="required"
+                      >
+                        <v-autocomplete
+                          v-model="editedStudent.grade"
+                          :error-messages="errors"
+                          :disabled="isLoading"
+                          :items="grades"
+                          item-text="name"
+                          item-value="id"
+                          label="Grade"
+                          name="grade"
+                          required=""
+                          clearable=""
+                          outlined=""
+                          hint="Please choose the study program first"
+                        />
+                      </validation-provider>
+                    </validation-observer>
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
                     <v-switch
                       v-model="editedStudent.is_active"
                       class="ma-0"
                       label="Is student active?"
                     />
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="" class="text-xs-center">
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12" class="text-center">
                     <v-hover>
                       <template #default="{ hover }">
                         <app-avatar
@@ -188,13 +216,13 @@
                             <v-container
                               v-if="hover"
                               fluid=""
-                              fill-height=""
-                              style="background-color: rgba(0, 0, 0, .5)"
+                              class="fill-height"
+                              style="background-color: rgba(0, 0, 0, 0.5);"
                             >
-                              <v-layout
-                                fill-height=""
-                                align-center=""
-                                justify-center=""
+                              <v-row
+                                class="fill-height"
+                                align="center"
+                                justify="center"
                               >
                                 <v-btn
                                   :disabled="isLoading"
@@ -204,19 +232,19 @@
                                 >
                                   Remove
                                 </v-btn>
-                              </v-layout>
+                              </v-row>
                             </v-container>
                           </v-fade-transition>
                         </app-avatar>
                       </template>
                     </v-hover>
-                  </v-flex>
-                </v-layout>
-                <v-layout row="" wrap="">
-                  <v-flex xs12="">
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
                     <input
                       ref="avatarImage"
-                      style="display: none"
+                      class="d-none"
                       type="file"
                       name="image"
                       accept="image/jpeg,image/jpg"
@@ -231,8 +259,8 @@
                       Select Image
                     </v-btn>
                     <span>{{ avatarImage.name }}</span>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-card-text>
               <v-divider />
               <v-card-actions>
@@ -249,12 +277,12 @@
               </v-card-actions>
             </v-card>
           </form>
-        </v-flex>
-        <v-flex xs12="" md8="">
+        </v-col>
+        <v-col cols="12" md="8">
           <v-card>
-            <v-toolbar card="">
+            <v-app-bar flat="">
               <v-toolbar-title>Photo</v-toolbar-title>
-            </v-toolbar>
+            </v-app-bar>
             <v-card-text>
               <v-tabs v-model="currentTab" slider-color="primary" class="mb-3">
                 <v-tab ripple="" href="#capture">Capture</v-tab>
@@ -262,8 +290,8 @@
               </v-tabs>
               <v-tabs-items v-model="currentTab">
                 <v-tab-item value="capture">
-                  <v-layout row="" wrap="">
-                    <v-flex xs12="" md6="">
+                  <v-row class="flex-wrap">
+                    <v-col cols="12" md="6">
                       <video
                         id="live-video"
                         ref="liveVideo"
@@ -271,33 +299,34 @@
                         height="540"
                         autoplay=""
                       />
-                    </v-flex>
-                    <v-flex xs12="" md6="">
+                    </v-col>
+                    <v-col cols="12" md="6">
                       <canvas
                         id="live-canvas"
                         ref="liveCanvas"
                         width="720"
                         height="540"
                       />
-                    </v-flex>
-                  </v-layout>
-                  <v-layout row="" wrap="">
-                    <v-flex xs12="" md6="">
+                    </v-col>
+                  </v-row>
+                  <v-row class="flex-wrap">
+                    <v-col cols="12" md="6">
                       <v-select
                         v-model="selectedCamera"
                         :items="cameras"
                         label="Select Camera"
-                        outline=""
+                        outlined=""
                         item-value="deviceId"
                         item-text="label"
                       />
-                    </v-flex>
-                    <v-flex xs12="" md6="">
+                    </v-col>
+                    <v-col cols="12" md="6">
                       <v-tooltip bottom="">
                         <template #activator="{ on }">
                           <v-btn
                             v-long-press="300"
                             color="accent"
+                            class="ma-1"
                             v-on="on"
                             @click="onTakePhoto"
                             @long-press-start="onTakePhotoLongPressedStart"
@@ -311,34 +340,34 @@
                       <v-btn
                         :disabled="isLoading"
                         :loading="isLoading"
+                        class="ma-1"
                         color="error"
                         @click="onResetPhoto"
                       >
                         Reset
                       </v-btn>
-                    </v-flex>
-                  </v-layout>
+                    </v-col>
+                  </v-row>
                 </v-tab-item>
                 <v-tab-item value="file-upload">
-                  <v-layout row="" wrap="">
-                    <v-flex xs12="" md6="">
+                  <v-row class="flex-wrap">
+                    <v-col cols="12" md="6">
                       <v-img
                         src="/examples/images/tony-stark.jpg"
                         :aspect-ratio="456 / 400"
                         class="mb-3"
                       >
                         <template #placeholder="">
-                          <v-layout
-                            fill-height=""
-                            align-center=""
-                            justify-center=""
-                            ma-0=""
+                          <v-row
+                            class="fill-height ma-0"
+                            align="center"
+                            justify="center"
                           >
                             <v-progress-circular
                               indeterminate=""
                               color="grey lighten-5"
                             />
-                          </v-layout>
+                          </v-row>
                         </template>
                       </v-img>
                       <h2 class="headline success--text">Good</h2>
@@ -357,25 +386,24 @@
                           Image resolution must be greater or equal than 720x540
                         </li>
                       </ol>
-                    </v-flex>
-                    <v-flex xs12="" md6="">
+                    </v-col>
+                    <v-col cols="12" md="6">
                       <v-img
                         src="/examples/images/iron-man.jpg"
                         :aspect-ratio="456 / 400"
                         class="mb-3"
                       >
                         <template #placeholder="">
-                          <v-layout
-                            fill-height=""
-                            align-center=""
-                            justify-center=""
-                            ma-0=""
+                          <v-row
+                            class="fill-height ma-0"
+                            align="center"
+                            justify="center"
                           >
                             <v-progress-circular
                               indeterminate=""
                               color="grey lighten-5"
                             />
-                          </v-layout>
+                          </v-row>
                         </template>
                       </v-img>
                       <h2 class="headline error--text">Bad</h2>
@@ -386,13 +414,13 @@
                           that can cover
                         </li>
                       </ol>
-                    </v-flex>
-                  </v-layout>
-                  <v-layout row="" wrap="">
-                    <v-flex xs12="">
+                    </v-col>
+                  </v-row>
+                  <v-row class="flex-wrap">
+                    <v-col cols="12">
                       <input
                         ref="images"
-                        style="display: none"
+                        class="d-none"
                         type="file"
                         name="image"
                         accept="image/jpeg,image/jpg"
@@ -407,78 +435,88 @@
                       >
                         Select Images
                       </v-btn>
-                    </v-flex>
-                  </v-layout>
+                    </v-col>
+                  </v-row>
                 </v-tab-item>
               </v-tabs-items>
             </v-card-text>
           </v-card>
-        </v-flex>
-      </v-layout>
-      <v-layout row="" wrap="">
-        <v-flex xs12="">
+        </v-col>
+      </v-row>
+      <v-row class="flex-wrap">
+        <v-col cols="12">
           <v-card>
-            <v-toolbar card="">
+            <v-app-bar flat="">
               <v-toolbar-title>Photos</v-toolbar-title>
               <v-spacer />
               <v-fade-transition>
                 <v-btn
                   v-if="removingImages.length > 0"
+                  class="ma-1"
                   color="error"
                   @click="isRemoving = true"
                 >
                   Remove {{ pluralize('image', removingImages.length, true) }}
                 </v-btn>
               </v-fade-transition>
-              <v-btn color="accent" @click="onSelectAllImages">
+              <v-btn class="ma-1" color="accent" @click="onSelectAllImages">
                 {{ isAllImagesSelected ? 'Unselect All' : 'Select All' }}
               </v-btn>
-            </v-toolbar>
+            </v-app-bar>
             <v-card-text>
-              <v-container grid-list-xl="" fluid="">
+              <v-container fluid="">
                 <v-data-iterator
                   :items="studentImages"
-                  :rows-per-page-items="rowsPerPageItems"
-                  :pagination.sync="pagination"
-                  :total-items="totalItems"
+                  :footer-props="{
+                    'items-per-page-options': rowsPerPageItems
+                  }"
+                  :options.sync="pagination"
+                  :server-items-length="totalItems"
                   :loading="isLoading"
-                  content-tag="v-layout"
-                  row=""
-                  wrap=""
                 >
-                  <template #item="{ item }">
-                    <v-fade-transition>
-                      <v-flex xs12="" sm6="" md4="" d-flex="">
+                  <template #default="{ items }">
+                    <v-row class="flex-wrap">
+                      <v-col
+                        v-for="item in items"
+                        :key="item.id"
+                        cols="12"
+                        sm="6"
+                        md="4"
+                        class="d-flex"
+                      >
                         <v-hover>
                           <template #default="{ hover }">
-                            <v-card flat="" tile="" class="d-flex">
-                              <v-img :src="item.path" :aspect-ratio="720 / 540">
+                            <v-card text="" tile="" class="d-flex">
+                              <v-img
+                                :src="item.path"
+                                :width="720"
+                                :aspect-ratio="720 / 540"
+                              >
                                 <template #placeholder="">
-                                  <v-layout
-                                    fill-height=""
-                                    align-center=""
-                                    justify-center=""
-                                    ma-0=""
+                                  <v-row
+                                    class="fill-height ma-0"
+                                    align="center"
+                                    justify="center"
                                   >
                                     <v-progress-circular
                                       indeterminate=""
                                       color="grey lighten-5"
                                     />
-                                  </v-layout>
+                                  </v-row>
                                 </template>
                                 <v-fade-transition>
                                   <v-container
                                     v-if="removingImages.includes(item.id)"
                                     fluid=""
-                                    fill-height=""
-                                    style="background-color: rgba(0, 0, 0, .5)"
+                                    class="fill-height"
+                                    style="
+                                      background-color: rgba(0, 0, 0, 0.5);
+                                    "
                                   >
-                                    <v-layout
-                                      row=""
-                                      wrap=""
-                                      fill-height=""
-                                      align-center=""
-                                      justify-center=""
+                                    <v-row
+                                      class="fill-height flex-wrap"
+                                      align="center"
+                                      justify="center"
                                     >
                                       <v-btn
                                         :disabled="isLoading"
@@ -488,27 +526,28 @@
                                       >
                                         Unselect
                                       </v-btn>
-                                    </v-layout>
+                                    </v-row>
                                   </v-container>
                                 </v-fade-transition>
                                 <v-fade-transition>
                                   <v-container
                                     v-if="hover"
                                     fluid=""
-                                    fill-height=""
-                                    style="background-color: rgba(0, 0, 0, .5)"
+                                    class="fill-height"
+                                    style="
+                                      background-color: rgba(0, 0, 0, 0.5);
+                                    "
                                   >
-                                    <v-layout
-                                      row=""
-                                      wrap=""
-                                      fill-height=""
-                                      align-center=""
-                                      justify-center=""
+                                    <v-row
+                                      class="fill-height flex-wrap"
+                                      align="center"
+                                      justify="center"
                                     >
                                       <v-btn
                                         :disabled="isLoading"
                                         :loading="isLoading"
                                         color="primary"
+                                        class="ma-1"
                                         @click="onUseAsAvatar(item.path)"
                                       >
                                         Use as Avatar
@@ -517,19 +556,20 @@
                                         :disabled="isLoading"
                                         :loading="isLoading"
                                         color="accent"
+                                        class="ma-1"
                                         @click="onTriggerSelecting(item.id)"
                                       >
                                         Select
                                       </v-btn>
-                                    </v-layout>
+                                    </v-row>
                                   </v-container>
                                 </v-fade-transition>
                               </v-img>
                             </v-card>
                           </template>
                         </v-hover>
-                      </v-flex>
-                    </v-fade-transition>
+                      </v-col>
+                    </v-row>
                   </template>
                 </v-data-iterator>
               </v-container>
@@ -539,7 +579,6 @@
                     <v-btn
                       v-if="removingImages.length > 0"
                       color="error"
-                      icon=""
                       fab=""
                       bottom=""
                       right=""
@@ -557,11 +596,11 @@
               </v-tooltip>
             </v-card-text>
           </v-card>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
       <v-dialog v-model="isRemoving" width="350" @input="onCloseRemoving">
         <v-card>
-          <v-card-text>
+          <v-card-text class="pt-5">
             <div class="body-2">
               Are you sure you want to remove
               {{ pluralize('image', removingImages.length, true) }}?
@@ -572,7 +611,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="onCloseRemoving"
             >
               Cancel
@@ -581,7 +620,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="error"
-              flat=""
+              text=""
               @click="onRemoveTrainingImage(removingImages)"
             >
               Remove
@@ -589,11 +628,12 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
+import { validate } from 'vee-validate'
 import { mapState, mapActions } from 'vuex'
 import {
   setIntervalAsync,
@@ -614,12 +654,60 @@ export default {
   validate({ params: { id = '' } }) {
     return uuidValidate(id, 4)
   },
-  head() {
-    return {
-      title: `Edit Student - ${this.student.name}`
+  mixins: [string],
+  async asyncData({ app: { $api, $handleError }, params: { id = '' } }) {
+    try {
+      const [
+        { student },
+        { rowCount, studentImages, ...filter }
+      ] = await Promise.all([
+        $api.students.fetch(id, { withRelated: 'study_program,major,group' }),
+        $api.studentImages.fetchPage({
+          orderBy: '-created_at',
+          limit: 12,
+          offset: 0,
+          student_id: id
+        })
+      ])
+      const [
+        { students },
+        { departments },
+        { studyPrograms },
+        { majors },
+        { groups }
+      ] = await Promise.all([
+        $api.students.fetchPage({
+          orderBy: 'identifier',
+          study_program_id: student.study_program_id,
+          major_id: student.major_id,
+          group_id: student.group_id,
+          limit: -1
+        }),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.studyPrograms.fetchPage({ limit: -1 }),
+        $api.majors.fetchPage({
+          department_id: student.major.department_id,
+          limit: -1
+        }),
+        $api.groups.fetchPage({ limit: -1 })
+      ])
+      return {
+        selectedStudent: id,
+        students,
+        student,
+        selectedDepartment: student.major.department_id,
+        departments,
+        majors,
+        studyPrograms,
+        groups,
+        studentImages,
+        studentImagesFilter: filter,
+        totalItems: rowCount
+      }
+    } catch (error) {
+      $handleError(error)
     }
   },
-  mixins: [string],
   data() {
     return {
       selectedStudent: null,
@@ -716,11 +804,10 @@ export default {
         { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }
       ],
       pagination: {
-        descending: true,
+        sortDesc: [true],
         page: 1,
-        rowsPerPage: 12,
-        sortBy: 'created_at',
-        totalItems: 12
+        itemsPerPage: 12,
+        sortBy: ['created_at']
       },
       totalItems: 0,
 
@@ -770,14 +857,14 @@ export default {
         this.stopCamera()
       }
     },
-    'avatarImage.file': async function(file) {
+    async 'avatarImage.file'(file) {
       await this.onCreateOrEdit(null, {
         ...this.editedStudent,
         image: file
       })
     },
     // eslint-disable-next-line
-    'editedStudent.study_program_id': function(study_program_id) {
+    'editedStudent.study_program_id': function (study_program_id) {
       // eslint-disable-next-line
       if (study_program_id && this.selectedDepartment) {
         this.fetchMajors({
@@ -802,15 +889,13 @@ export default {
       this.initCamera(selectedCamera)
     },
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchImages({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * itemsPerPage,
+          sortDesc
         })
       },
       deep: true
@@ -820,59 +905,6 @@ export default {
         name: 'admin-students-id',
         params: { id: selectedStudent }
       })
-    }
-  },
-  async asyncData({ app: { $api, $handleError }, params: { id = '' } }) {
-    try {
-      const [
-        { student },
-        { rowCount, studentImages, ...filter }
-      ] = await Promise.all([
-        $api.students.fetch(id, { withRelated: 'study_program,major,group' }),
-        $api.studentImages.fetchPage({
-          orderBy: '-created_at',
-          limit: 12,
-          offset: 0,
-          student_id: id
-        })
-      ])
-      const [
-        { students },
-        { departments },
-        { studyPrograms },
-        { majors },
-        { groups }
-      ] = await Promise.all([
-        $api.students.fetchPage({
-          orderBy: 'identifier',
-          study_program_id: student.study_program_id,
-          major_id: student.major_id,
-          group_id: student.group_id,
-          limit: -1
-        }),
-        $api.departments.fetchPage({ limit: -1 }),
-        $api.studyPrograms.fetchPage({ limit: -1 }),
-        $api.majors.fetchPage({
-          department_id: student.major.department_id,
-          limit: -1
-        }),
-        $api.groups.fetchPage({ limit: -1 })
-      ])
-      return {
-        selectedStudent: id,
-        students,
-        student,
-        selectedDepartment: student.major.department_id,
-        departments,
-        majors,
-        studyPrograms,
-        groups,
-        studentImages,
-        studentImagesFilter: filter,
-        totalItems: rowCount
-      }
-    } catch (error) {
-      $handleError(error)
     }
   },
   beforeMount() {
@@ -1010,18 +1042,23 @@ export default {
     },
     async fetchImages(
       {
-        orderBy = '-created_at',
-        limit = this.pagination.rowsPerPage,
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+        orderBy = this.pagination.sortBy,
+        limit = this.pagination.itemsPerPage,
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc
       } = {
-        orderBy: '-created_at',
-        limit: this.pagination.rowsPerPage,
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
+        orderBy: this.pagination.sortBy,
+        limit: this.pagination.itemsPerPage,
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
         const { id } = this.$route.params
+        if (sortDesc[0]) {
+          orderBy = `-${orderBy[0]}`
+        }
         // eslint-disable-next-line
         const {
           rowCount,
@@ -1036,6 +1073,9 @@ export default {
         this.studentImages = studentImages
         this.studentImagesFilter = filter
         this.totalItems = rowCount
+        if (rowCount > 0) {
+          setTimeout(() => {}, 1000)
+        }
       } catch (error) {
         this.$handleError(error)
       } finally {
@@ -1097,7 +1137,7 @@ export default {
           payload.append('has_descriptor', false)
           // Taken from: https://stackoverflow.com/a/40902462/7711812
           const filesArray = Array.from(files)
-          filesArray.forEach(file => {
+          filesArray.forEach((file) => {
             payload.append('images', file)
           })
           const { studentImages } = await this.$api.studentImages.create(
@@ -1107,7 +1147,7 @@ export default {
             }
           )
           await Promise.all(
-            studentImages.map(image => this.computeImageDescriptors(image))
+            studentImages.map((image) => this.computeImageDescriptors(image))
           )
           await Promise.all([
             this.fetchImages(),
@@ -1196,7 +1236,7 @@ export default {
     onTriggerSelecting(id) {
       if (this.removingImages.includes(id)) {
         const removingId = this.removingImages.findIndex(
-          imageId => imageId === id
+          (imageId) => imageId === id
         )
         this.removingImages.splice(removingId, 1)
       } else {
@@ -1215,7 +1255,7 @@ export default {
         this.isLoading = true
         if (removingImages.length > 0) {
           await Promise.all(
-            removingImages.map(id => this.$api.studentImages.destroy(id))
+            removingImages.map((id) => this.$api.studentImages.destroy(id))
           )
           await Promise.all([
             this.fetchImages(),
@@ -1256,8 +1296,12 @@ export default {
     },
     async onCreateOrEdit(event, _payload = this.editedStudent) {
       try {
-        const valid = await this.$validator.validate()
-        if (valid) {
+        const valids = await Promise.all(
+          Object.keys(this.student)
+            .filter((i) => i !== 'id')
+            .map((i) => validate(this.student[i], 'required'))
+        )
+        if (valids.every(({ valid }) => valid)) {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
@@ -1284,7 +1328,6 @@ export default {
           await this.fetchStudent()
           await Promise.all([
             this.prefillData(),
-            this.$validator.reset(),
             this.$notify({
               kind: 'success',
               message: 'Profile is updated successfully'
@@ -1301,6 +1344,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: `Edit Student - ${this.student.name}`
     }
   }
 }

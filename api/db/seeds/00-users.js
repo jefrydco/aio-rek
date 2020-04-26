@@ -2,7 +2,7 @@ const argon2 = require('argon2')
 const students = require('../fixtures/students.json')
 const lecturers = require('../fixtures/lecturers.json')
 
-exports.seed = async function(knex, Promise) {
+exports.seed = async function (knex, Promise) {
   const qb = knex('users')
   await qb.del()
 

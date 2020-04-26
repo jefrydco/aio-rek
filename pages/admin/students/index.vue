@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar card="">
+    <v-app-bar flat="">
       <v-toolbar-title>
         <h2 class="headline">Students</h2>
       </v-toolbar-title>
@@ -8,17 +8,19 @@
       <v-btn class="aio-refresh" color="accent" @click="fetchStudents">
         Refresh
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <v-card-text>
       <v-data-table
         :headers="headers"
         :items="students"
-        :rows-per-page-items="rowsPerPageItems"
-        :pagination.sync="pagination"
-        :total-items="totalItems"
+        :footer-props="{
+          'items-per-page-options': rowsPerPageItems
+        }"
+        :options.sync="pagination"
+        :server-items-length="totalItems"
         :loading="isLoading"
       >
-        <template #items="{ item, index }">
+        <template #item="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1">
               <app-avatar
@@ -42,24 +44,25 @@
             <td class="py-1 body-2">
               {{ item.group ? item.group.name : '' }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
-                <v-avatar class="info darken-3">
+                <v-avatar left="" class="info darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
                 <span>Active</span>
               </v-chip>
               <v-chip v-else="" color="error" text-color="white">
-                <v-avatar class="error darken-3">
+                <v-avatar left="" class="error darken-3">
                   <v-icon>close</v-icon>
                 </v-avatar>
                 <span>Inactive</span>
               </v-chip>
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
                 :class="`aio-edit-${kebabCase(item.name)}`"
                 color="primary"
+                class="ma-1"
                 nuxt=""
                 exact=""
                 :to="{ name: 'admin-students-id', params: { id: item.id } }"
@@ -69,6 +72,7 @@
               <v-btn
                 :class="`aio-delete-${kebabCase(item.name)}`"
                 color="error"
+                class="ma-1"
               >
                 Delete
               </v-btn>
@@ -84,12 +88,24 @@
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Students'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const { rowCount, students, ...filter } = await $api.students.fetchPage({
+        orderBy: 'identifier',
+        limit: 25,
+        offset: 0,
+        withRelated: 'study_program,major,group'
+      })
+      return {
+        filter,
+        students,
+        totalItems: rowCount
+      }
+    } catch (error) {
+      $handleError(error)
     }
   },
-  mixins: [string],
   data() {
     return {
       default: {
@@ -132,70 +148,56 @@ export default {
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: 'identifier',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['identifier']
       },
       totalItems: 0
     }
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
-        if (sortBy) {
-          if (sortBy.includes('.name')) {
-            sortBy = `${sortBy.replace('.name', '')}_id`
-          }
-        }
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchStudents({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage,
-          withRelated: 'study_program,major,group'
+          offset: (page - 1) * itemsPerPage,
+          withRelated: 'study_program,major,group',
+          sortDesc
         })
       },
       deep: true
     }
   },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const { rowCount, students, ...filter } = await $api.students.fetchPage({
-        orderBy: 'identifier',
-        limit: 25,
-        offset: 0,
-        withRelated: 'study_program,major,group'
-      })
-      return {
-        filter,
-        students,
-        totalItems: rowCount
-      }
-    } catch (error) {
-      $handleError(error)
-    }
-  },
   methods: {
     async fetchStudents(
       {
-        orderBy = 'identifier',
+        orderBy = this.pagination.sortBy,
         limit = 25,
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated = 'study_program,major,group'
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        withRelated = 'study_program,major,group',
+        sortDesc = this.pagination.sortDesc
       } = {
-        orderBy: 'identifier',
+        orderBy: this.pagination.sortBy,
         limit: 25,
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        withRelated: 'study_program,major,group'
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        withRelated: 'study_program,major,group',
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
+        if (orderBy) {
+          if (orderBy.includes('.name')) {
+            orderBy = `${orderBy.replace('.name', '')}_id`
+          }
+        }
+        if (sortDesc[0]) {
+          orderBy = `-${orderBy}`
+        }
         const {
           rowCount,
           students,
@@ -214,6 +216,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Students'
     }
   }
 }

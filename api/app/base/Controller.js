@@ -11,9 +11,11 @@ module.exports = class Controller {
     this.name = camelCase(name.replace('Controller', ''))
     autoBind(this)
   }
+
   _getPluralName() {
     return pluralize(this.name)
   }
+
   _getFormDataPayload({ file, files = [], body }) {
     return {
       file,
@@ -21,9 +23,11 @@ module.exports = class Controller {
       body
     }
   }
+
   _getPayload({ body }) {
     return body[this.name]
   }
+
   _getService({
     app: {
       locals: { services }
@@ -31,15 +35,19 @@ module.exports = class Controller {
   }) {
     return services[this._getPluralName()]
   }
+
   _getTrx({ locals: { trx } = {} }) {
     return trx
   }
+
   _getParamsId({ params: { id } }) {
     return id
   }
+
   _getRelated({ query: { withRelated } }) {
     return withRelated
   }
+
   create(req, res, next) {
     return errorCatcher(async (req, res) => {
       const payload = this._getPayload(req)
@@ -53,6 +61,7 @@ module.exports = class Controller {
       })
     })(req, res, next)
   }
+
   fetchPage(req, res, next) {
     return errorCatcher(async (req, res) => {
       const service = this._getService(req)
@@ -68,6 +77,7 @@ module.exports = class Controller {
       return res.send(json)
     })(req, res, next)
   }
+
   fetch(req, res, next) {
     return errorCatcher(async (req, res) => {
       const service = this._getService(req)
@@ -81,6 +91,7 @@ module.exports = class Controller {
       })
     })(req, res, next)
   }
+
   update(req, res, next) {
     return errorCatcher(async (req, res) => {
       const payload = this._getPayload(req)
@@ -95,6 +106,7 @@ module.exports = class Controller {
       })
     })(req, res, next)
   }
+
   destroy(req, res, next) {
     return errorCatcher(async (req, res) => {
       const service = this._getService(req)

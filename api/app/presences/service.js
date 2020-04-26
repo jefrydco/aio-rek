@@ -8,4 +8,4 @@ class PresenceService extends Service {
   }
 }
 
-module.exports = app => new PresenceService(app)
+module.exports = (app) => new PresenceService(app)

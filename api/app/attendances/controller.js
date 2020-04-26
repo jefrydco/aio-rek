@@ -1,7 +1,7 @@
 'use strict'
 
 const fs = require('fs')
-const boolean = require('boolean')
+const { boolean } = require('boolean')
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
 
@@ -9,6 +9,7 @@ class AttendanceController extends Controller {
   constructor() {
     super(AttendanceController.name)
   }
+
   create(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { body, file } = this._getFormDataPayload(req)
@@ -38,6 +39,7 @@ class AttendanceController extends Controller {
       })
     })(req, res, next)
   }
+
   update(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { body, file } = this._getFormDataPayload(req)
@@ -78,6 +80,7 @@ class AttendanceController extends Controller {
       })
     })(req, res, next)
   }
+
   destroy(req, res, next) {
     return errorCatcher(async (req, res) => {
       const service = this._getService(req)

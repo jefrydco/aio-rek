@@ -1,51 +1,59 @@
 <template>
   <form action="" @submit.prevent="onLogin">
     <v-card>
-      <v-toolbar card="" dark="" color="primary">
+      <v-app-bar flat="" dark="" color="primary">
         <v-toolbar-title>Login</v-toolbar-title>
-      </v-toolbar>
+      </v-app-bar>
       <v-card-text>
-        <v-layout row="" wrap="">
-          <v-flex xs12="">
-            <v-text-field
-              v-model="credential.email"
-              v-validate="'required|email'"
-              :error-messages="errors.collect('email')"
-              :disabled="isLoading"
-              label="Email"
-              type="email"
-              data-vv-name="email"
-              data-vv-as="email"
-              required=""
-              clearable=""
-              outline=""
-              name="email"
-              autofocus=""
-              data-vv-value-path="credential.email"
-            />
-          </v-flex>
-        </v-layout>
-        <v-layout row="" wrap="">
-          <v-flex xs12="">
-            <v-text-field
-              v-model="credential.password"
-              v-validate="'required'"
-              :error-messages="errors.collect('password')"
-              :disabled="isLoading"
-              label="Password"
-              :type="isPassword ? 'password' : 'text'"
-              :append-icon="isPassword ? 'lock_open' : 'lock'"
-              data-vv-name="password"
-              data-vv-as="password"
-              required=""
-              clearable=""
-              outline=""
-              name="password"
-              data-vv-value-path="credential.password"
-              @click:append="() => (isPassword = !isPassword)"
-            />
-          </v-flex>
-        </v-layout>
+        <v-row class="flex-wrap">
+          <v-col cols="12">
+            <validation-observer>
+              <validation-provider
+                #default="{ errors }"
+                name="Email"
+                rules="required|email"
+              >
+                <v-text-field
+                  v-model="credential.email"
+                  :error-messages="errors"
+                  :disabled="isLoading"
+                  label="Email"
+                  type="email"
+                  required=""
+                  clearable=""
+                  outlined=""
+                  name="email"
+                  autofocus=""
+                />
+              </validation-provider>
+            </validation-observer>
+          </v-col>
+        </v-row>
+        <v-row class="flex-wrap">
+          <v-col cols="12">
+            <validation-observer>
+              <validation-provider
+                #default="{ errors }"
+                name="Password"
+                rules="required"
+              >
+                <v-text-field
+                  v-model="credential.password"
+                  :error-messages="errors"
+                  :disabled="isLoading"
+                  label="Password"
+                  :type="isPassword ? 'password' : 'text'"
+                  :append-icon="isPassword ? 'lock_open' : 'lock'"
+                  required=""
+                  clearable=""
+                  outlined=""
+                  name="password"
+                  @click:append="() => (isPassword = !isPassword)"
+                />
+              </validation-provider>
+            </validation-observer>
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -66,21 +74,14 @@
 </template>
 
 <script>
+import { validate } from 'vee-validate'
 import AppNotification from '~/components/AppNotification'
 const Cookie = process.client ? require('js-cookie') : null
 
 export default {
   layout: 'login',
-  $_veeValidate: {
-    validator: 'new'
-  },
   components: {
     AppNotification
-  },
-  head() {
-    return {
-      title: 'Login'
-    }
   },
   data() {
     return {
@@ -96,8 +97,11 @@ export default {
     async onLogin() {
       try {
         this.isLoading = true
-        const valid = await this.$validator.validate()
-        if (valid) {
+        const valids = await Promise.all([
+          validate(this.credential.email, 'required|email'),
+          validate(this.credential.password, 'required')
+        ])
+        if (valids.every(({ valid }) => valid)) {
           const {
             user: { token }
           } = await this.$http.$post('users/login', {
@@ -114,6 +118,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Login'
     }
   }
 }

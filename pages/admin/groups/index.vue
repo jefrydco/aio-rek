@@ -1,35 +1,38 @@
 <template>
   <v-card>
-    <v-toolbar card="">
+    <v-app-bar flat="">
       <v-toolbar-title>
         <h2 class="headline">Groups</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn class="aio-refresh" color="accent" @click="fetchGroups">
+      <v-btn class="aio-refresh ma-1" color="accent" @click="fetchGroups">
         Refresh
       </v-btn>
-      <v-btn class="aio-create" color="primary" @click="onTrigger">
+      <v-btn class="aio-create ma-1" color="primary" @click="onTrigger">
         Create Group
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <v-card-text>
       <v-data-table
         :headers="headers"
         :items="groups"
-        :rows-per-page-items="rowsPerPageItems"
-        :pagination.sync="pagination"
-        :total-items="totalItems"
+        :footer-props="{
+          'items-per-page-options': rowsPerPageItems
+        }"
+        :options.sync="pagination"
+        :server-items-length="totalItems"
         :loading="isLoading"
       >
-        <template #items="{ item, index }">
+        <template #item="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">
               {{ item.name }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
                 :class="`aio-edit-${kebabCase(item.name)}`"
                 color="primary"
+                class="ma-1"
                 @click="onTrigger($event, item)"
               >
                 Edit
@@ -37,6 +40,7 @@
               <v-btn
                 :class="`aio-delete-${kebabCase(item.name)}`"
                 color="error"
+                class="ma-1"
                 @click="onTriggerRemoving(item)"
               >
                 Delete
@@ -49,11 +53,10 @@
         v-model="isCreatingOrEditingDialog"
         scrollable=""
         width="350"
-        lazy=""
         @input="onClose"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">{{ isEditing ? 'Edit' : 'Create' }} Group</h3>
             </v-toolbar-title>
@@ -61,28 +64,32 @@
             <v-btn icon="" @click="onClose">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-text-field
-                    v-model="group.name"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('name')"
-                    :disabled="isLoading"
-                    label="Name"
-                    data-vv-name="name"
-                    data-vv-as="name"
-                    name="name"
-                    required=""
-                    clearable=""
-                    outline=""
-                    autofocus=""
-                    data-vv-value-path="group.name"
-                  />
-                </v-flex>
-              </v-layout>
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Name"
+                      rules="required"
+                    >
+                      <v-text-field
+                        v-model="group.name"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        label="Name"
+                        name="name"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        autofocus=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -91,7 +98,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               class="aio-cancel-edit-save"
               @click="onClose"
             >
@@ -101,7 +108,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="primary"
-              flat=""
+              text=""
               class="aio-edit-save"
               @click="onCreateOrEdit"
             >
@@ -114,11 +121,10 @@
         v-model="isRemovingDialog"
         width="350"
         scrollable=""
-        lazy=""
         @input="onCloseRemoving"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Delete Confirmation
@@ -128,8 +134,8 @@
             <v-btn icon="" @click="onCloseRemoving">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
+          </v-app-bar>
+          <v-card-text class="pt-5">
             <div class="body-2">
               Are you sure you want to remove {{ group.name }}?
             </div>
@@ -140,7 +146,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               class="aio-cancel-delete"
               @click="onCloseRemoving"
             >
@@ -150,7 +156,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="error"
-              flat=""
+              text=""
               class="aio-remove"
               @click="onRemove(group)"
             >
@@ -164,16 +170,28 @@
 </template>
 
 <script>
+import { validate } from 'vee-validate'
 import cloneDeep from 'lodash/fp/cloneDeep'
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Groups'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const { rowCount, groups, ...filter } = await $api.groups.fetchPage({
+        orderBy: 'name',
+        limit: 25,
+        offset: 0
+      })
+      return {
+        filter,
+        groups,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
-  mixins: [string],
   data() {
     return {
       isCreatingOrEditingDialog: false,
@@ -201,75 +219,51 @@ export default {
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: 'name',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['name']
       },
       totalItems: 0
     }
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
-        if (sortBy) {
-          if (sortBy.includes('.name')) {
-            sortBy = `${sortBy.replace('.name', '')}_id`
-          }
-        }
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchGroups({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * itemsPerPage
         })
       },
       deep: true
-    }
-  },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const { rowCount, groups, ...filter } = await $api.groups.fetchPage({
-        orderBy: 'name',
-        limit: 25,
-        offset: 0
-      })
-      return {
-        filter,
-        groups,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
     }
   },
   methods: {
     async fetchGroups(
       {
         orderBy = this.pagination.sortBy,
-        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending = this.pagination.descending
+        limit = this.pagination.itemsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc
       } = {
         orderBy: this.pagination.sortBy,
-        limit: this.pagination.rowsPerPage,
+        limit: this.pagination.itemsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending: this.pagination.descending
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
         if (orderBy) {
           if (orderBy.includes('.name')) {
             orderBy = `${orderBy.replace('.name', '')}_id`
           }
         }
-        if (descending) {
+        if (sortDesc[0]) {
           orderBy = `-${orderBy}`
         }
         const {
@@ -300,7 +294,7 @@ export default {
     onClose() {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
-      this.$validator.reset()
+
       this.group = { ...this.default }
     },
     async onCreateOrEdit(
@@ -311,8 +305,12 @@ export default {
       }
     ) {
       try {
-        const valid = await this.$validator.validate()
-        if (valid) {
+        const valids = await Promise.all(
+          Object.keys(this.group)
+            .filter((i) => i !== 'id')
+            .map((i) => validate(this.group[i], 'required'))
+        )
+        if (valids.every(({ valid }) => valid)) {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
@@ -358,7 +356,7 @@ export default {
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
-      this.$validator.reset()
+
       this.group = { ...this.default }
     },
     async onRemove(item) {
@@ -379,6 +377,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Groups'
     }
   }
 }

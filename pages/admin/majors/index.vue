@@ -1,34 +1,37 @@
 <template>
   <v-card>
-    <v-toolbar card="">
+    <v-app-bar flat="">
       <v-toolbar-title>
         <h2 class="headline">Majors</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn class="aio-refresh" color="accent" @click="fetchMajors">
+      <v-btn class="aio-refresh ma-1" color="accent" @click="fetchMajors">
         Refresh
       </v-btn>
-      <v-btn class="aio-create" color="primary" @click="onTrigger">
+      <v-btn class="aio-create ma-1" color="primary" @click="onTrigger">
         Create Major
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <v-card-text>
       <v-data-table
         :headers="headers"
         :items="majors"
-        :rows-per-page-items="rowsPerPageItems"
-        :pagination.sync="pagination"
-        :total-items="totalItems"
+        :footer-props="{
+          'items-per-page-options': rowsPerPageItems
+        }"
+        :options.sync="pagination"
+        :server-items-length="totalItems"
         :loading="isLoading"
       >
-        <template #items="{ item, index }">
+        <template #item="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">{{ item.name }}</td>
             <td class="py-1 body-2">{{ item.department.name }}</td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
                 :class="`aio-edit-${kebabCase(item.name)}`"
                 color="primary"
+                class="ma-1"
                 @click="onTrigger($event, item)"
               >
                 Edit
@@ -36,6 +39,7 @@
               <v-btn
                 :class="`aio-delete-${kebabCase(item.name)}`"
                 color="error"
+                class="ma-1"
                 @click="onTriggerRemoving(item)"
               >
                 Delete
@@ -48,11 +52,10 @@
         v-model="isCreatingOrEditingDialog"
         scrollable=""
         width="350"
-        lazy=""
         @input="onClose"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">{{ isEditing ? 'Edit' : 'Create' }} Major</h3>
             </v-toolbar-title>
@@ -60,70 +63,82 @@
             <v-btn icon="" @click="onClose">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-text-field
-                    v-model="major.name"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('name')"
-                    :disabled="isLoading"
-                    label="Name"
-                    data-vv-name="name"
-                    data-vv-as="name"
-                    name="name"
-                    required=""
-                    clearable=""
-                    outline=""
-                    autofocus=""
-                    data-vv-value-path="major.name"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-autocomplete
-                    v-model="major.department_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('department_id')"
-                    :disabled="isLoading"
-                    :items="departments"
-                    item-value="id"
-                    item-text="name"
-                    label="Department"
-                    data-vv-name="department_id"
-                    data-vv-as="department"
-                    name="department_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="major.department_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="">
-                  <v-autocomplete
-                    v-model="major.study_program_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('study_program_id')"
-                    :disabled="isLoading"
-                    :items="studyPrograms"
-                    item-value="id"
-                    item-text="name"
-                    label="Study Program"
-                    data-vv-name="study_program_id"
-                    data-vv-as="study program"
-                    name="study_program_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="major.study_program_id"
-                  />
-                </v-flex>
-              </v-layout>
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Name"
+                      rules="required"
+                    >
+                      <v-text-field
+                        v-model="major.name"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        label="Name"
+                        name="name"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        autofocus=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Department"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="major.department_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="departments"
+                        item-value="id"
+                        item-text="name"
+                        label="Department"
+                        name="department_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Study Program"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="major.study_program_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="studyPrograms"
+                        item-value="id"
+                        item-text="name"
+                        label="Study Program"
+                        name="study_program_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -132,7 +147,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               class="aio-cancel-edit-save"
               @click="onClose"
             >
@@ -142,7 +157,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="primary"
-              flat=""
+              text=""
               class="aio-edit-save"
               @click="onCreateOrEdit"
             >
@@ -155,11 +170,10 @@
         v-model="isRemovingDialog"
         width="350"
         scrollable=""
-        lazy=""
         @input="onCloseRemoving"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Delete Confirmation
@@ -169,8 +183,8 @@
             <v-btn icon="" @click="onCloseRemoving">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
+          </v-app-bar>
+          <v-card-text class="pt-5">
             <div class="body-2">
               Are you sure you want to remove {{ major.name }}?
             </div>
@@ -181,7 +195,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               class="aio-cancel-delete"
               @click="onCloseRemoving"
             >
@@ -191,7 +205,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="error"
-              flat=""
+              text=""
               class="aio-remove"
               @click="onRemove(major)"
             >
@@ -205,16 +219,39 @@
 </template>
 
 <script>
+import { validate } from 'vee-validate'
 import cloneDeep from 'lodash/fp/cloneDeep'
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Majors'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const [
+        { rowCount, majors, ...filter },
+        { departments },
+        { studyPrograms }
+      ] = await Promise.all([
+        $api.majors.fetchPage({
+          orderBy: 'name',
+          limit: 25,
+          offset: 0,
+          withRelated: 'department'
+        }),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.studyPrograms.fetchPage({ limit: -1 })
+      ])
+      return {
+        filter,
+        majors,
+        totalItems: rowCount,
+        departments,
+        studyPrograms
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
-  mixins: [string],
   data() {
     return {
       departments: [],
@@ -249,89 +286,56 @@ export default {
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: 'name',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['name']
       },
       totalItems: 0
     }
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
-        if (sortBy) {
-          if (sortBy.includes('.name')) {
-            sortBy = `${sortBy.replace('.name', '')}_id`
-          }
-        }
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchMajors({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage,
-          withRelated: 'department'
+          offset: (page - 1) * itemsPerPage,
+          withRelated: 'department',
+          sortDesc
         })
       },
       deep: true
-    }
-  },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const [
-        { rowCount, majors, ...filter },
-        { departments },
-        { studyPrograms }
-      ] = await Promise.all([
-        $api.majors.fetchPage({
-          orderBy: 'name',
-          limit: 25,
-          offset: 0,
-          withRelated: 'department'
-        }),
-        $api.departments.fetchPage({ limit: -1 }),
-        $api.studyPrograms.fetchPage({ limit: -1 })
-      ])
-      return {
-        filter,
-        majors,
-        totalItems: rowCount,
-        departments,
-        studyPrograms
-      }
-    } catch ({ response }) {
-      $handleError(response)
     }
   },
   methods: {
     async fetchMajors(
       {
         orderBy = this.pagination.sortBy,
-        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending = this.pagination.descending
+        limit = this.pagination.itemsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc
       } = {
         orderBy: this.pagination.sortBy,
-        limit: this.pagination.rowsPerPage,
+        limit: this.pagination.itemsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending: this.pagination.descending
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
         if (orderBy) {
           if (orderBy.includes('.name')) {
             orderBy = `${orderBy.replace('.name', '')}_id`
           }
         }
-        if (descending) {
+        if (sortDesc[0]) {
           orderBy = `-${orderBy}`
         }
+
         const {
           rowCount,
           majors,
@@ -387,7 +391,7 @@ export default {
     onClose() {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
-      this.$validator.reset()
+
       this.major = { ...this.default }
     },
     async onCreateOrEdit(
@@ -398,8 +402,12 @@ export default {
       }
     ) {
       try {
-        const valid = await this.$validator.validate()
-        if (valid) {
+        const valids = await Promise.all(
+          Object.keys(this.major)
+            .filter((i) => i !== 'id')
+            .map((i) => validate(this.major[i], 'required'))
+        )
+        if (valids.every(({ valid }) => valid)) {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
@@ -446,7 +454,7 @@ export default {
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
-      this.$validator.reset()
+
       this.major = { ...this.default }
     },
     async onRemove(item) {
@@ -467,6 +475,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Majors'
     }
   }
 }

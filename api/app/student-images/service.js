@@ -8,4 +8,4 @@ class StudentImageService extends Service {
   }
 }
 
-module.exports = app => new StudentImageService(app)
+module.exports = (app) => new StudentImageService(app)

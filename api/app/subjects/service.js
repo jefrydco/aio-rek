@@ -8,4 +8,4 @@ class SubjectService extends Service {
   }
 }
 
-module.exports = app => new SubjectService(app)
+module.exports = (app) => new SubjectService(app)

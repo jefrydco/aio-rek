@@ -2,7 +2,7 @@
 'use strict'
 
 const fs = require('fs')
-const boolean = require('boolean')
+const { boolean } = require('boolean')
 const pluralize = require('pluralize')
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
@@ -11,6 +11,7 @@ class StudentImageController extends Controller {
   constructor() {
     super(StudentImageController.name)
   }
+
   create(req, res, next) {
     return errorCatcher(async (req, res) => {
       const {
@@ -43,11 +44,12 @@ class StudentImageController extends Controller {
       )
       return res.status(201).json({
         [pluralize(this.name)]: await Promise.all(
-          queryResults.map(queryResult => service.toJSON(queryResult))
+          queryResults.map((queryResult) => service.toJSON(queryResult))
         )
       })
     })(req, res, next)
   }
+
   update(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { body, file } = this._getFormDataPayload(req)
@@ -89,6 +91,7 @@ class StudentImageController extends Controller {
       })
     })(req, res, next)
   }
+
   destroy(req, res, next) {
     return errorCatcher(async (req, res) => {
       const service = this._getService(req)

@@ -3,6 +3,7 @@
 const path = require('path')
 const cors = require('cors')
 const helmet = require('helmet')
+const noCache = require('nocache')
 const passport = require('passport')
 const pino = require('express-pino-logger')
 const requireDirectory = require('require-directory')
@@ -19,9 +20,9 @@ const {
   handleCors
 } = require('../middleware')
 
-module.exports = app => {
+module.exports = (app) => {
   app.use(helmet())
-  app.use(helmet.noCache())
+  app.use(noCache())
   app.use(cors())
   app.use(pino({ level: config.get('pino.level') }))
   app.use(passport.initialize())
@@ -30,7 +31,7 @@ module.exports = app => {
 
   requireDirectory(module, path.join(__dirname, '..'), {
     include: /router\.js$/,
-    visit: router => app.use(router)
+    visit: (router) => app.use(router)
   })
 
   app.use(handleRouteNotFoundError)

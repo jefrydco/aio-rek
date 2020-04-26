@@ -2,26 +2,26 @@
 
 exports[`Index renders to match snapshot 1`] = `
 <form action="">
-  <v-card-stub tag="div">
-    <v-toolbar-stub color="primary" dark="true" card="true" scrollthreshold="300">
+  <v-card-stub loaderheight="4" tag="div">
+    <v-app-bar-stub color="primary" dark="true" tag="header" tile="true" extensionheight="48" flat="true" src="" value="true">
       <v-toolbar-title-stub>Login</v-toolbar-title-stub>
-    </v-toolbar-stub>
+    </v-app-bar-stub>
     <v-card-text-stub>
-      <v-layout-stub tag="div" row="" wrap="">
-        <v-flex-stub tag="div" xs12="">
-          <v-text-field-stub error-messages="" label="Email" type="email" data-vv-name="email" data-vv-as="email" required="" clearable="" outline="" autofocus="" data-vv-value-path="credential.email" value=""></v-text-field-stub>
-        </v-flex-stub>
-      </v-layout-stub>
-      <v-layout-stub tag="div" row="" wrap="">
-        <v-flex-stub tag="div" xs12="">
-          <v-text-field-stub error-messages="" label="Password" type="password" append-icon="lock_open" data-vv-name="password" data-vv-as="password" required="" clearable="" outline="" data-vv-value-path="credential.password" value=""></v-text-field-stub>
-        </v-flex-stub>
-      </v-layout-stub>
+      <v-row-stub tag="div" class="flex-wrap">
+        <v-col-stub cols="12" tag="div">
+          <div></div>
+        </v-col-stub>
+      </v-row-stub>
+      <v-row-stub tag="div" class="flex-wrap">
+        <v-col-stub cols="12" tag="div">
+          <div></div>
+        </v-col-stub>
+      </v-row-stub>
     </v-card-text-stub>
     <v-divider-stub></v-divider-stub>
     <v-card-actions-stub>
       <v-spacer-stub></v-spacer-stub>
-      <v-btn-stub color="accent" activeclass="v-btn--active" tag="button" type="submit">
+      <v-btn-stub color="accent" tag="button" activeclass="" type="submit">
         Login
       </v-btn-stub>
     </v-card-actions-stub>

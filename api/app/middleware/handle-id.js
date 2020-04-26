@@ -3,7 +3,7 @@
 const errorCatcher = require('async-error-catcher').default
 const pluralize = require('pluralize')
 
-module.exports = model =>
+module.exports = (model) =>
   errorCatcher(async (req, res, next) => {
     const {
       app: {

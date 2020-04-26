@@ -1,27 +1,29 @@
 <template>
   <v-card>
-    <v-toolbar card="">
+    <v-app-bar flat="">
       <v-toolbar-title>
         <h2 class="headline">Schedules</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn class="aio-refresh" color="accent" @click="fetchSchedules">
+      <v-btn class="aio-refresh ma-1" color="accent" @click="fetchSchedules">
         Refresh
       </v-btn>
-      <v-btn class="aio-create" color="primary" @click="onTrigger">
+      <v-btn class="aio-create ma-1" color="primary" @click="onTrigger">
         Create Schedule
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <v-card-text>
       <v-data-table
         :headers="headers"
         :items="schedules"
-        :rows-per-page-items="rowsPerPageItems"
-        :pagination.sync="pagination"
-        :total-items="totalItems"
+        :footer-props="{
+          'items-per-page-options': rowsPerPageItems
+        }"
+        :options.sync="pagination"
+        :server-items-length="totalItems"
         :loading="isLoading"
       >
-        <template #items="{ item, index }">
+        <template #item="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1 body-2">
               {{ getDay(item.day) }}
@@ -53,25 +55,23 @@
             <td class="py-1 body-2">
               {{ item.end_time }}
             </td>
-            <td class="py-1 body-2 text-xs-center">
+            <td class="py-1 body-2 text-center">
               <v-btn
-                :class="
-                  `aio-edit-${kebabCase(item.subject.name)}-${kebabCase(
-                    item.room.name
-                  )}-${kebabCase(item.start_time)}`
-                "
+                :class="`aio-edit-${kebabCase(item.subject.name)}-${kebabCase(
+                  item.room.name
+                )}-${kebabCase(item.start_time)}`"
                 color="primary"
+                class="ma-1"
                 @click="onTrigger($event, item)"
               >
                 Edit
               </v-btn>
               <v-btn
-                :class="
-                  `aio-delete-${kebabCase(item.subject.name)}-${kebabCase(
-                    item.room.name
-                  )}-${kebabCase(item.start_time)}`
-                "
+                :class="`aio-delete-${kebabCase(item.subject.name)}-${kebabCase(
+                  item.room.name
+                )}-${kebabCase(item.start_time)}`"
                 color="error"
+                class="ma-1"
                 @click="onTriggerRemoving(item)"
               >
                 Delete
@@ -84,11 +84,10 @@
         v-model="isCreatingOrEditingDialog"
         scrollable=""
         width="700"
-        lazy=""
         @input="onClose"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 {{ isEditing ? 'Edit' : 'Create' }} Schedule
@@ -98,227 +97,271 @@
             <v-btn icon="" @click="onClose">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container fluid="" grid-list-xl="">
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.day"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('day')"
-                    :disabled="isLoading"
-                    :items="days"
-                    label="Day"
-                    data-vv-name="day"
-                    data-vv-as="day"
-                    name="day"
-                    required=""
-                    clearable=""
-                    outline=""
-                    autofocus=""
-                    data-vv-value-path="schedule.day"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.room_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('room_id')"
-                    :disabled="isLoading"
-                    :items="rooms"
-                    item-text="name"
-                    item-value="id"
-                    label="Room"
-                    data-vv-name="room_id"
-                    data-vv-as="room"
-                    name="room_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="schedule.room_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.subject_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('subject_id')"
-                    :disabled="isLoading"
-                    :items="subjects"
-                    item-text="name"
-                    item-value="id"
-                    label="Subject"
-                    data-vv-name="subject_id"
-                    data-vv-as="subject"
-                    name="subject_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="schedule.subject_id"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.lecturer_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('lecturer_id')"
-                    :disabled="isLoading"
-                    :items="lecturers"
-                    item-text="name"
-                    item-value="id"
-                    label="Lecturer"
-                    data-vv-name="lecturer_id"
-                    data-vv-as="lecturer"
-                    name="lecturer_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="schedule.lecturer_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-text-field
-                    v-model="schedule.start_time"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('start_time')"
-                    :disabled="isLoading"
-                    label="Start Time"
-                    data-vv-name="start_time"
-                    data-vv-as="start time"
-                    name="start_time"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="schedule.start_time"
-                    mask="time"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-text-field
-                    v-model="schedule.end_time"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('end_time')"
-                    :disabled="isLoading"
-                    label="End Time"
-                    data-vv-name="end_time"
-                    data-vv-as="end time"
-                    name="end_time"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="schedule.end_time"
-                    mask="time"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.study_program_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('study_program_id')"
-                    :disabled="isLoading"
-                    :items="studyPrograms"
-                    item-text="name"
-                    item-value="id"
-                    label="Study Program"
-                    data-vv-name="study_program_id"
-                    data-vv-as="study program"
-                    name="study_program_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="schedule.study_program_id"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="selectedDepartment"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('department')"
-                    :disabled="isLoading"
-                    :items="departments"
-                    item-text="name"
-                    item-value="id"
-                    label="Department"
-                    data-vv-name="department"
-                    data-vv-as="department"
-                    name="department"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="selectedDepartment"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.major_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('major_id')"
-                    :disabled="isLoading"
-                    :items="majors"
-                    item-text="name"
-                    item-value="id"
-                    label="Major"
-                    data-vv-name="major_id"
-                    data-vv-as="major"
-                    name="major_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program and department first"
-                    data-vv-value-path="schedule.major_id"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.group_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('group_id')"
-                    :disabled="isLoading"
-                    :items="groups"
-                    item-text="name"
-                    item-value="id"
-                    label="Group"
-                    data-vv-name="group_id"
-                    data-vv-as="group"
-                    name="group_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="schedule.group_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout row="" wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="schedule.grade"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('grade')"
-                    :disabled="isLoading"
-                    :items="grades"
-                    item-text="name"
-                    item-value="id"
-                    label="Grade"
-                    data-vv-name="grade"
-                    data-vv-as="grade"
-                    name="grade"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program first"
-                    data-vv-value-path="schedule.grade"
-                  />
-                </v-flex>
-              </v-layout>
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Day"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.day"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="days"
+                        label="Day"
+                        name="day"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        autofocus=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Room"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.room_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="rooms"
+                        item-text="name"
+                        item-value="id"
+                        label="Room"
+                        name="room_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Subject"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.subject_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="subjects"
+                        item-text="name"
+                        item-value="id"
+                        label="Subject"
+                        name="subject_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Lecturer"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.lecturer_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="lecturers"
+                        item-text="name"
+                        item-value="id"
+                        label="Lecturer"
+                        name="lecturer_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Start Time"
+                      rules="required"
+                    >
+                      <v-text-field
+                        v-model="schedule.start_time"
+                        v-mask="'##:##:##'"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        label="Start Time"
+                        name="start_time"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="End Time"
+                      rules="required"
+                    >
+                      <v-text-field
+                        v-model="schedule.end_time"
+                        v-mask="'##:##:##'"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        label="End Time"
+                        name="end_time"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Study Program"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.study_program_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="studyPrograms"
+                        item-text="name"
+                        item-value="id"
+                        label="Study Program"
+                        name="study_program_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Department"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="selectedDepartment"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="departments"
+                        item-text="name"
+                        item-value="id"
+                        label="Department"
+                        name="department"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Major"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.major_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="majors"
+                        item-text="name"
+                        item-value="id"
+                        label="Major"
+                        name="major_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program and department first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Group"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.group_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="groups"
+                        item-text="name"
+                        item-value="id"
+                        label="Group"
+                        name="group_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Grade"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="schedule.grade"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="grades"
+                        item-text="name"
+                        item-value="id"
+                        label="Grade"
+                        name="grade"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -327,7 +370,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               class="aio-cancel-edit-save"
               @click="onClose"
             >
@@ -337,7 +380,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="primary"
-              flat=""
+              text=""
               class="aio-edit-save"
               @click="onCreateOrEdit"
             >
@@ -350,11 +393,10 @@
         v-model="isRemovingDialog"
         width="350"
         scrollable=""
-        lazy=""
         @input="onCloseRemoving"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Delete Confirmation
@@ -364,8 +406,8 @@
             <v-btn icon="" @click="onCloseRemoving">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
+          </v-app-bar>
+          <v-card-text class="pt-5">
             <div class="body-2">
               Are you sure you want to remove {{ schedule.subject.name }}?
             </div>
@@ -376,7 +418,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               class="aio-cancel-delete"
               @click="onCloseRemoving"
             >
@@ -386,7 +428,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="error"
-              flat=""
+              text=""
               class="aio-remove"
               @click="onRemove(schedule)"
             >
@@ -400,16 +442,53 @@
 </template>
 
 <script>
+import { validate } from 'vee-validate'
 import cloneDeep from 'lodash/fp/cloneDeep'
 import string from '~/mixins/string'
 
 export default {
-  head() {
-    return {
-      title: 'Schedules'
+  mixins: [string],
+  async asyncData({ app: { $api, $http, $handleError } }) {
+    try {
+      const [
+        { rowCount, schedules, ...filter },
+        { studyPrograms },
+        { departments },
+        { groups },
+        { rooms },
+        { subjects },
+        { lecturers }
+      ] = await Promise.all([
+        $api.schedules.fetchPage({
+          orderBy: 'day',
+          limit: 25,
+          offset: 0,
+          withRelated:
+            'study_program,major.department,group,room,subject,lecturer'
+        }),
+        $api.studyPrograms.fetchPage({ limit: -1 }),
+        $api.departments.fetchPage({ limit: -1 }),
+        $api.groups.fetchPage({ limit: -1 }),
+        $api.rooms.fetchPage({ limit: -1 }),
+        $api.subjects.fetchPage({ limit: -1 }),
+        $api.lecturers.fetchPage({ limit: -1 })
+      ])
+
+      return {
+        filter,
+        schedules,
+        studyPrograms,
+        departments,
+        groups,
+        rooms,
+        subjects,
+        lecturers,
+        totalItems: rowCount
+      }
+    } catch ({ response }) {
+      $handleError(response)
     }
   },
-  mixins: [string],
   data() {
     return {
       isCreatingOrEditingDialog: false,
@@ -566,11 +645,10 @@ export default {
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: 'day',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['day']
       },
       totalItems: 0,
       days: [
@@ -592,11 +670,11 @@ export default {
   },
   computed: {
     getDay() {
-      return _day => {
+      return (_day) => {
         if (!_day) {
           return ''
         }
-        const { text } = this.days.find(day => day.value === _day)
+        const { text } = this.days.find((day) => day.value === _day)
         if (text) {
           return text
         }
@@ -622,19 +700,19 @@ export default {
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchSchedules({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage,
-          descending
+          offset: (page - 1) * itemsPerPage,
+          sortDesc
         })
       },
       deep: true
     },
     // eslint-disable-next-line
-    'schedule.study_program_id': function(study_program_id) {
+    'schedule.study_program_id': function (study_program_id) {
       // eslint-disable-next-line
       if (study_program_id && this.selectedDepartment) {
         this.fetchMajors({
@@ -656,70 +734,30 @@ export default {
       }
     }
   },
-  async asyncData({ app: { $api, $http, $handleError } }) {
-    try {
-      const [
-        { rowCount, schedules, ...filter },
-        { studyPrograms },
-        { departments },
-        { groups },
-        { rooms },
-        { subjects },
-        { lecturers }
-      ] = await Promise.all([
-        $api.schedules.fetchPage({
-          orderBy: 'day',
-          limit: 25,
-          offset: 0,
-          withRelated:
-            'study_program,major.department,group,room,subject,lecturer'
-        }),
-        $api.studyPrograms.fetchPage({ limit: -1 }),
-        $api.departments.fetchPage({ limit: -1 }),
-        $api.groups.fetchPage({ limit: -1 }),
-        $api.rooms.fetchPage({ limit: -1 }),
-        $api.subjects.fetchPage({ limit: -1 }),
-        $api.lecturers.fetchPage({ limit: -1 })
-      ])
-
-      return {
-        filter,
-        schedules,
-        studyPrograms,
-        departments,
-        groups,
-        rooms,
-        subjects,
-        lecturers,
-        totalItems: rowCount
-      }
-    } catch ({ response }) {
-      $handleError(response)
-    }
-  },
   methods: {
     async fetchSchedules(
       {
         orderBy = this.pagination.sortBy,
-        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending = this.pagination.descending
+        limit = this.pagination.itemsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc
       } = {
         orderBy: this.pagination.sortBy,
-        limit: this.pagination.rowsPerPage,
+        limit: this.pagination.itemsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending: this.pagination.descending
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
         if (orderBy) {
           if (orderBy.includes('.name')) {
             orderBy = `${orderBy.replace('.name', '')}_id`
           }
         }
-        if (descending) {
+        if (sortDesc[0]) {
           orderBy = `-${orderBy}`
         }
         const {
@@ -806,7 +844,7 @@ export default {
       this.isCreatingOrEditingDialog = false
       this.selectedDepartment = null
       this.isEditing = false
-      this.$validator.reset()
+
       this.schedule = { ...this.default }
     },
     async onCreateOrEdit(
@@ -817,8 +855,12 @@ export default {
       }
     ) {
       try {
-        const valid = await this.$validator.validate()
-        if (valid) {
+        const valids = await Promise.all(
+          Object.keys(this.schedule)
+            .filter((i) => i !== 'id')
+            .map((i) => validate(this.schedule[i], 'required'))
+        )
+        if (valids.every(({ valid }) => valid)) {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
@@ -870,7 +912,7 @@ export default {
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
-      this.$validator.reset()
+
       this.schedule = { ...this.default }
     },
     async onRemove(item) {
@@ -891,6 +933,11 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Schedules'
     }
   }
 }

@@ -1,8 +1,8 @@
-/* eslint-disable nuxt/no-cjs-in-config */
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+const colors = require('vuetify/es5/util/colors').default
 
 const isDev = process.env.NODE_ENV !== 'production'
 
+// eslint-disable-next-line
 module.exports = {
   // https://nuxtjs.org/api/configuration-modern
   modern: !isDev,
@@ -52,10 +52,31 @@ module.exports = {
     failedColor: '#F44336'
   },
 
+  buildModules: [
+    // Simple usage
+    '@nuxtjs/vuetify'
+  ],
+
+  vuetify: {
+    theme: {
+      themes: {
+        light: {
+          primary: colors.cyan.base,
+          secondary: colors.cyan.darken2,
+          accent: colors.deepOrange.base,
+          error: colors.red.base,
+          info: colors.blue.base,
+          success: colors.green.base,
+          warning: colors.amber.base
+        }
+      }
+    }
+  },
+
   // https://nuxtjs.org/api/configuration-plugins
   plugins: [
     '~plugins/components',
-    '~plugins/vuetify',
+    // '~plugins/vuetify',
     '~plugins/vee-validate',
     '~plugins/api',
     '~plugins/notify',
@@ -66,6 +87,25 @@ module.exports = {
 
   // https://nuxtjs.org/api/configuration-css
   css: ['~assets/styles/app', '~/assets/styles/main'],
+
+  // https://pwa.nuxtjs.org/modules/meta.html
+  meta: {
+    name: 'AIO Rek',
+    description: 'Face recognition based attendance system',
+    twitterCard: 'summary_large_image',
+    twitterSite: '@jefrydco',
+    twitterCreator: '@jefrydco'
+  },
+
+  // https://pwa.nuxtjs.org/modules/manifest.html
+  manifest: {
+    name: 'AIO Rek',
+    short_name: 'AIO Rek',
+    start_url: '/?utm_source=homescreen',
+    description: 'Face recognition based attendance system',
+    background_color: '#2D3748',
+    theme_color: '#2D3748'
+  },
 
   // https://pwa.nuxtjs.org/modules/workbox.html
   workbox: {
@@ -82,6 +122,12 @@ module.exports = {
       '/models/face_landmark_68_model-shard1',
       '/models/face_expression_model-shard1',
       '/models/age_gender_model-shard1'
+    ],
+    runtimeCaching: [
+      {
+        urlPattern: 'https://fonts.gstatic.com/.*',
+        handler: 'staleWhileRevalidate'
+      }
     ]
   },
 
@@ -90,13 +136,7 @@ module.exports = {
   // https://nuxtjs.org/api/configuration-build
   build: {
     extractCSS: !isDev,
-    transpile: ['vuetify/lib'],
-    plugins: [new VuetifyLoaderPlugin()],
-    loaders: {
-      stylus: {
-        import: ['~assets/styles/variables.styl']
-      }
-    },
+    transpile: ['vee-validate/dist/rules'],
     extend(config, { isDev, isClient }) {
       if (isClient) {
         config.node = {

@@ -1,4 +1,4 @@
-export const getFileName = url => {
+export const getFileName = (url) => {
   if (!url) {
     return
   }
@@ -10,7 +10,7 @@ export const getFileName = url => {
     .replace(/\?(.*?)$/, '')
 }
 
-export const getFileFromUrl = async url => {
+export const getFileFromUrl = async (url) => {
   // Taken from: https://stackoverflow.com/questions/44070437/how-to-get-a-file-or-blob-from-an-url-in-javascript
   if (!url) {
     return
@@ -24,8 +24,8 @@ export const getFileFromUrl = async url => {
   })
 }
 
-export const fileReader = file => {
-  return new Promise(resolve => {
+export const fileReader = (file) => {
+  return new Promise((resolve) => {
     const fileReader = new FileReader()
     fileReader.readAsDataURL(file)
     fileReader.addEventListener('load', () => {

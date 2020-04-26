@@ -1,16 +1,16 @@
 <template>
   <v-app>
-    <v-toolbar app="" color="primary" dark="">
-      <v-toolbar-side-icon
+    <v-app-bar app="" color="primary" dark="">
+      <v-app-bar-nav-icon
         class="hidden-sm-and-up"
         @click="isSidebar = !isSidebar"
       />
       <v-toolbar-title>
         <v-img src="/icon.png" width="30" alt="Ayo Rek Admin">
           <template #placeholder="">
-            <v-layout fill-height="" align-center="" justify-center="" ma-0="">
+            <v-row class="fill-height ma-0" align="center" justify="center">
               <v-progress-circular indeterminate="" color="grey lighten-5" />
-            </v-layout>
+            </v-row>
           </template>
         </v-img>
       </v-toolbar-title>
@@ -23,13 +23,13 @@
             bottom=""
           >
             <template #activator="{ on }">
-              <v-btn flat="" :class="menu.id" v-on="on">
+              <v-btn text="" :class="menu.id" v-on="on">
                 <span>{{ menu.text }}</span>
                 <v-icon dark>arrow_drop_down</v-icon>
               </v-btn>
             </template>
             <v-list>
-              <v-list-tile
+              <v-list-item
                 v-for="(menuSub, j) in menu.subMenus"
                 :key="`menu_toolbar_${i}_sub_${j}`"
                 ripple=""
@@ -38,16 +38,16 @@
                 :class="menuSub.id"
                 :to="menuSub.to"
               >
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ menuSub.text }}</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
+                <v-list-item-content>
+                  <v-list-item-title>{{ menuSub.text }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
           </v-menu>
           <v-btn
-            v-else
+            v-else=""
             :key="`menu_toolbar_${i}`"
-            flat=""
+            text=""
             nuxt=""
             exact=""
             :to="menu.to"
@@ -60,7 +60,7 @@
       <v-toolbar-items>
         <v-menu offset-y="">
           <template #activator="{ on }">
-            <v-btn class="aio-menu-account" flat="" v-on="on">
+            <v-btn class="aio-menu-account" text="" v-on="on">
               <app-avatar
                 :name="avatarName"
                 :image="user.image"
@@ -72,35 +72,35 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-tile
+            <v-list-item
               v-if="$route.name.includes('device')"
               ripple=""
               @click="onSettings"
             >
-              <v-list-tile-content>
-                <v-list-tile-title>Settings</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-list-tile class="aio-menu-logout" ripple="" @click="onLogout">
-              <v-list-tile-content>
-                <v-list-tile-title>Logout</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              <v-list-item-content>
+                <v-list-item-title>Settings</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item class="aio-menu-logout" ripple="" @click="onLogout">
+              <v-list-item-content>
+                <v-list-item-title>Logout</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
       </v-toolbar-items>
-    </v-toolbar>
+    </v-app-bar>
     <v-content>
-      <v-container fluid="" grid-list-xl="">
-        <v-layout>
-          <v-flex xs12="">
+      <v-container fluid="">
+        <v-row>
+          <v-col cols="12">
             <nuxt />
             <app-notification />
             <app-loading :value="isModelsLoading">
               Loading face recognition models
             </app-loading>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-content>
   </v-app>

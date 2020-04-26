@@ -2,7 +2,7 @@
 
 const Checkit = require('checkit')
 
-module.exports = bookshelf =>
+module.exports = (bookshelf) =>
   bookshelf.model('LecturerDescriptor', {
     tableName: 'lecturer_descriptors',
     lecturer_image() {

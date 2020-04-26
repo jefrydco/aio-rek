@@ -8,4 +8,4 @@ class ScheduleService extends Service {
   }
 }
 
-module.exports = app => new ScheduleService(app)
+module.exports = (app) => new ScheduleService(app)

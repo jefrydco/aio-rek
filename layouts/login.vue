@@ -1,12 +1,12 @@
 <template>
   <v-app>
     <v-content>
-      <v-container fluid="" grid-list-xl="" fill-height="">
-        <v-layout fill-height="" align-center="" justify-center="">
-          <v-flex xs12="" sm8="" md6="" lg4="">
+      <v-container fluid="" class="fill-height">
+        <v-row class="fill-height" align="center" justify="center">
+          <v-col cols="12" sm="8" md="6" lg="4">
             <nuxt />
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-content>
   </v-app>

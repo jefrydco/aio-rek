@@ -1,50 +1,74 @@
-# Nuxt PWA Vuetify Starter
+# AIO Rek
 
-[![CircleCI Build Status](https://badgen.net/circleci/github/jefrydco/nuxt-pwa-vuetify-starter/master)](https://circleci.com/gh/jefrydco/nuxt-pwa-vuetify-starter)
-[![Azure Build Status](https://dev.azure.com/jefrydco/jefrydco/_apis/build/status/jefrydco.nuxt-pwa-vuetify-starter)](https://dev.azure.com/jefrydco/jefrydco/_build?definitionId=1)
-[![Coverage Status](https://badgen.net/codecov/c/github/jefrydco/nuxt-pwa-vuetify-starter/master)](https://codecov.io/gh/jefrydco/nuxt-pwa-vuetify-starter)
-
-> Nuxt.js + PWA + Vuetify.js starter project
+> Face recognition based attendance system
 
 ## Features
 
 This starter project includes official Nuxt.js modules for best PWA project:
 
-- [Axios](https://github.com/nuxt-community/axios-module)
-- [Component-cache](https://github.com/nuxt-community/modules/tree/master/packages/component-cache)
+- [Http](https://github.com/nuxt/http)
 - [Dotenv](https://github.com/nuxt-community/dotenv-module)
-- [Google-analytics](https://github.com/nuxt-community/analytics-module)
 - [PWA](https://github.com/nuxt-community/pwa-module)
-- [Sentry](https://github.com/nuxt-community/sentry-module)
-- [Sitemap](https://github.com/nuxt-community/sitemap-module)
 
 It is also enriched with the best Vue's UI framework:
 
 - [Vuetify](https://vuetifyjs.com)
-- [VeeValidate](https://baianat.github.io/vee-validate/)
+- [VeeValidate](https://logaretm.github.io/vee-validate)
+
+## Prerequisite
+
+You must have installed:
+
+- [Node.js](https://nodejs.org/en/)
+- [Docker](https://docs.docker.com/)
 
 ## Setup
 
+1. Clone this repository
+
 ```bash
-# install dependencies
-$ yarn # Or npm install
+$ git clone https://github.com/jefrydco/aio-rek.git
+$ cd aio-rek
+```
+
+2. Download the following repository [Face API](https://github.com/justadudewhohacks/face-api.js)
+3. Extract its content
+4. There will be a folder called `weights`. Copy that folder into `aio-rek/static`
+5. Rename it in to `models`
+6. Now the content of your `static` folder should looks like this:
+
+```
+static
+|-cats
+|-models
+|-sounds
+|-examples
+```
+
+7. Then run the following command to run the project
+
+```bash
+# instal dependencies
+$ yarn # or npm install
+
+# run the docker environment
+$ docker-compose up
+
+# serve the api at localhost:3001
+$ yarn api
 
 # serve with hot reload at localhost:3000
 $ yarn dev
+```
 
-# build for production and launch server
-$ yarn build
-$ yarn start
+## Test
 
-# generate static project
-$ yarn generate
-
-# Run unit test
+```bash
+# run unit test
 $ yarn test
 
-# Run e2e test
-$ yarn dev
-$ yarn test:e2e
+# run e2e test
+$ yarn test:e2e:open
 ```
 
 ## Getting Started

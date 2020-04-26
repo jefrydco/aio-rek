@@ -6,4 +6,4 @@ const guard = require('express-jwt-permissions')({
   permissionsProperty: 'role'
 })
 
-module.exports = role => errorCatcher(guard.check(role))
+module.exports = (role) => errorCatcher(guard.check(role))

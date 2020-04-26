@@ -79,12 +79,7 @@ export const actions = {
       await commit(types.LOADED)
     }
   },
-  async getFaceDescriptors(
-    { commit, state },
-    {
-      image: { path }
-    }
-  ) {
+  async getFaceDescriptors({ commit, state }, { image: { path } }) {
     try {
       const img = await faceapi.fetchImage(path)
       const { descriptor } = await faceapi
@@ -115,7 +110,7 @@ export const actions = {
         const descriptors = []
         images.forEach(({ has_descriptor, descriptor: { descriptor } }) => {
           if (!isEmpty(descriptor) && has_descriptor) {
-            const desc = Object.values(descriptor).map(_descItem =>
+            const desc = Object.values(descriptor).map((_descItem) =>
               parseFloat(_descItem)
             )
             descriptors.push(new Float32Array(desc))
@@ -126,8 +121,10 @@ export const actions = {
         )
       }
     })
-    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
-    commit(types.SET_FACE_MATCHER, faceMatcher)
+    if (labeledDescriptors.length > 0) {
+      const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
+      commit(types.SET_FACE_MATCHER, faceMatcher)
+    }
   },
   async getFaceDetections(
     { commit, state },
@@ -268,11 +265,11 @@ export const actions = {
       if (isExpressionEnabled && detection.expressions) {
         const emotions = Object.keys(
           pickBy(
-            value => value >= config.expressions.minConfidence,
+            (value) => value >= config.expressions.minConfidence,
             detection.expressions
           )
         )
-          .map(emotion => capitalize(emotion))
+          .map((emotion) => capitalize(emotion))
           .join(' & ')
         canvasCtx.fillText(
           emotions,
