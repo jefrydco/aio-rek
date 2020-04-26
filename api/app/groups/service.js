@@ -8,4 +8,4 @@ class GroupService extends Service {
   }
 }
 
-module.exports = app => new GroupService(app)
+module.exports = (app) => new GroupService(app)

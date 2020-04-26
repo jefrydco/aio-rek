@@ -4,7 +4,7 @@ const argon2 = require('argon2')
 const Checkit = require('checkit')
 const isString = require('lodash/fp/isString')
 
-module.exports = bookshelf =>
+module.exports = (bookshelf) =>
   bookshelf.model('User', {
     tableName: 'users',
     getValidators() {

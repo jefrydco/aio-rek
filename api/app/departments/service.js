@@ -8,4 +8,4 @@ class DepartmentService extends Service {
   }
 }
 
-module.exports = app => new DepartmentService(app)
+module.exports = (app) => new DepartmentService(app)

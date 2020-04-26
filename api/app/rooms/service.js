@@ -8,4 +8,4 @@ class RoomService extends Service {
   }
 }
 
-module.exports = app => new RoomService(app)
+module.exports = (app) => new RoomService(app)

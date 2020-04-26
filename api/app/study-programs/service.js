@@ -8,4 +8,4 @@ class StudyProgramService extends Service {
   }
 }
 
-module.exports = app => new StudyProgramService(app)
+module.exports = (app) => new StudyProgramService(app)

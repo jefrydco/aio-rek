@@ -12,9 +12,11 @@ module.exports = class Service {
     this.app = app
     this.defaultFilter = [...defaultFilter, 'created_at', 'updated_at']
   }
+
   _getPluralName() {
     return pluralize(this.name)
   }
+
   _getModel(attributes) {
     const {
       locals: { models }
@@ -25,6 +27,7 @@ module.exports = class Service {
     }
     return new Model(attributes)
   }
+
   async create(attributes, { trx } = {}) {
     const model = this._getModel(attributes)
 
@@ -35,6 +38,7 @@ module.exports = class Service {
     })
     return queryResult
   }
+
   async fetchPage(filter, { trx } = {}) {
     const defaultFilter = { limit: 20, offset: 0, orderBy: '-created_at' }
     const _filter = {
@@ -79,6 +83,7 @@ module.exports = class Service {
       })
     return queryResult
   }
+
   async fetch(attributes, { trx } = {}, withRelated) {
     const model = this._getModel(attributes)
 
@@ -95,6 +100,7 @@ module.exports = class Service {
     })
     return queryResult
   }
+
   async destroy(model, { trx } = {}) {
     const deleted = await model.destroy({
       require: true,
@@ -102,6 +108,7 @@ module.exports = class Service {
     })
     return deleted
   }
+
   async update(model, attributes, { trx } = {}) {
     const updated = await model.save(attributes, {
       method: 'update',
@@ -111,14 +118,18 @@ module.exports = class Service {
     })
     return updated
   }
+
   async toJSONArray({ models = [], orderBy, pagination }) {
-    const jsonArray = await Promise.all(models.map(model => this.toJSON(model)))
+    const jsonArray = await Promise.all(
+      models.map((model) => this.toJSON(model))
+    )
     return {
       ...pagination,
       orderBy,
       [camelCase(this._getPluralName())]: jsonArray
     }
   }
+
   toJSON(model, additionalFilter = []) {
     let json = model.toJSON()
     const deletedKey = [...additionalFilter, ...this.defaultFilter]

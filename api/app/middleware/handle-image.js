@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
-const uuid = require('uuid/v4')
+const { v4: uuid } = require('uuid')
 
 const multerFactory = (location, fileTypes = /jpeg|jpg/) => {
   const storage = multer.diskStorage({

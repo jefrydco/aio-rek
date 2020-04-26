@@ -8,6 +8,7 @@ class LecturerService extends Service {
   constructor(app) {
     super(LecturerService.name, app, ['user.hashed_password'])
   }
+
   async fetchPage(filter, { trx } = {}) {
     const defaultFilter = { limit: 20, offset: 0, orderBy: 'name' }
     const _filter = {
@@ -54,4 +55,4 @@ class LecturerService extends Service {
   }
 }
 
-module.exports = app => new LecturerService(app)
+module.exports = (app) => new LecturerService(app)

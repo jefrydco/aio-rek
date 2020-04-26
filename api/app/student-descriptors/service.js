@@ -8,4 +8,4 @@ class StudentDescriptorService extends Service {
   }
 }
 
-module.exports = app => new StudentDescriptorService(app)
+module.exports = (app) => new StudentDescriptorService(app)

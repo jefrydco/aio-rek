@@ -17,7 +17,7 @@ const {
   handleRouteNotFoundError,
   rollbackTransaction,
   handleRateLimit,
-  handleCors,
+  handleCors
 } = require('../middleware')
 
 module.exports = (app) => {
@@ -31,7 +31,7 @@ module.exports = (app) => {
 
   requireDirectory(module, path.join(__dirname, '..'), {
     include: /router\.js$/,
-    visit: (router) => app.use(router),
+    visit: (router) => app.use(router)
   })
 
   app.use(handleRouteNotFoundError)

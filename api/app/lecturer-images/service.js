@@ -8,7 +8,7 @@ class LecturerImageService extends Service {
   }
 }
 
-module.exports = app => new LecturerImageService(app)
+module.exports = (app) => new LecturerImageService(app)
 
 // module.exports = app => ({
 //   async create(attributes, { trx } = {}) {

@@ -8,4 +8,4 @@ class MajorService extends Service {
   }
 }
 
-module.exports = app => new MajorService(app)
+module.exports = (app) => new MajorService(app)

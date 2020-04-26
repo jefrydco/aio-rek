@@ -8,6 +8,7 @@ class UserController extends Controller {
   constructor() {
     super(UserController.name)
   }
+
   login(req, res, next) {
     return errorCatcher((req, res) => {
       const { user } = req
@@ -15,6 +16,7 @@ class UserController extends Controller {
       return res.json({ [this.name]: service.getAuthJSON(user) })
     })(req, res, next)
   }
+
   fetchAuth(req, res, next) {
     return errorCatcher((req, res) => {
       const { user } = req
@@ -23,6 +25,7 @@ class UserController extends Controller {
       return res.json({ [this.name]: service.getAuthJSON(user, token) })
     })(req, res, next)
   }
+
   fetchProfile(req, res, next) {
     return errorCatcher((req, res) => {
       const { user } = req
