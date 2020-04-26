@@ -2,6 +2,8 @@
 
 > Face recognition based attendance system
 
+<img width="2620" height="1526" src="https://repository-images.githubusercontent.com/182638111/fedded00-8811-11ea-9d5c-398c5ab3562b" alt="aio-rek">
+
 ## Features
 
 This starter project includes official Nuxt.js modules for best PWA project:
