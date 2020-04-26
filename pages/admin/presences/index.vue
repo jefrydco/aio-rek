@@ -1,27 +1,29 @@
 <template>
   <v-card>
-    <v-toolbar card="">
+    <v-app-bar flat="">
       <v-toolbar-title>
         <h2 class="headline">Presences</h2>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn color="accent" @click="fetchPresences">
+      <v-btn class="ma-1" color="accent" @click="fetchPresences">
         Refresh
       </v-btn>
-      <v-btn color="primary" @click="onTrigger">
+      <v-btn class="ma-1" color="primary" @click="onTrigger">
         Create Presence
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <v-card-text>
       <v-data-table
         :headers="headers"
         :items="presences"
-        :rows-per-page-items="rowsPerPageItems"
-        :pagination.sync="pagination"
-        :total-items="totalItems"
+        :footer-props="{
+          'items-per-page-options': rowsPerPageItems
+        }"
+        :options.sync="pagination"
+        :server-items-length="totalItems"
         :loading="isLoading"
       >
-        <template #items="{ item, index }">
+        <template #item="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1">
               <app-avatar
@@ -43,13 +45,13 @@
             </td>
             <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_late" color="error" text-color="white">
-                <v-avatar class="error darken-3">
+                <v-avatar left="" class="error darken-3">
                   <v-icon>close</v-icon>
                 </v-avatar>
                 <span>Late</span>
               </v-chip>
               <v-chip v-else="" color="info" text-color="white">
-                <v-avatar class="info darken-3">
+                <v-avatar left="" class="info darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
                 <span>On Time</span>
@@ -57,7 +59,10 @@
             </td>
             <td class="py-1 body-2 text-center">
               <v-chip :color="getStatusColor(item.status)" text-color="white">
-                <v-avatar :class="`${getStatusColor(item.status)} darken-3`">
+                <v-avatar
+                  left=""
+                  :class="`${getStatusColor(item.status)} darken-3`"
+                >
                   <v-icon>{{ getStatusIcon(item.status) }}</v-icon>
                 </v-avatar>
                 <span>{{ upperFirst(item.status) }}</span>
@@ -67,13 +72,25 @@
               {{ item.datetime ? $moment(item.datetime).format('llll') : '' }}
             </td>
             <td class="py-1 body-2">
-              <v-btn color="info" @click="onTriggerEnlargeImage($event, item)">
+              <v-btn
+                class="ma-1"
+                color="info"
+                @click="onTriggerEnlargeImage($event, item)"
+              >
                 Enlarge Image
               </v-btn>
-              <v-btn color="primary" @click="onTrigger($event, item)">
+              <v-btn
+                class="ma-1"
+                color="primary"
+                @click="onTrigger($event, item)"
+              >
                 Edit
               </v-btn>
-              <v-btn color="error" @click="onTriggerRemoving(item)">
+              <v-btn
+                class="ma-1"
+                color="error"
+                @click="onTriggerRemoving(item)"
+              >
                 Delete
               </v-btn>
             </td>
@@ -84,11 +101,10 @@
         v-model="isCreatingOrEditingDialog"
         scrollable=""
         width="700"
-        lazy=""
         @input="onClose"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 {{ isEditing ? 'Edit' : 'Create' }} Presence
@@ -98,305 +114,347 @@
             <v-btn icon="" @click="onClose">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.study_program_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('study_program_id')"
-                    :disabled="isLoading"
-                    :items="studyPrograms"
-                    item-text="name"
-                    item-value="id"
-                    label="Study Program"
-                    data-vv-name="study_program_id"
-                    data-vv-as="study program"
-                    name="study_program_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="scheduleFilter.study_program_id"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.department_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('department')"
-                    :disabled="isLoading"
-                    :items="departments"
-                    item-text="name"
-                    item-value="id"
-                    label="Department"
-                    data-vv-name="department"
-                    data-vv-as="department"
-                    name="department"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="scheduleFilter.department_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.major_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('major_id')"
-                    :disabled="isLoading"
-                    :items="majors"
-                    item-text="name"
-                    item-value="id"
-                    label="Major"
-                    data-vv-name="major_id"
-                    data-vv-as="major"
-                    name="major_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program and department first"
-                    data-vv-value-path="scheduleFilter.major_id"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.group_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('group_id')"
-                    :disabled="isLoading"
-                    :items="groups"
-                    item-text="name"
-                    item-value="id"
-                    label="Group"
-                    data-vv-name="group_id"
-                    data-vv-as="group"
-                    name="group_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="scheduleFilter.group_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.grade"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('grade')"
-                    :disabled="isLoading"
-                    :items="grades"
-                    item-text="name"
-                    item-value="id"
-                    label="Grade"
-                    data-vv-name="grade"
-                    data-vv-as="grade"
-                    name="grade"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program first"
-                    data-vv-value-path="scheduleFilter.grade"
-                  />
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="scheduleFilter.lecturer_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('lecturer_id')"
-                    :disabled="isLoading"
-                    :items="lecturers"
-                    item-text="name"
-                    item-value="id"
-                    label="Lecturer"
-                    data-vv-name="lecturer_id"
-                    data-vv-as="lecturer"
-                    name="lecturer_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program first"
-                    data-vv-value-path="scheduleFilter.lecturer_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="attendanceFilter.schedule_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('schedule_id')"
-                    :disabled="isLoading"
-                    :items="schedules"
-                    item-value="id"
-                    label="Schedule"
-                    data-vv-name="schedule_id"
-                    data-vv-as="schedule"
-                    name="schedule_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    hint="Please choose the study program, department, major, group, grade and lecturer first"
-                    data-vv-value-path="attendanceFilter.schedule_id"
-                  >
-                    <template #selection="{ item }">
-                      {{ item.subject.name }}
-                    </template>
-                    <template #item="{ item }">
-                      <v-list-tile-content>
-                        <v-list-tile-title>
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Study Program"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.study_program_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="studyPrograms"
+                        item-text="name"
+                        item-value="id"
+                        label="Study Program"
+                        name="study_program_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Department"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.department_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="departments"
+                        item-text="name"
+                        item-value="id"
+                        label="Department"
+                        name="department"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Major"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.major_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="majors"
+                        item-text="name"
+                        item-value="id"
+                        label="Major"
+                        name="major_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program and department first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Group"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.group_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="groups"
+                        item-text="name"
+                        item-value="id"
+                        label="Group"
+                        name="group_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Grade"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.grade"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="grades"
+                        item-text="name"
+                        item-value="id"
+                        label="Grade"
+                        name="grade"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Lecturer"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="scheduleFilter.lecturer_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="lecturers"
+                        item-text="name"
+                        item-value="id"
+                        label="Lecturer"
+                        name="lecturer_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program first"
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Schedule"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="attendanceFilter.schedule_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="schedules"
+                        item-value="id"
+                        label="Schedule"
+                        name="schedule_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                        hint="Please choose the study program, department, major, group, grade and lecturer first"
+                      >
+                        <template #selection="{ item }">
                           {{ item.subject.name }}
-                        </v-list-tile-title>
-                        <v-list-tile-sub-title>
-                          {{ item.room.name }} -
-                          {{
-                            item.start_time
-                              ? $moment(item.start_time, 'HH:mm:ss').format(
-                                  'HH:mm'
-                                )
-                              : ''
-                          }}
-                          -
-                          {{
-                            item.end_time
-                              ? $moment(item.end_time, 'HH:mm:ss').format(
-                                  'HH:mm'
-                                )
-                              : ''
-                          }}
-                        </v-list-tile-sub-title>
-                      </v-list-tile-content>
-                    </template>
-                  </v-autocomplete>
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="attendanceFilter.room_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('room_id')"
-                    :disabled="isLoading"
-                    :items="rooms"
-                    item-value="id"
-                    item-text="name"
-                    label="Room"
-                    data-vv-name="room_id"
-                    data-vv-as="room"
-                    name="room_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="attendanceFilter.room_id"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout wrap="">
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="presence.attendance_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('attendance_id')"
-                    :disabled="isLoading"
-                    :items="attendances"
-                    item-value="id"
-                    item-text="schedule.lecturer.name"
-                    label="Attendance"
-                    data-vv-name="attendance_id"
-                    data-vv-as="attendance"
-                    name="attendance_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="presence.attendance_id"
-                  >
-                    <template #selection="{ item, selected }">
-                      <v-chip :selected="selected">
-                        <app-avatar
-                          :image="item.schedule.lecturer.image"
-                          :name="item.schedule.lecturer.name"
-                          text-class="caption"
-                        />
-                        <span>{{ item.schedule.lecturer.name }}</span>
-                      </v-chip>
-                    </template>
-                    <template #item="{ item }">
-                      <v-list-tile-avatar>
-                        <app-avatar
-                          :image="item.image"
-                          :name="item.schedule.lecturer.name"
-                          text-class="caption"
-                        />
-                      </v-list-tile-avatar>
-                      <v-list-tile-content>
-                        <v-list-tile-title>
-                          {{ item.schedule.lecturer.name }}
-                        </v-list-tile-title>
-                        <v-list-tile-sub-title>
-                          {{
-                            item.start_datetime
-                              ? $moment(item.start_datetime).format('llll')
-                              : ''
-                          }}
-                        </v-list-tile-sub-title>
-                      </v-list-tile-content>
-                    </template>
-                  </v-autocomplete>
-                </v-flex>
-                <v-flex xs12="" sm6="">
-                  <v-autocomplete
-                    v-model="presence.student_id"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('student_id')"
-                    :disabled="isLoading"
-                    :items="students"
-                    item-value="id"
-                    item-text="name"
-                    label="Student"
-                    data-vv-name="student_id"
-                    data-vv-as="student"
-                    name="student_id"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="presence.student_id"
-                  >
-                    <template #selection="{ item, selected }">
-                      <v-chip :selected="selected">
-                        <app-avatar
-                          :image="item.image"
-                          :name="item.name"
-                          text-class="caption"
-                        />
-                        <span>{{ item.name }}</span>
-                      </v-chip>
-                    </template>
-                    <template #item="{ item }">
-                      <v-list-tile-avatar>
-                        <app-avatar
-                          :image="item.image"
-                          :name="item.name"
-                          :size="36"
-                          text-class="caption"
-                        />
-                      </v-list-tile-avatar>
-                      <v-list-tile-content>
-                        <v-list-tile-title>
-                          {{ item.name }}
-                        </v-list-tile-title>
-                      </v-list-tile-content>
-                    </template>
-                  </v-autocomplete>
-                </v-flex>
-              </v-layout>
-              <v-layout wrap="">
-                <v-flex xs12="" sm6="">
+                        </template>
+                        <template #item="{ item }">
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ item.subject.name }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                              {{ item.room.name }} -
+                              {{
+                                item.start_time
+                                  ? $moment(item.start_time, 'HH:mm:ss').format(
+                                      'HH:mm'
+                                    )
+                                  : ''
+                              }}
+                              -
+                              {{
+                                item.end_time
+                                  ? $moment(item.end_time, 'HH:mm:ss').format(
+                                      'HH:mm'
+                                    )
+                                  : ''
+                              }}
+                            </v-list-item-subtitle>
+                          </v-list-item-content>
+                        </template>
+                      </v-autocomplete>
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Room"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="attendanceFilter.room_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="rooms"
+                        item-value="id"
+                        item-text="name"
+                        label="Room"
+                        name="room_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Attendance"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="presence.attendance_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="attendances"
+                        item-value="id"
+                        item-text="schedule.lecturer.name"
+                        label="Attendance"
+                        name="attendance_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      >
+                        <template #selection="{ item, selected }">
+                          <v-chip :input-value="selected">
+                            <app-avatar
+                              :image="item.schedule.lecturer.image"
+                              :name="item.schedule.lecturer.name"
+                              left=""
+                              text-class="caption"
+                            />
+                            <span>{{ item.schedule.lecturer.name }}</span>
+                          </v-chip>
+                        </template>
+                        <template #item="{ item }">
+                          <v-list-item-avatar>
+                            <app-avatar
+                              :image="item.image"
+                              :name="item.schedule.lecturer.name"
+                              text-class="caption"
+                            />
+                          </v-list-item-avatar>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ item.schedule.lecturer.name }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                              {{
+                                item.start_datetime
+                                  ? $moment(item.start_datetime).format('llll')
+                                  : ''
+                              }}
+                            </v-list-item-subtitle>
+                          </v-list-item-content>
+                        </template>
+                      </v-autocomplete>
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Student"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="presence.student_id"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="students"
+                        item-value="id"
+                        item-text="name"
+                        label="Student"
+                        name="student_id"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      >
+                        <template #selection="{ item, selected }">
+                          <v-chip :input-value="selected">
+                            <app-avatar
+                              :image="item.image"
+                              :name="item.name"
+                              left=""
+                              text-class="caption"
+                            />
+                            <span>{{ item.name }}</span>
+                          </v-chip>
+                        </template>
+                        <template #item="{ item }">
+                          <v-list-item-avatar>
+                            <app-avatar
+                              :image="item.image"
+                              :name="item.name"
+                              :size="36"
+                              text-class="caption"
+                            />
+                          </v-list-item-avatar>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ item.name }}
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </template>
+                      </v-autocomplete>
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12" sm="6">
                   <div>
                     <input
                       ref="image"
-                      style="display: none;"
+                      class="d-none"
                       type="file"
                       name="image"
                       accept="image/jpeg,image/jpg"
@@ -406,6 +464,7 @@
                       :disabled="isLoading"
                       :loading="isLoading"
                       color="primary"
+                      class="ma-1"
                       @click="onSelectImage"
                     >
                       Select Image
@@ -414,21 +473,20 @@
                   </div>
                   <v-img alt="Image" :src="image.url">
                     <template #placeholder="">
-                      <v-layout
-                        fill-height=""
-                        align-center=""
-                        justify-center=""
-                        ma-0=""
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
                       >
                         <v-progress-circular
                           indeterminate=""
                           color="grey lighten-5"
                         />
-                      </v-layout>
+                      </v-row>
                     </template>
                   </v-img>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -437,7 +495,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="onClose"
             >
               Cancel
@@ -446,7 +504,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="primary"
-              flat=""
+              text=""
               @click="onCreateOrEdit"
             >
               {{ isEditing ? 'Edit' : 'Save' }}
@@ -458,11 +516,10 @@
         v-model="isRemovingDialog"
         width="350"
         scrollable=""
-        lazy=""
         @input="onCloseRemoving"
       >
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Delete Confirmation
@@ -472,8 +529,8 @@
             <v-btn icon="" @click="onCloseRemoving">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
+          </v-app-bar>
+          <v-card-text class="pt-5">
             <div class="body-2">
               Are you sure you want to remove {{ presence.student.name }}?
             </div>
@@ -484,7 +541,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="onCloseRemoving"
             >
               Cancel
@@ -493,7 +550,7 @@
               :loading="isLoading"
               :disabled="isLoading"
               color="error"
-              flat=""
+              text=""
               @click="onRemove(presence)"
             >
               Remove
@@ -501,9 +558,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isEnlargingImage" width="700" scrollable="" lazy="">
+      <v-dialog v-model="isEnlargingImage" width="700" scrollable="">
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Image
@@ -513,32 +570,31 @@
             <v-btn icon="" @click="isEnlargingImage = false">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout wrap="">
-                <v-flex xs12="">
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12">
                   <v-img
                     v-if="presence.image"
                     :src="enlargedImage.url"
                     :alt="enlargedImage.name"
                   >
                     <template #placeholder="">
-                      <v-layout
-                        fill-height=""
-                        align-center=""
-                        justify-center=""
-                        ma-0=""
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
                       >
                         <v-progress-circular
                           indeterminate=""
                           color="grey lighten-5"
                         />
-                      </v-layout>
+                      </v-row>
                     </template>
                   </v-img>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -547,7 +603,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="isEnlargingImage = false"
             >
               Cancel
@@ -561,6 +617,7 @@
 
 <script>
 /* eslint-disable camelcase */
+import { validate } from 'vee-validate'
 import toFormData from 'json-form-data'
 import cloneDeep from 'lodash/fp/cloneDeep'
 import upperFirst from 'lodash/fp/upperFirst'
@@ -656,11 +713,10 @@ export default {
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: '-datetime',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['-datetime']
       },
       totalItems: 0,
       students: [],
@@ -752,20 +808,13 @@ export default {
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
-        if (sortBy) {
-          if (sortBy.includes('.name')) {
-            sortBy = `${sortBy.replace('.name', '')}_id`
-          }
-        }
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchPresences({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * itemsPerPage,
+          sortDesc
         })
       },
       deep: true
@@ -833,25 +882,26 @@ export default {
     async fetchPresences(
       {
         orderBy = this.pagination.sortBy,
-        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending = this.pagination.descending
+        limit = this.pagination.itemsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc
       } = {
         orderBy: this.pagination.sortBy,
-        limit: this.pagination.rowsPerPage,
+        limit: this.pagination.itemsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending: this.pagination.descending
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
         if (orderBy) {
           if (orderBy.includes('.name')) {
             orderBy = `${orderBy.replace('.name', '')}_id`
           }
         }
-        if (descending) {
+        if (sortDesc[0]) {
           orderBy = `-${orderBy}`
         }
         const {
@@ -1044,7 +1094,7 @@ export default {
     onClose() {
       this.isCreatingOrEditingDialog = false
       this.isEditing = false
-      this.$validator.reset()
+
       this.presence = { ...this.default }
 
       this.image.url = ''
@@ -1067,8 +1117,12 @@ export default {
       }
     ) {
       try {
-        const valid = await this.$validator.validate()
-        if (valid) {
+        const valids = await Promise.all(
+          Object.keys(this.presence)
+            .filter((i) => i !== 'id')
+            .map((i) => validate(this.presence[i], 'required'))
+        )
+        if (valids.every(({ valid }) => valid)) {
           this.isLoading = true
 
           let payload = cloneDeep(_payload)
@@ -1128,7 +1182,7 @@ export default {
     },
     onCloseRemoving() {
       this.isRemovingDialog = false
-      this.$validator.reset()
+
       this.presence = { ...this.default }
     },
     async onRemove(item) {

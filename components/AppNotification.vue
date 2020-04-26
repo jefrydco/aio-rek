@@ -1,13 +1,7 @@
 <template>
-  <v-snackbar
-    :value="message !== null"
-    :color="kind"
-    auto-height=""
-    right=""
-    @input="$notify"
-  >
+  <v-snackbar :value="message !== null" :color="kind" right="" @input="$notify">
     {{ message }}
-    <v-btn flat="" @click="$notify">
+    <v-btn text="" @click="$notify">
       Close
     </v-btn>
   </v-snackbar>

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar card="">
+    <v-app-bar flat="">
       <v-toolbar-title>
         <h2 class="headline">Lecturers</h2>
       </v-toolbar-title>
@@ -8,17 +8,19 @@
       <v-btn class="aio-refresh" color="accent" @click="fetchLecturers">
         Refresh
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <v-card-text>
       <v-data-table
         :headers="headers"
         :items="lecturers"
-        :rows-per-page-items="rowsPerPageItems"
-        :pagination.sync="pagination"
-        :total-items="totalItems"
+        :footer-props="{
+          'items-per-page-options': rowsPerPageItems
+        }"
+        :options.sync="pagination"
+        :server-items-length="totalItems"
         :loading="isLoading"
       >
-        <template #items="{ item, index }">
+        <template #item="{ item, index }">
           <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
             <td class="py-1">
               <app-avatar
@@ -35,13 +37,13 @@
             </td>
             <td class="py-1 body-2 text-center">
               <v-chip v-if="item.is_active" color="info" text-color="white">
-                <v-avatar class="info darken-3">
+                <v-avatar left="" class="info darken-3">
                   <v-icon>check</v-icon>
                 </v-avatar>
                 <span>Active</span>
               </v-chip>
               <v-chip v-else="" color="error" text-color="white">
-                <v-avatar class="error darken-3">
+                <v-avatar left="" class="error darken-3">
                   <v-icon>close</v-icon>
                 </v-avatar>
                 <span>Inactive</span>
@@ -50,6 +52,7 @@
             <td class="py-1 body-2 text-center">
               <v-btn
                 color="primary"
+                class="ma-1"
                 nuxt=""
                 exact=""
                 :class="`aio-edit-${kebabCase(item.name)}`"
@@ -60,6 +63,7 @@
               <v-btn
                 :class="`aio-delete-${kebabCase(item.name)}`"
                 color="error"
+                class="ma-1"
               >
                 Delete
               </v-btn>
@@ -106,38 +110,30 @@ export default {
       isLoading: false,
       headers: [
         { text: 'Image', value: 'image', sortable: false },
-        { text: 'Identifier', value: 'name' },
+        { text: 'Identifier', value: 'identifier' },
         { text: 'Name', value: 'name' },
         { text: 'Is Active?', value: 'group.is_active', align: 'center' },
         { text: 'Action', align: 'center', sortable: false }
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: 'name',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['name']
       },
       totalItems: 0
     }
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
-        if (sortBy) {
-          if (sortBy.includes('.name')) {
-            sortBy = `${sortBy.replace('.name', '')}_id`
-          }
-        }
-        if (descending) {
-          sortBy = `-${sortBy}`
-        }
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         this.fetchLecturers({
           orderBy: sortBy,
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           // Taken from: https://stackoverflow.com/a/3521002/7711812
-          offset: (page - 1) * rowsPerPage
+          offset: (page - 1) * itemsPerPage,
+          sortDesc
         })
       },
       deep: true
@@ -146,17 +142,28 @@ export default {
   methods: {
     async fetchLecturers(
       {
-        orderBy = 'name',
+        orderBy = this.pagination.sortBy,
         limit = 25,
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc
       } = {
-        orderBy: 'name',
+        orderBy: this.pagination.sortBy,
         limit: 25,
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
+        if (orderBy) {
+          if (orderBy.includes('.name')) {
+            orderBy = `${orderBy.replace('.name', '')}_id`
+          }
+        }
+        if (sortDesc[0]) {
+          orderBy = `-${orderBy}`
+        }
         const {
           rowCount,
           lecturers,

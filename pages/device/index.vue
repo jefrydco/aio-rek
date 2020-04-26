@@ -1,10 +1,10 @@
 <template>
-  <v-layout wrap="">
-    <v-flex xs12="">
-      <v-layout wrap="">
-        <v-flex xs12="" md6="">
+  <v-row class="flex-wrap">
+    <v-col cols="12">
+      <v-row class="flex-wrap">
+        <v-col cols="12" md="6">
           <v-card>
-            <v-toolbar card="">
+            <v-app-bar flat="">
               <v-toolbar-title>
                 <h2 class="headline">Camera</h2>
               </v-toolbar-title>
@@ -12,11 +12,11 @@
               <v-chip label="" color="accent" text-color="white">
                 Idle: {{ idleTime }}
               </v-chip>
-            </v-toolbar>
+            </v-app-bar>
             <v-card-text>
-              <v-container class="pa-0" fluid="" grid-list-xl="">
-                <v-layout style="display: none;" wrap="">
-                  <v-flex xs12="">
+              <v-container class="pa-0" fluid="">
+                <v-row class="flex-wrap d-none">
+                  <v-col cols="12">
                     <video
                       id="live-video"
                       ref="liveVideo"
@@ -24,25 +24,25 @@
                       height="540"
                       autoplay=""
                     />
-                  </v-flex>
-                </v-layout>
-                <v-layout wrap="">
-                  <v-flex xs12="">
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
                     <canvas
                       id="live-canvas"
                       ref="liveCanvas"
                       width="720"
                       height="540"
                     />
-                  </v-flex>
-                </v-layout>
-                <v-layout wrap="">
-                  <v-flex xs12="">
+                  </v-col>
+                </v-row>
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
                     <v-autocomplete
                       v-model="selectedCamera"
                       :items="cameras"
                       label="Camera"
-                      outline=""
+                      outlined=""
                       item-value="deviceId"
                       item-text="label"
                     />
@@ -52,11 +52,11 @@
                     <v-chip label="" color="accent" text-color="white">
                       Duration: {{ prettyDuration(duration) }}
                     </v-chip>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
 
-                <v-layout wrap="">
-                  <v-flex xs12="" class="pa-4">
+                <v-row class="flex-wrap">
+                  <v-col cols="12" class="pa-4">
                     <v-slider
                       v-model="minConfidence"
                       :max="0.99"
@@ -76,13 +76,13 @@
                       ticks=""
                     />
                     <v-item-group v-model="selectedOptions" multiple="">
-                      <v-layout wrap="">
-                        <v-flex
+                      <v-row class="flex-wrap">
+                        <v-col
                           v-for="(option, i) in options"
                           :key="`option_${i}`"
-                          xs12=""
-                          md4=""
-                          lg3=""
+                          cols="12"
+                          md="4"
+                          lg="3"
                         >
                           <v-item :value="option.value">
                             <template #default="{ active, toggle }">
@@ -101,18 +101,18 @@
                               </v-card>
                             </template>
                           </v-item>
-                        </v-flex>
-                      </v-layout>
+                        </v-col>
+                      </v-row>
                     </v-item-group>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-card-text>
           </v-card>
-        </v-flex>
-        <v-flex xs12="" md6="">
+        </v-col>
+        <v-col cols="12" md="6">
           <v-card class="mb-3">
-            <v-toolbar card="">
+            <v-app-bar flat="">
               <v-toolbar-title>
                 <h2 class="headline">
                   Start Lesson
@@ -122,41 +122,42 @@
               <v-chip label="" color="accent" text-color="white">
                 Timeout: {{ timeoutTime }}
               </v-chip>
-            </v-toolbar>
+            </v-app-bar>
             <v-card-text>
-              <v-container class="pa-0" fluid="" grid-list-xl="">
-                <v-layout v-if="isLecturerDetected" wrap="">
-                  <v-flex xs12="">
-                    <v-layout wrap="">
-                      <v-flex xs12="" sm3="">
+              <v-container class="pa-0" fluid="">
+                <v-row v-if="isLecturerDetected" class="flex-wrap">
+                  <v-col cols="12">
+                    <v-row class="flex-wrap">
+                      <v-col cols="12" sm="3">
                         <app-avatar
                           :name="removeTitle(detectedLecturer.name)"
                           :image="detectedLecturer.image"
                           :size="128"
                           text-class="caption"
                         />
-                      </v-flex>
-                      <v-flex xs12="" sm9="">
-                        <v-layout wrap="">
-                          <v-flex xs12="">
+                      </v-col>
+                      <v-col cols="12" sm="9">
+                        <v-row class="flex-wrap">
+                          <v-col cols="12">
                             <h3 class="display-1">
                               {{ detectedLecturer.name }}
                             </h3>
-                          </v-flex>
-                        </v-layout>
-                        <v-layout v-if="!isAttendanceStarted" wrap="">
-                          <v-flex xs12="">
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="!isAttendanceStarted" class="flex-wrap">
+                          <v-col cols="12">
                             <v-dialog
                               v-model="isConfirming"
                               width="350"
                               scrollable=""
-                              lazy=""
                             >
                               <template #activator="{ on }">
-                                <v-btn large="" v-on="on">Cancel</v-btn>
+                                <v-btn class="mr-3" large="" v-on="on">
+                                  Cancel
+                                </v-btn>
                               </template>
                               <v-card>
-                                <v-card-text>
+                                <v-card-text class="pt-5">
                                   <div class="body-2">
                                     To cancel the lesson, please keep your face
                                     away from the camera
@@ -167,7 +168,7 @@
                                   <v-btn
                                     :loading="isLoading"
                                     :disabled="isLoading"
-                                    flat=""
+                                    text=""
                                     @click="isConfirming = false"
                                   >
                                     Cancel
@@ -176,7 +177,7 @@
                                     :loading="isLoading"
                                     :disabled="isLoading"
                                     color="primary"
-                                    flat=""
+                                    text=""
                                     @click="onUnderstand"
                                   >
                                     I Understand
@@ -185,14 +186,14 @@
                               </v-card>
                             </v-dialog>
 
-                            <v-btn large="" color="primary" @click="onCustom">
+                            <!-- <v-btn large="" color="primary" @click="onCustom">
                               Custom
-                            </v-btn>
+                            </v-btn> -->
+
                             <v-dialog
                               v-model="isChoosingSchedule"
                               width="1050"
                               scrollable=""
-                              lazy=""
                             >
                               <template #activator="{ on }">
                                 <v-btn large="" color="accent" v-on="on">
@@ -200,7 +201,7 @@
                                 </v-btn>
                               </template>
                               <v-card>
-                                <v-toolbar card="" color="primary" dark="">
+                                <v-app-bar flat="" color="primary" dark="">
                                   <v-toolbar-title>
                                     Choose Schedule
                                   </v-toolbar-title>
@@ -211,26 +212,19 @@
                                   >
                                     <v-icon>close</v-icon>
                                   </v-btn>
-                                </v-toolbar>
-                                <v-card-text>
-                                  <v-container
-                                    class="pa-0"
-                                    fluid=""
-                                    grid-list-xl=""
-                                  >
-                                    <v-data-iterator
-                                      :items="schedules"
-                                      :rows-per-page-items="rowsPerPageItems"
-                                      :pagination.sync="pagination"
-                                      :total-items="totalItems"
-                                      :loading="isLoading"
-                                      content-tag="v-layout"
-                                      row=""
-                                      wrap=""
-                                    >
-                                      <template #item="{ item }">
-                                        <v-fade-transition>
-                                          <v-flex xs12="" sm6="" md4="">
+                                </v-app-bar>
+                                <v-card-text class="pt-5">
+                                  <v-container class="pa-0" fluid="">
+                                    <v-data-iterator :items="schedules">
+                                      <template #default="{ items }">
+                                        <v-row class="flex-wrap">
+                                          <v-col
+                                            v-for="item in items"
+                                            :key="item.id"
+                                            cols="12"
+                                            sm="6"
+                                            md="4"
+                                          >
                                             <v-card
                                               ripple=""
                                               @click="onStart(item)"
@@ -262,8 +256,8 @@
                                                 </h5>
                                               </v-card-text>
                                             </v-card>
-                                          </v-flex>
-                                        </v-fade-transition>
+                                          </v-col>
+                                        </v-row>
                                       </template>
                                     </v-data-iterator>
                                   </v-container>
@@ -273,7 +267,7 @@
                                   <v-spacer />
                                   <v-btn
                                     large=""
-                                    flat=""
+                                    text=""
                                     @click="isChoosingSchedule = false"
                                   >
                                     Cancel
@@ -281,12 +275,12 @@
                                 </v-card-actions>
                               </v-card>
                             </v-dialog>
-                          </v-flex>
-                        </v-layout>
-                        <v-layout v-else="" wrap="">
-                          <v-flex xs12="">
-                            <v-layout wrap="">
-                              <v-flex xs12="">
+                          </v-col>
+                        </v-row>
+                        <v-row v-else="" class="flex-wrap">
+                          <v-col cols="12">
+                            <v-row class="flex-wrap">
+                              <v-col cols="12">
                                 <h4>Subject</h4>
                                 <h5 class="subheading mb-1">
                                   {{ attendance.schedule.subject.name }}
@@ -311,15 +305,14 @@
                                 <h5 class="subheading mb-1">
                                   {{ attendance.schedule.group.name }}
                                 </h5>
-                              </v-flex>
-                            </v-layout>
-                            <v-layout wrap="">
-                              <v-flex xs12="">
+                              </v-col>
+                            </v-row>
+                            <v-row class="flex-wrap">
+                              <v-col cols="12">
                                 <v-dialog
                                   v-model="isStoping"
                                   width="350"
                                   scrollable=""
-                                  lazy=""
                                 >
                                   <template #activator="{ on }">
                                     <v-btn color="accent" large="" v-on="on">
@@ -327,7 +320,7 @@
                                     </v-btn>
                                   </template>
                                   <v-card>
-                                    <v-card-text>
+                                    <v-card-text class="pt-5">
                                       <div class="body-2">
                                         Are you sure to stop the lesson?
                                       </div>
@@ -337,7 +330,7 @@
                                       <v-btn
                                         :loading="isLoading"
                                         :disabled="isLoading"
-                                        flat=""
+                                        text=""
                                         @click="isStoping = false"
                                       >
                                         Cancel
@@ -346,7 +339,7 @@
                                         :loading="isLoading"
                                         :disabled="isLoading"
                                         color="error"
-                                        flat=""
+                                        text=""
                                         @click="onStop"
                                       >
                                         Stop
@@ -354,26 +347,26 @@
                                     </v-card-actions>
                                   </v-card>
                                 </v-dialog>
-                              </v-flex>
-                            </v-layout>
-                          </v-flex>
-                        </v-layout>
-                      </v-flex>
-                    </v-layout>
-                  </v-flex>
-                </v-layout>
-                <v-layout v-else="" wrap="">
-                  <v-flex xs12="" class="text-center">
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+                <v-row v-else="" class="flex-wrap">
+                  <v-col cols="12" class="text-center">
                     <h3 class="headline">
                       Please, point Your face at the camera to start the lesson
                     </h3>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-card-text>
           </v-card>
           <v-card>
-            <v-toolbar card="">
+            <v-app-bar flat="">
               <v-toolbar-title>
                 <h2 class="headline">Presences</h2>
               </v-toolbar-title>
@@ -381,20 +374,22 @@
               <v-chip label="" color="accent" text-color="white">
                 Late: {{ lateTime }}
               </v-chip>
-            </v-toolbar>
+            </v-app-bar>
             <v-card-text>
-              <v-container class="pa-0" fluid="" grid-list-xl="">
-                <v-layout wrap="">
-                  <v-flex xs12="">
+              <v-container class="pa-0" fluid="">
+                <v-row class="flex-wrap">
+                  <v-col cols="12">
                     <v-data-table
                       :headers="headers"
                       :items="presences"
-                      :rows-per-page-items="rowsPerPageItems"
-                      :pagination.sync="pagination"
-                      :total-items="totalItems"
+                      :footer-props="{
+                        'items-per-page-options': rowsPerPageItems
+                      }"
+                      :options.sync="pagination"
+                      :server-items-length="totalItems"
                       :loading="isLoading"
                     >
-                      <template #items="{ item, index }">
+                      <template #item="{ item, index }">
                         <tr :class="{ 'grey lighten-4': index % 2 === 0 }">
                           <td class="py-1">
                             <app-avatar
@@ -412,13 +407,13 @@
                               color="error"
                               text-color="white"
                             >
-                              <v-avatar class="error darken-3">
+                              <v-avatar left="" class="error darken-3">
                                 <v-icon>close</v-icon>
                               </v-avatar>
                               <span>Late</span>
                             </v-chip>
                             <v-chip v-else="" color="info" text-color="white">
-                              <v-avatar class="info darken-3">
+                              <v-avatar left="" class="info darken-3">
                                 <v-icon>check</v-icon>
                               </v-avatar>
                               <span>On Time</span>
@@ -430,6 +425,7 @@
                               text-color="white"
                             >
                               <v-avatar
+                                left=""
                                 :class="`${getStatusColor(
                                   item.status
                                 )} darken-3`"
@@ -455,88 +451,92 @@
                             >
                               Enlarge Image
                             </v-btn>
-                            <v-btn
+                            <!-- <v-btn
                               color="primary"
-                              @click="onTrigger($event, item)"
+                              class="mb-3"
+                              @click="onTriggerEdit($event, item)"
                             >
                               Edit
                             </v-btn>
                             <v-btn
                               color="error"
+                              class="mb-3"
                               @click="onTriggerRemoving(item)"
                             >
                               Delete
-                            </v-btn>
+                            </v-btn> -->
                           </td>
                         </tr>
                       </template>
                     </v-data-table>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-card-text>
           </v-card>
-        </v-flex>
-      </v-layout>
-      <v-dialog
-        v-model="isConfiguring"
-        scrollable=""
-        persistent=""
-        width="350"
-        lazy=""
-      >
+        </v-col>
+      </v-row>
+      <v-dialog v-model="isConfiguring" scrollable="" persistent="" width="350">
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Device Configuration
               </h3>
             </v-toolbar-title>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout wrap="">
-                <v-flex xs12="">
-                  <v-autocomplete
-                    v-model="selectedRoom"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('room')"
-                    :disabled="isLoading"
-                    :items="rooms"
-                    item-text="name"
-                    item-value="id"
-                    label="Room"
-                    data-vv-name="room"
-                    data-vv-as="room"
-                    name="room"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="room"
-                  />
-                </v-flex>
-              </v-layout>
-              <v-layout wrap="">
-                <v-flex xs12="">
-                  <v-autocomplete
-                    v-model="selectedDevice"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('camera')"
-                    :disabled="isLoading"
-                    :items="cameras"
-                    item-value="deviceId"
-                    item-text="label"
-                    label="Camera"
-                    data-vv-name="camera"
-                    data-vv-as="camera"
-                    name="camera"
-                    required=""
-                    clearable=""
-                    outline=""
-                    data-vv-value-path="camera"
-                  />
-                </v-flex>
-              </v-layout>
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Room"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="selectedRoom"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="rooms"
+                        item-text="name"
+                        item-value="id"
+                        label="Room"
+                        name="room"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
+              <v-row class="flex-wrap">
+                <v-col cols="12">
+                  <validation-observer>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Camera"
+                      rules="required"
+                    >
+                      <v-autocomplete
+                        v-model="selectedDevice"
+                        :error-messages="errors"
+                        :disabled="isLoading"
+                        :items="cameras"
+                        item-value="deviceId"
+                        item-text="label"
+                        label="Camera"
+                        name="camera"
+                        required=""
+                        clearable=""
+                        outlined=""
+                      />
+                    </validation-provider>
+                  </validation-observer>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -552,9 +552,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isEnlargingImage" width="700" scrollable="" lazy="">
+      <v-dialog v-model="isEnlargingImage" width="700" scrollable="">
         <v-card>
-          <v-toolbar color="primary" dark="" card="">
+          <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
               <h3 class="title">
                 Image
@@ -564,28 +564,27 @@
             <v-btn icon="" @click="isEnlargingImage = false">
               <v-icon>close</v-icon>
             </v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-container class="pa-0" fluid="" grid-list-xl="">
-              <v-layout wrap="">
-                <v-flex xs12="">
+          </v-app-bar>
+          <v-card-text class="pt-5">
+            <v-container class="pa-0" fluid="">
+              <v-row class="flex-wrap">
+                <v-col cols="12">
                   <v-img :src="enlargedImage.url" :alt="enlargedImage.name">
                     <template #placeholder="">
-                      <v-layout
-                        fill-height=""
-                        align-center=""
-                        justify-center=""
-                        ma-0=""
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
                       >
                         <v-progress-circular
                           indeterminate=""
                           color="grey lighten-5"
                         />
-                      </v-layout>
+                      </v-row>
                     </template>
                   </v-img>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
           <v-divider />
@@ -594,7 +593,7 @@
             <v-btn
               :loading="isLoading"
               :disabled="isLoading"
-              flat=""
+              text=""
               @click="isEnlargingImage = false"
             >
               Cancel
@@ -602,31 +601,24 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog
-        v-model="isIdling"
-        fullscreen=""
-        persistent=""
-        scrollable=""
-        lazy=""
-      >
+      <v-dialog v-model="isIdling" fullscreen="" persistent="" scrollable="">
         <v-card>
-          <v-card-text class="fill-height">
-            <v-container fluid="" grid-list-xl="" fill-height="">
-              <v-layout wrap="" align-center="" justify-center="">
-                <v-flex xs12="" sm4="" class="text-center">
+          <v-card-text class="fill-height pt-5">
+            <v-container fluid="" class="fill-height">
+              <v-row class="flex-wrap" align="center" justify="center">
+                <v-col cols="12" sm="4" class="text-center">
                   <v-img :src="randomCat()" alt="Cat" class="mb-3">
                     <template #placeholder="">
-                      <v-layout
-                        fill-height=""
-                        align-center=""
-                        justify-center=""
-                        ma-0=""
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
                       >
                         <v-progress-circular
                           indeterminate=""
                           color="grey lighten-5"
                         />
-                      </v-layout>
+                      </v-row>
                     </template>
                   </v-img>
                   <h2 class="headline mb-3">
@@ -636,19 +628,19 @@
                   <v-btn color="primary" large="" @click="onAyoRek">
                     Ayo Rek
                   </v-btn>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
         </v-card>
       </v-dialog>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 /* eslint-disable camelcase */
-
+import { validate } from 'vee-validate'
 import { Howl } from 'howler'
 import uniqueRandomArray from 'unique-random-array'
 import toFormData from 'json-form-data'
@@ -672,9 +664,9 @@ import { types as deviceTypes } from '~/store/device'
 import string from '~/mixins/string'
 
 const MAXIMUM_IDLE = 60 * 1000 // seconds
-const MAXIMUM_DETECTED_LECTURER_TIMEOUT = 60 * 1000 // seconds
-const MAXIMUM_STUDENT_LATE = 30 * 1000 // seconds
-const MAXIMUM_STUDENT_TIME_OUT = 60 * 1000 // minutes
+const MAXIMUM_DETECTED_LECTURER_TIMEOUT = 10 * 60 * 1000 // seconds
+const MAXIMUM_STUDENT_LATE = 10 * 30 * 1000 // seconds
+const MAXIMUM_STUDENT_TIME_OUT = 10 * 60 * 1000 // minutes
 
 const randomCat = uniqueRandomArray([
   '/cats/cat-1.gif',
@@ -684,6 +676,23 @@ const randomCat = uniqueRandomArray([
 
 export default {
   mixins: [string],
+  async asyncData({ app: { $api, $handleError } }) {
+    try {
+      const [{ rooms }, { lecturers }] = await Promise.all([
+        $api.rooms.fetchPage({ limit: -1 }),
+        $api.lecturers.fetchPage({
+          limit: -1,
+          withRelated: 'images.descriptor'
+        })
+      ])
+      return {
+        rooms,
+        lecturers
+      }
+    } catch (error) {
+      $handleError(error)
+    }
+  },
   data() {
     return {
       isIdling: false,
@@ -710,11 +719,10 @@ export default {
       ],
       rowsPerPageItems: [25, 50, 75, 100],
       pagination: {
-        descending: false,
+        sortDesc: [false],
         page: 1,
-        rowsPerPage: 25,
-        sortBy: '-datetime',
-        totalItems: 25
+        itemsPerPage: 25,
+        sortBy: ['-datetime']
       },
       totalItems: 0,
       fps: 60,
@@ -846,21 +854,14 @@ export default {
   },
   watch: {
     pagination: {
-      handler({ descending, page, rowsPerPage, sortBy }) {
+      handler({ sortDesc, page, itemsPerPage, sortBy }) {
         if (this.isAttendanceStarted) {
-          if (sortBy) {
-            if (sortBy.includes('.name')) {
-              sortBy = `${sortBy.replace('.name', '')}_id`
-            }
-          }
-          if (descending) {
-            sortBy = `-${sortBy}`
-          }
           this.fetchPresences({
             orderBy: sortBy,
-            limit: rowsPerPage,
+            limit: itemsPerPage,
             // Taken from: https://stackoverflow.com/a/3521002/7711812
-            offset: (page - 1) * rowsPerPage
+            offset: (page - 1) * itemsPerPage,
+            sortDesc
           })
         }
       },
@@ -922,23 +923,6 @@ export default {
       } else {
         await this.init()
       }
-    }
-  },
-  async asyncData({ app: { $api, $handleError } }) {
-    try {
-      const [{ rooms }, { lecturers }] = await Promise.all([
-        $api.rooms.fetchPage({ limit: -1 }),
-        $api.lecturers.fetchPage({
-          limit: -1,
-          withRelated: 'images.descriptor'
-        })
-      ])
-      return {
-        rooms,
-        lecturers
-      }
-    } catch (error) {
-      $handleError(error)
     }
   },
   async beforeMount() {
@@ -1023,8 +1007,11 @@ export default {
       this.isConfiguring = true
     },
     async onSaveConfiguration() {
-      const valid = await this.$validator.validate()
-      if (valid) {
+      const valids = await Promise.all([
+        validate(this.selectedRoom, 'required'),
+        validate(this.selectedDevice, 'required')
+      ])
+      if (valids.every(({ valid }) => valid)) {
         this.$store.commit(`device/${deviceTypes.SET_CONFIGURING}`, false)
         this.$store.commit(
           `device/${deviceTypes.SET_DEVICE}`,
@@ -1335,30 +1322,33 @@ export default {
       this.enlargedImage.name = item.student.name
       this.enlargedImage.url = item.image
     },
+    // onTriggerEdit() {},
+    // onTriggerRemoving() {},
     async fetchPresences(
       {
         orderBy = this.pagination.sortBy,
-        limit = this.pagination.rowsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset = (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending = this.pagination.descending,
+        limit = this.pagination.itemsPerPage, // Taken from: https://stackoverflow.com/a/3521002/7711812
+        offset = (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc = this.pagination.sortDesc,
         attendance_id = this.attendance.id
       } = {
         orderBy: this.pagination.sortBy,
-        limit: this.pagination.rowsPerPage,
+        limit: this.pagination.itemsPerPage,
         // Taken from: https://stackoverflow.com/a/3521002/7711812
-        offset: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-        descending: this.pagination.descending,
+        offset: (this.pagination.page - 1) * this.pagination.itemsPerPage,
+        sortDesc: this.pagination.sortDesc,
         attendance_id: this.attendance.id
       }
     ) {
       try {
         this.isLoading = true
+        orderBy = orderBy[0]
         if (orderBy) {
           if (orderBy.includes('.name')) {
             orderBy = `${orderBy.replace('.name', '')}_id`
           }
         }
-        if (descending) {
+        if (sortDesc[0]) {
           orderBy = `-${orderBy}`
         }
         const {

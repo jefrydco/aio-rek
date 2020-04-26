@@ -1,4 +1,9 @@
 import Vue from 'vue'
-import VeeValidate from 'vee-validate'
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
+import { required, email } from 'vee-validate/dist/rules'
 
-Vue.use(VeeValidate)
+extend('required', required)
+extend('email', email)
+
+Vue.component('ValidationObserver', ValidationObserver)
+Vue.component('ValidationProvider', ValidationProvider)

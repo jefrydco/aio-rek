@@ -77,7 +77,7 @@ module.exports = {
   plugins: [
     '~plugins/components',
     // '~plugins/vuetify',
-    // '~plugins/vee-validate',
+    '~plugins/vee-validate',
     '~plugins/api',
     '~plugins/notify',
     '~plugins/handle-error',
@@ -87,6 +87,25 @@ module.exports = {
 
   // https://nuxtjs.org/api/configuration-css
   css: ['~assets/styles/app', '~/assets/styles/main'],
+
+  // https://pwa.nuxtjs.org/modules/meta.html
+  meta: {
+    name: 'AIO Rek',
+    description: 'Face recognition based attendance system',
+    twitterCard: 'summary_large_image',
+    twitterSite: '@jefrydco',
+    twitterCreator: '@jefrydco'
+  },
+
+  // https://pwa.nuxtjs.org/modules/manifest.html
+  manifest: {
+    name: 'AIO Rek',
+    short_name: 'AIO Rek',
+    start_url: '/?utm_source=homescreen',
+    description: 'Face recognition based attendance system',
+    background_color: '#2D3748',
+    theme_color: '#2D3748'
+  },
 
   // https://pwa.nuxtjs.org/modules/workbox.html
   workbox: {
@@ -103,6 +122,12 @@ module.exports = {
       '/models/face_landmark_68_model-shard1',
       '/models/face_expression_model-shard1',
       '/models/age_gender_model-shard1'
+    ],
+    runtimeCaching: [
+      {
+        urlPattern: 'https://fonts.gstatic.com/.*',
+        handler: 'staleWhileRevalidate'
+      }
     ]
   },
 

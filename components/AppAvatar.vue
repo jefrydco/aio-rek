@@ -1,10 +1,10 @@
 <template>
-  <v-avatar :color="getColor" :size="size">
+  <v-avatar :color="getColor" :size="size" :left="left">
     <v-img v-if="image" :src="image" :alt="name">
       <template #placeholder="">
-        <v-layout fill-height="" align-center="" justify-center="" ma-0="">
+        <v-row align="center" justify="center" class="fill-height ma-0">
           <v-progress-circular indeterminate="" color="grey lighten-5" />
-        </v-layout>
+        </v-row>
       </template>
       <slot />
     </v-img>
@@ -37,6 +37,10 @@ export default {
     textClass: {
       type: String,
       default: ''
+    },
+    left: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

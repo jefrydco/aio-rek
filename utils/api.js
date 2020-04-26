@@ -1,20 +1,20 @@
-const qs = require('qs')
+const { stringify } = require('query-string')
 
 export default ($http) => (resource) => ({
   create(attributes, filter, options) {
-    const queryString = qs.stringify(filter)
+    const queryString = stringify(filter)
     return $http.$post(`${resource}?${queryString}`, attributes, options)
   },
   fetchPage(filter, options) {
-    const queryString = qs.stringify(filter)
+    const queryString = stringify(filter)
     return $http.$get(`${resource}?${queryString}`, options)
   },
   fetch(id, filter, options) {
-    const queryString = qs.stringify(filter)
+    const queryString = stringify(filter)
     return $http.$get(`${resource}/${id}?${queryString}`, options)
   },
   update(id, attributes, filter, options) {
-    const queryString = qs.stringify(filter)
+    const queryString = stringify(filter)
     return $http.$put(`${resource}/${id}?${queryString}`, attributes, options)
   },
   destroy(id, options) {

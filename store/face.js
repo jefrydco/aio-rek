@@ -121,8 +121,10 @@ export const actions = {
         )
       }
     })
-    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
-    commit(types.SET_FACE_MATCHER, faceMatcher)
+    if (labeledDescriptors.length > 0) {
+      const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
+      commit(types.SET_FACE_MATCHER, faceMatcher)
+    }
   },
   async getFaceDetections(
     { commit, state },
