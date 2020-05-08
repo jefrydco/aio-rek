@@ -53,7 +53,7 @@
     "chance": "^1.1.4",
     "checkit": "^0.7.0",
     "clipboard-copy": "^3.1.0",
-    "convict": "^5.2.0",
+    "convict": "^6.0.0",
     "cookieparser": "^0.1.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.2",
