@@ -73,7 +73,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.0",
     "lodash": "^4.17.15",
-    "lru-cache": "^5.1.1",
+    "lru-cache": "^6.0.0",
     "material-color-hash": "^0.1.6",
     "moment": "^2.24.0",
     "morgan": "^1.10.0",
