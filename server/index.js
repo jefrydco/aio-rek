@@ -4,7 +4,11 @@ const helmet = require('helmet')
 const { Nuxt, Builder } = require('nuxt')
 const app = express()
 
-app.use(helmet())
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+)
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
