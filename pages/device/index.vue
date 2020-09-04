@@ -114,9 +114,7 @@
           <v-card class="mb-3">
             <v-app-bar flat="">
               <v-toolbar-title>
-                <h2 class="headline">
-                  Start Lesson
-                </h2>
+                <h2 class="headline">Start Lesson</h2>
               </v-toolbar-title>
               <v-spacer />
               <v-chip label="" color="accent" text-color="white">
@@ -480,9 +478,7 @@
         <v-card>
           <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
-              <h3 class="title">
-                Device Configuration
-              </h3>
+              <h3 class="title">Device Configuration</h3>
             </v-toolbar-title>
           </v-app-bar>
           <v-card-text class="pt-5">
@@ -556,9 +552,7 @@
         <v-card>
           <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
-              <h3 class="title">
-                Image
-              </h3>
+              <h3 class="title">Image</h3>
             </v-toolbar-title>
             <v-spacer />
             <v-btn icon="" @click="isEnlargingImage = false">

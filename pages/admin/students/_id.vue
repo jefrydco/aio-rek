@@ -217,7 +217,7 @@
                               v-if="hover"
                               fluid=""
                               class="fill-height"
-                              style="background-color: rgba(0, 0, 0, 0.5);"
+                              style="background-color: rgba(0, 0, 0, 0.5)"
                             >
                               <v-row
                                 class="fill-height"
@@ -509,9 +509,7 @@
                                     v-if="removingImages.includes(item.id)"
                                     fluid=""
                                     class="fill-height"
-                                    style="
-                                      background-color: rgba(0, 0, 0, 0.5);
-                                    "
+                                    style="background-color: rgba(0, 0, 0, 0.5)"
                                   >
                                     <v-row
                                       class="fill-height flex-wrap"
@@ -534,9 +532,7 @@
                                     v-if="hover"
                                     fluid=""
                                     class="fill-height"
-                                    style="
-                                      background-color: rgba(0, 0, 0, 0.5);
-                                    "
+                                    style="background-color: rgba(0, 0, 0, 0.5)"
                                   >
                                     <v-row
                                       class="fill-height flex-wrap"

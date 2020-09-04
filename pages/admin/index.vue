@@ -1,8 +1,6 @@
 <template>
   <v-card>
-    <v-card-text>
-      Hello
-    </v-card-text>
+    <v-card-text> Hello </v-card-text>
   </v-card>
 </template>
 

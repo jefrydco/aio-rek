@@ -128,9 +128,7 @@
         <v-card>
           <v-app-bar color="primary" dark="" flat="">
             <v-toolbar-title>
-              <h3 class="title">
-                Delete Confirmation
-              </h3>
+              <h3 class="title">Delete Confirmation</h3>
             </v-toolbar-title>
             <v-spacer />
             <v-btn icon="" @click="onCloseRemoving">
