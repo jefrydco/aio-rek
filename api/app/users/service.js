@@ -1,7 +1,7 @@
-'use strict'
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const config = require('../../config')
+const knex = require('knex')(config.get('db'))
 const User = require('../models/User')
 const LoginAttempt = require('../models/LoginAttempt')
 const Service = require('../base/Service')
@@ -39,6 +39,22 @@ class UserService extends Service {
     const token = this.generateJWT(user)
     await LoginAttempt.create({ user_id: user.id, timestamp: new Date(), status: 'successful' })
     return this.getAuthJSON(user, token)
+  }
+  async updatePassword(email, newPassword, passwordConfirmation) {
+    const user = await knex('users').where({ email }).first()
+    if (!user) {
+      throw new Error('User not found')
+    }
+    if (newPassword !== passwordConfirmation) {
+      throw new Error('Password and confirmation do not match')
+    }
+    await knex('users').where({ id: user.id }).update({ password: newPassword })
+    await knex('login_attempts').insert({
+      user_id: user.id,
+      timestamp: new Date(),
+      status: 'password updated'
+    })
+    return { message: 'Password updated successfully' }
   }
 }
 module.exports = (app) => new UserService(app)

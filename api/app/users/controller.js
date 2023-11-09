@@ -1,4 +1,3 @@
-'use strict'
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
@@ -35,6 +34,18 @@ class UserController extends Controller {
       const { user } = req
       const service = this._getService(res)
       return res.json({ [this.name]: service.toJSON(user) })
+    })(req, res, next)
+  }
+  updatePassword(req, res, next) {
+    return errorCatcher(async (req, res) => {
+      const { email, new_password: newPassword, password_confirmation: passwordConfirmation } = req.body
+      const service = this._getService(res)
+      try {
+        await service.updatePassword(email, newPassword, passwordConfirmation)
+        return res.status(200).json({ message: 'Password updated successfully' })
+      } catch (error) {
+        return res.status(400).json({ message: error.message })
+      }
     })(req, res, next)
   }
 }
