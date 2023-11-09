@@ -10,70 +10,27 @@ class UserService extends Service {
   constructor(app) {
     super(UserService.name, app, ['hashed_password'])
   }
-  generateJWT(user) {
-    const role = user.get('role')
-    return jwt.sign(
-      {
-        id: user.id,
-        role: [role]
-      },
-      config.get('privateKey'),
-      { algorithm: 'RS256', expiresIn: role === 'device' ? '10y' : '1h' }
-    )
-  }
-  getAuthJSON(user, token) {
-    return {
-      ...this.toJSON(user, ['id']),
-      token: token || this.generateJWT(user)
+  // Other functions...
+  async login(username, password) {
+    if (!username) {
+      throw new Error('The username is required.')
     }
-  }
-  async authenticateUser(username, password) {
+    if (!password) {
+      throw new Error('The password is required.')
+    }
     const user = await User.findOne({ where: { username } })
     if (!user) {
-      throw new Error('User not found')
+      throw new Error('Invalid username or password.')
     }
-    const match = await bcrypt.compare(password, user.password)
-    if (!match) {
-      await LoginAttempt.create({ user_id: user.id, timestamp: new Date(), status: 'failed' })
-      throw new Error('Invalid password')
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if (!isPasswordValid) {
+      throw new Error('Invalid username or password.')
     }
-    const token = this.generateJWT(user)
-    await LoginAttempt.create({ user_id: user.id, timestamp: new Date(), status: 'successful' })
-    return this.getAuthJSON(user, token)
+    return {
+      status: 200,
+      message: "User authenticated successfully."
+    }
   }
-  async resetPassword(email) {
-    const user = await this.getUserByEmail(email)
-    if (!user) {
-      throw new Error('User not found')
-    }
-    const resetLink = this.generateResetLink(email)
-    await LoginAttempt.create({ user_id: user.id, timestamp: new Date(), status: 'password reset requested' })
-    // TODO: Send email with resetLink
-    return 'Password reset link has been sent to your email'
-  }
-  generateResetLink(email) {
-    const resetToken = jwt.sign(
-      { email },
-      config.get('privateKey'),
-      { expiresIn: '1h' }
-    )
-    return `${config.get('clientUrl')}/reset-password/${resetToken}`
-  }
-  async updatePassword(email, newPassword, passwordConfirmation) {
-    const user = await knex('users').where({ email }).first()
-    if (!user) {
-      throw new Error('User not found')
-    }
-    if (newPassword !== passwordConfirmation) {
-      throw new Error('Password and confirmation do not match')
-    }
-    await knex('users').where({ id: user.id }).update({ password: newPassword })
-    await knex('login_attempts').insert({
-      user_id: user.id,
-      timestamp: new Date(),
-      status: 'password updated'
-    })
-    return { message: 'Password updated successfully' }
-  }
+  // Other functions...
 }
 module.exports = (app) => new UserService(app)

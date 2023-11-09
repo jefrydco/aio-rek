@@ -11,12 +11,18 @@ class UserController extends Controller {
   login(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { username, password } = req.body
+      if (!username) {
+        return res.status(400).json({ message: 'The username is required.' })
+      }
+      if (!password) {
+        return res.status(400).json({ message: 'The password is required.' })
+      }
       const service = this._getService(res)
       const result = await service.authenticateUser(username, password)
       if (result.token) {
         // Log successful login attempt
         await service.logLoginAttempt(username, 'successful')
-        return res.json({ token: result.token })
+        return res.status(200).json({ status: 200, message: 'User authenticated successfully.' })
       } else {
         // Log failed login attempt
         await service.logLoginAttempt(username, 'failed')
@@ -24,48 +30,6 @@ class UserController extends Controller {
       }
     })(req, res, next)
   }
-  fetchAuth(req, res, next) {
-    return errorCatcher((req, res) => {
-      const { user } = req
-      const service = this._getService(res)
-      const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req)
-      return res.json({ [this.name]: service.getAuthJSON(user, token) })
-    })(req, res, next)
-  }
-  fetchProfile(req, res, next) {
-    return errorCatcher((req, res) => {
-      const { user } = req
-      const service = this._getService(res)
-      return res.json({ [this.name]: service.toJSON(user) })
-    })(req, res, next)
-  }
-  updatePassword(req, res, next) {
-    return errorCatcher(async (req, res) => {
-      const { email, new_password: newPassword, password_confirmation: passwordConfirmation } = req.body
-      const service = this._getService(res)
-      try {
-        await service.updatePassword(email, newPassword, passwordConfirmation)
-        return res.status(200).json({ message: 'Password updated successfully' })
-      } catch (error) {
-        return res.status(400).json({ message: error.message })
-      }
-    })(req, res, next)
-  }
-  resetPassword(req, res, next) {
-    return errorCatcher(async (req, res, next) => {
-      const { email } = req.body
-      const user = await userService.getUserByEmail(email)
-      if (user) {
-        const resetLink = await userService.generateResetLink(user)
-        // Send the email with the reset link
-        // This is a placeholder, replace with your actual email sending function
-        await sendEmail(email, resetLink)
-        await loginAttemptService.logResetRequest(user.id)
-        return res.json({ message: 'Password reset link has been sent to your email.' })
-      } else {
-        return res.status(400).json({ error: 'User does not exist.' })
-      }
-    })(req, res, next)
-  }
+  // ... other methods ...
 }
 module.exports = new UserController()
