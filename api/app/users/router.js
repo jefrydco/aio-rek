@@ -1,5 +1,5 @@
+// PATH: /api/app/users/router.js
 'use strict'
-
 const bodyParser = require('body-parser')
 const router = require('express').Router()
 const {
@@ -8,7 +8,6 @@ const {
   localAuth,
   handleRole
 } = require('../middleware')
-
 const {
   login,
   fetchAuth,
@@ -17,9 +16,9 @@ const {
   fetchPage,
   fetch,
   update,
-  destroy
+  destroy,
+  resetPassword // import the resetPassword function from the controller
 } = require('./controller')
-
 router.post(
   '/users/login',
   bodyParser.json(),
@@ -64,7 +63,6 @@ router.delete(
   handleRole('admin'),
   destroy
 )
-
 router.get(
   '/user/auth',
   createTransaction,
@@ -79,5 +77,11 @@ router.get(
   handleRole([['admin'], ['device']]),
   fetchProfile
 )
-
+// Add a new route for the password reset request
+router.post(
+  '/users/reset-password',
+  bodyParser.json(),
+  createTransaction,
+  resetPassword
+)
 module.exports = router

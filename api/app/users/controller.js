@@ -1,6 +1,9 @@
+'use strict'
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
+const userService = require('./service')
+const loginAttemptService = require('../login_attempts/service')
 class UserController extends Controller {
   constructor() {
     super(UserController.name)
@@ -45,6 +48,22 @@ class UserController extends Controller {
         return res.status(200).json({ message: 'Password updated successfully' })
       } catch (error) {
         return res.status(400).json({ message: error.message })
+      }
+    })(req, res, next)
+  }
+  resetPassword(req, res, next) {
+    return errorCatcher(async (req, res, next) => {
+      const { email } = req.body
+      const user = await userService.getUserByEmail(email)
+      if (user) {
+        const resetLink = await userService.generateResetLink(user)
+        // Send the email with the reset link
+        // This is a placeholder, replace with your actual email sending function
+        await sendEmail(email, resetLink)
+        await loginAttemptService.logResetRequest(user.id)
+        return res.json({ message: 'Password reset link has been sent to your email.' })
+      } else {
+        return res.status(400).json({ error: 'User does not exist.' })
       }
     })(req, res, next)
   }
