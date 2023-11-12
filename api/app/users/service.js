@@ -12,8 +12,14 @@ class UserService extends Service {
   constructor(app) {
     super(UserService.name, app, ['hashed_password'])
   }
-  // ...
-  // Add the new function here
+  // ... existing methods ...
+  async checkKYCStatus(id) {
+    const user = await this.app.models.User.findOne({ where: { id } })
+    if (!user) {
+      throw new Error('User not found')
+    }
+    return user.kyc_status
+  }
   async retrieveKYCDocuments(user_id) {
     // Validate user_id
     if (!user_id) {
@@ -24,6 +30,5 @@ class UserService extends Service {
     // Return the retrieved documents
     return kycDocuments
   }
-  // ...
 }
 module.exports = (app) => new UserService(app)
