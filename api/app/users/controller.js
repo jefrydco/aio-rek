@@ -28,6 +28,18 @@ class UserController extends Controller {
       return res.json({ [this.name]: service.toJSON(user) })
     })(req, res, next)
   }
+  forgotPassword(req, res, next) {
+    return errorCatcher(async (req, res) => {
+      const { email } = req.body
+      const service = this._getService(res)
+      const result = await service.forgotPassword(email)
+      if (result) {
+        return res.json({ message: 'A password reset email has been sent.' })
+      } else {
+        return res.status(400).json({ message: 'Failed to send password reset email.' })
+      }
+    })(req, res, next)
+  }
   resetPassword(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { reset_link, new_password } = req.body

@@ -1,6 +1,9 @@
+'use strict'
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
 const config = require('../../config')
+const uuid = require('uuid')
+const nodemailer = require('nodemailer')
+const bcrypt = require('bcryptjs')
 const LoginAttempt = require('../login_attempts/model')
 const Service = require('../base/Service')
 class UserService extends Service {
@@ -43,6 +46,33 @@ class UserService extends Service {
     await loginAttempt.save()
     const token = this.generateJWT(user)
     return this.getAuthJSON(user, token)
+  }
+  async forgotPassword(email) {
+    const user = await this.app.models.User.findOne({ where: { email } })
+    if (!user) {
+      throw new Error('User not found')
+    }
+    const resetLink = uuid.v4()
+    await this.app.models.PasswordReset.create({
+      user_id: user.id,
+      request_time: new Date(),
+      reset_link: resetLink
+    })
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: config.get('email'),
+        pass: config.get('password')
+      }
+    })
+    const mailOptions = {
+      from: config.get('email'),
+      to: email,
+      subject: 'Password Reset',
+      text: `You requested for a password reset, kindly use this ${resetLink} to reset your password`
+    }
+    await transporter.sendMail(mailOptions)
+    return 'Password reset email has been sent.'
   }
   async resetPassword(reset_link, new_password) {
     const passwordReset = await this.app.models.PasswordReset.findOne({ where: { reset_link } })

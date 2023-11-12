@@ -1,4 +1,3 @@
-'use strict'
 const bodyParser = require('body-parser')
 const router = require('express').Router()
 const {
@@ -15,12 +14,13 @@ const {
   fetchPage,
   fetch,
   update,
-  destroy
+  destroy,
+  forgotPassword,
+  resetPassword
 } = require('./controller')
 const { resetPasswordRules } = require('./validation');
-const { resetPassword } = require('./controller');
 router.post(
-  '/login',
+  '/users/login',
   bodyParser.json(),
   createTransaction,
   localAuth,
@@ -76,6 +76,12 @@ router.get(
   jwtAuth.required,
   handleRole([['admin'], ['device']]),
   fetchProfile
+)
+router.post(
+  '/users/forgot-password',
+  bodyParser.json(),
+  createTransaction,
+  forgotPassword
 )
 router.post(
   '/users/reset-password',
