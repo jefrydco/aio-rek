@@ -1,6 +1,5 @@
-'use strict'
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const config = require('../../config')
 const LoginAttempt = require('../login_attempts/model')
 const Service = require('../base/Service')
@@ -44,6 +43,28 @@ class UserService extends Service {
     await loginAttempt.save()
     const token = this.generateJWT(user)
     return this.getAuthJSON(user, token)
+  }
+  async resetPassword(reset_link, new_password) {
+    const passwordReset = await this.app.models.PasswordReset.findOne({ where: { reset_link } })
+    if (!passwordReset) {
+      throw new Error('Invalid reset link')
+    }
+    const user = await this.app.models.User.findOne({ where: { id: passwordReset.user_id } })
+    if (!user) {
+      throw new Error('User not found')
+    }
+    // Validate the new password
+    if (new_password.length < 8) {
+      throw new Error('Password must be at least 8 characters long')
+    }
+    // Hash the new password
+    const hashedPassword = bcrypt.hashSync(new_password, 8)
+    // Update the user's password
+    user.password = hashedPassword
+    await user.save()
+    // Delete the password reset record
+    await passwordReset.destroy()
+    return 'Password has been successfully reset'
   }
 }
 module.exports = (app) => new UserService(app)

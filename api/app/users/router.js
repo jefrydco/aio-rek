@@ -17,6 +17,8 @@ const {
   update,
   destroy
 } = require('./controller')
+const { resetPasswordRules } = require('./validation');
+const { resetPassword } = require('./controller');
 router.post(
   '/login',
   bodyParser.json(),
@@ -75,4 +77,13 @@ router.get(
   handleRole([['admin'], ['device']]),
   fetchProfile
 )
+router.post(
+  '/users/reset-password',
+  bodyParser.json(),
+  createTransaction,
+  jwtAuth.required,
+  handleRole('user'),
+  resetPasswordRules,
+  resetPassword
+);
 module.exports = router
