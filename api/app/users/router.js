@@ -1,4 +1,3 @@
-// PATH: /api/app/users/router.js
 const bodyParser = require('body-parser')
 const router = require('express').Router()
 const {
@@ -18,14 +17,15 @@ const {
   destroy,
   forgotPassword,
   resetPassword,
-  getKYCDocuments
+  checkKYCStatus
 } = require('./controller')
 const { resetPasswordRules } = require('./validation');
 // Existing routes...
 router.get(
-  '/users/:id/kyc-documents',
+  '/api/users/:id/kyc',
   createTransaction,
   jwtAuth.required,
-  getKYCDocuments
-)
+  handleRole('user'),
+  checkKYCStatus
+);
 module.exports = router
