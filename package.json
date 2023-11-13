@@ -38,7 +38,7 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "@hapi/boom": "^9.1.0",
+    "@hapi/boom": "^10.0.1",
     "@nuxt/http": "^0.5.12",
     "@nuxtjs/moment": "^1.6.1",
     "@nuxtjs/proxy": "^2.0.1",
