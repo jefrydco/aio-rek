@@ -1,10 +1,26 @@
+<<<<<<< HEAD
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const errorCatcher = require('async-error-catcher').default;
+const Controller = require('../base/Controller');
+=======
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const errorCatcher = require('async-error-catcher').default
 const Controller = require('../base/Controller')
+>>>>>>> test-github
 class UserController extends Controller {
   constructor() {
-    super(UserController.name)
+    super(UserController.name);
   }
+<<<<<<< HEAD
+  // Existing code...
+  resetPassword(req, res, next) {
+    return errorCatcher(async (req, res) => {
+      const { email } = req.body;
+      const service = this._getService(res);
+      const message = await service.resetPassword(email);
+      return res.json({ message });
+    })(req, res, next);
+=======
   login(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { username, password } = req.body
@@ -27,6 +43,7 @@ class UserController extends Controller {
       const service = this._getService(res)
       return res.json({ [this.name]: service.toJSON(user) })
     })(req, res, next)
+>>>>>>> test-github
   }
   forgotPassword(req, res, next) {
     return errorCatcher(async (req, res) => {
@@ -49,4 +66,8 @@ class UserController extends Controller {
     })(req, res, next)
   }
 }
+<<<<<<< HEAD
+module.exports = new UserController();
+=======
 module.exports = new UserController()
+>>>>>>> test-github
