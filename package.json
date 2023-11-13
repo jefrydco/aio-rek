@@ -64,7 +64,7 @@
     "express-jwt-permissions": "^1.3.3",
     "express-pino-logger": "^5.0.0",
     "face-api.js": "^0.22.2",
-    "helmet": "^4.1.0",
+    "helmet": "^7.1.0",
     "howler": "^2.2.0",
     "initials": "^3.1.1",
     "is-dark-color": "^1.2.0",
