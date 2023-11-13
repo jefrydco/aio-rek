@@ -4,6 +4,12 @@ const emailService = require('../services/emailService');
 const { body, validationResult } = require('express-validator');
 exports.validate = (method) => {
   switch (method) {
+    case 'authenticateUser': {
+      return [
+        body('username', 'The username is required.').exists(),
+        body('password', 'The password is required.').exists(),
+      ]
+    }
     case 'lockAccount': {
       return [
         body('username', 'The username is required.').exists(),
@@ -17,6 +23,19 @@ exports.validate = (method) => {
     }
   }
 }
+exports.authenticateUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const { username, password } = req.body;
+  try {
+    const user = await userService.authenticateUser(username, password);
+    return res.status(200).json({ status: 200, message: 'Authentication successful.', user });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
 exports.lockAccount = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
