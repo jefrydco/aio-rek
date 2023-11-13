@@ -1,7 +1,7 @@
-// PATH: /api/app/auth/controller.js
 const userService = require('../services/userService');
 const loginAttemptService = require('../services/loginAttemptService');
 const { body, validationResult } = require('express-validator');
+const sendEmail = require('../services/emailService'); // Assuming you have an email service
 exports.validate = (method) => {
   switch (method) {
     case 'resetPassword': {
@@ -21,10 +21,7 @@ exports.resetPassword = async (req, res, next) => {
   const user = await userService.getUserByEmail(email);
   if (user) {
     const resetLink = await userService.generateResetLink(user);
-    const expiryDate = await userService.setExpiryDate();
-    await userService.saveResetLink(user, resetLink, expiryDate);
-    // TODO: Replace this with actual function for sending emails
-    // sendEmail(user.email, resetLink);
+    sendEmail(user.email, resetLink); // Send the reset link to the user's email
     loginAttemptService.logResetRequest(user);
     return res.status(200).json({ status: 200, message: 'Password reset link sent to email.' });
   } else {
