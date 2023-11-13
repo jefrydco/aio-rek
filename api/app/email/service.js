@@ -1,35 +1,47 @@
 const nodemailer = require('nodemailer');
-const User = require('../models/User');
-const PasswordReset = require('../models/PasswordReset');
-class EmailService {
-  async sendEmail(userEmail) {
-    let user = await User.findOne({ email: userEmail });
-    if (!user) {
-      return { status: 'failure', message: 'Email does not exist' };
-    }
-    let resetLink = await PasswordReset.create({ userId: user.id, expiresAt: Date.now() + 24*60*60*1000 });
+const User = require('../models/user'); // Assuming the User model is in this path
+async function sendAccountLockedEmail(user) {
     let transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-      }
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD
+        }
     });
     let mailOptions = {
-      from: process.env.EMAIL_USERNAME,
-      to: userEmail,
-      subject: 'Password Reset Link',
-      text: `You requested for a password reset, kindly use this ${resetLink} to reset your password.`
+        from: process.env.EMAIL,
+        to: user.email,
+        subject: 'Account Locked',
+        text: `Dear ${user.username},\n\nYour account has been locked due to multiple unsuccessful login attempts. Please contact our support team to unlock your account.\n\nBest Regards,\nYour Team`
     };
     transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-        return { status: 'failure', message: 'Error sending email' };
-      } else {
-        console.log('Email sent: ' + info.response);
-        return { status: 'success', message: 'Email sent successfully' };
-      }
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
     });
-  }
 }
-module.exports = new EmailService();
+async function lockUserAccount(username) {
+    try {
+        const user = await User.findOne({ username: username });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.failedLoginAttempts += 1;
+        if (user.failedLoginAttempts >= 3) {
+            user.accountLocked = true;
+            user.lockedUntil = Date.now() + 6 * 60 * 60 * 1000; // 6 hours from now
+            await sendAccountLockedEmail(user);
+        }
+        await user.save();
+        return { accountLocked: user.accountLocked };
+    } catch (error) {
+        console.error(error);
+        return { error: error.message };
+    }
+}
+module.exports = {
+    sendAccountLockedEmail,
+    lockUserAccount
+};
