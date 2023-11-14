@@ -36,3 +36,13 @@ exports.resetPassword = async (req, res, next) => {
     return res.status(400).json({ error: 'User does not exist.' });
   }
 };
+exports.handleLogin = async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    await authService.validateCredentials(username, password);
+    const token = authService.generateToken(username);
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};

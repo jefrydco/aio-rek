@@ -1,24 +1,35 @@
-// PATH: /api/app/auth/service.js
 const User = require('../models/User');
 const PasswordReset = require('../models/PasswordReset');
 const LoginAttempt = require('../models/LoginAttempt');
+const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const userService = require('../users/service');
+const loginAttemptService = require('../login_attempts/service');
+const emailService = require('../email/service');
+const errorUtil = require('../utils/error');
 class AuthService {
   ...
-  async getUserByUsername(username) {
+  async validateCredentials(username, password) {
     try {
-      const user = await User.findOne({ where: { username } });
+      const user = await userService.findUserByUsername(username);
+      if (!user) {
+        throw errorUtil.createError('Invalid credentials');
+      }
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        await loginAttemptService.recordFailedLoginAttempt(user.id);
+        const failedAttempts = await loginAttemptService.countFailedLoginAttempts(user.id);
+        if (failedAttempts > 5) {
+          const lockExpiry = new Date();
+          lockExpiry.setHours(lockExpiry.getHours() + 6);
+          await userService.lockUserAccount(user.id, lockExpiry);
+          await emailService.sendAccountLockedEmail(user.email);
+        }
+        throw errorUtil.createError('Invalid credentials');
+      }
       return user;
-    } catch (error) {
-      throw error;
-    }
-  }
-  async comparePassword(enteredPassword, storedPassword) {
-    try {
-      return await bcrypt.compare(enteredPassword, storedPassword);
     } catch (error) {
       throw error;
     }
@@ -27,18 +38,6 @@ class AuthService {
     try {
       const user = await User.update({ last_login: new Date() }, { where: { id: userId } });
       return user;
-    } catch (error) {
-      throw error;
-    }
-  }
-  async createLoginAttempt(userId, successful) {
-    try {
-      const loginAttempt = await LoginAttempt.create({
-        attempt_time: new Date(),
-        successful: successful,
-        user_id: userId
-      });
-      return loginAttempt;
     } catch (error) {
       throw error;
     }
@@ -53,16 +52,12 @@ class AuthService {
   }
   async authenticateUser(username, password) {
     try {
-      const user = await this.getUserByUsername(username);
+      const user = await this.validateCredentials(username, password);
       if (!user) {
         throw new Error('User not found');
       }
-      const isValidPassword = await this.comparePassword(password, user.password);
-      if (!isValidPassword) {
-        throw new Error('Invalid password');
-      }
       await this.updateLastLogin(user.id);
-      await this.createLoginAttempt(user.id, true);
+      await loginAttemptService.recordSuccessfulLoginAttempt(user.id);
       const token = await this.generateToken(user);
       return { user, token };
     } catch (error) {
