@@ -115,7 +115,7 @@
     "babel-jest": "^26.3.0",
     "codecov": "^3.7.2",
     "cypress": "^5.1.0",
-    "eslint": "^7.8.1",
+    "eslint": "^8.53.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-loader": "^4.0.2",
