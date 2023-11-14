@@ -1,7 +1,9 @@
+// PATH: /api/app/password_reset/service.js
 const PasswordReset = require('../models/PasswordReset');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
+const uuid = require('uuid');
 const validateResetLink = async (resetLink) => {
   const passwordReset = await PasswordReset.findOne({ reset_link: resetLink });
   if (!passwordReset) {
@@ -22,18 +24,17 @@ const resetPassword = async (resetLink, newPassword) => {
   await user.save();
   await passwordReset.remove();
 };
-const sendResetLink = async (email) => {
+const requestPasswordReset = async (email) => {
   const user = await User.findOne({ email: email });
   if (!user) {
     throw new Error('Email not found');
   }
-  const resetLink = await bcrypt.hash(user._id.toString(), 10);
-  const expiryDate = new Date();
-  expiryDate.setHours(expiryDate.getHours() + 24);
+  const resetLink = uuid.v4();
+  const requestTime = new Date();
   const passwordReset = new PasswordReset({
     user_id: user._id,
     reset_link: resetLink,
-    expiry_date: expiryDate
+    request_time: requestTime
   });
   await passwordReset.save();
   const transporter = nodemailer.createTransport({
@@ -50,9 +51,10 @@ const sendResetLink = async (email) => {
     text: `Here is your password reset link: ${resetLink}`
   };
   await transporter.sendMail(mailOptions);
+  return "A password reset link has been sent to your email address.";
 };
 module.exports = {
   validateResetLink,
   resetPassword,
-  sendResetLink
+  requestPasswordReset
 };
