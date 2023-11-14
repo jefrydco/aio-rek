@@ -1,54 +1,70 @@
+// PATH: /api/app/auth/service.js
 const User = require('../models/User');
 const PasswordReset = require('../models/PasswordReset');
+const LoginAttempt = require('../models/LoginAttempt');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 class AuthService {
   ...
-  async getUserByEmail(email) {
+  async getUserByUsername(username) {
     try {
-      const user = await User.findOne({ where: { email } });
+      const user = await User.findOne({ where: { username } });
       return user;
     } catch (error) {
       throw error;
     }
   }
-  async generateResetLink(userId) {
+  async comparePassword(enteredPassword, storedPassword) {
     try {
-      const resetLink = crypto.randomBytes(20).toString('hex');
-      const expiryDate = new Date();
-      expiryDate.setHours(expiryDate.getHours() + 24); // Link expires after 24 hours
-      const passwordReset = await PasswordReset.create({
-        reset_link: resetLink,
-        expiry_date: expiryDate,
-        user_id: userId
-      });
-      return passwordReset;
+      return await bcrypt.compare(enteredPassword, storedPassword);
     } catch (error) {
       throw error;
     }
   }
-  async sendResetLink(email, resetLink) {
+  async updateLastLogin(userId) {
     try {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'your-email@gmail.com',
-          pass: 'your-password'
-        }
+      const user = await User.update({ last_login: new Date() }, { where: { id: userId } });
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async createLoginAttempt(userId, successful) {
+    try {
+      const loginAttempt = await LoginAttempt.create({
+        attempt_time: new Date(),
+        successful: successful,
+        user_id: userId
       });
-      const mailOptions = {
-        from: 'your-email@gmail.com',
-        to: email,
-        subject: 'Password Reset',
-        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\nhttp://${req.headers.host}/reset/${resetLink}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`
-      };
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
+      return loginAttempt;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async generateToken(user) {
+    try {
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async authenticateUser(username, password) {
+    try {
+      const user = await this.getUserByUsername(username);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const isValidPassword = await this.comparePassword(password, user.password);
+      if (!isValidPassword) {
+        throw new Error('Invalid password');
+      }
+      await this.updateLastLogin(user.id);
+      await this.createLoginAttempt(user.id, true);
+      const token = await this.generateToken(user);
+      return { user, token };
     } catch (error) {
       throw error;
     }
