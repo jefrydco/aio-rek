@@ -1,4 +1,3 @@
-// PATH: /api/app/password_reset/service.js
 const PasswordReset = require('../models/PasswordReset');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
@@ -14,8 +13,17 @@ const validateResetLink = async (resetLink) => {
   }
   return passwordReset;
 };
-const resetPassword = async (resetLink, newPassword) => {
+const validateNewPassword = (newPassword, newPasswordConfirmation) => {
+  if (newPassword !== newPasswordConfirmation) {
+    throw new Error('Password confirmation does not match');
+  }
+  if (newPassword.length < 8) {
+    throw new Error('Password must be at least 8 characters long');
+  }
+};
+const resetPassword = async (resetLink, newPassword, newPasswordConfirmation) => {
   const passwordReset = await validateResetLink(resetLink);
+  validateNewPassword(newPassword, newPasswordConfirmation);
   const user = await User.findById(passwordReset.user_id);
   if (!user) {
     throw new Error('User not found');
@@ -23,6 +31,7 @@ const resetPassword = async (resetLink, newPassword) => {
   user.password = await bcrypt.hash(newPassword, 10);
   await user.save();
   await passwordReset.remove();
+  return { message: 'Password has been reset successfully' };
 };
 const requestPasswordReset = async (email) => {
   const user = await User.findOne({ email: email });
@@ -56,5 +65,6 @@ const requestPasswordReset = async (email) => {
 module.exports = {
   validateResetLink,
   resetPassword,
-  requestPasswordReset
+  requestPasswordReset,
+  validateNewPassword
 };
