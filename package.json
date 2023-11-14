@@ -97,7 +97,7 @@
     "rimraf": "^3.0.2",
     "set-interval-async": "^1.0.33",
     "unique-random-array": "^2.0.0",
-    "uuid": "^8.3.0",
+    "uuid": "^9.0.1",
     "uuid-validate": "^0.0.3",
     "v-mask": "^2.2.3",
     "vee-validate": "^3.3.9",
