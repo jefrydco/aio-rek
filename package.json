@@ -87,7 +87,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.3.3",
     "pino": "^6.5.1",
-    "pino-pretty": "^4.2.0",
+    "pino-pretty": "^10.2.3",
     "pluralize": "^8.0.0",
     "pretty-ms": "^7.0.0",
     "query-string": "^6.13.1",
