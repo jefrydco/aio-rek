@@ -94,7 +94,7 @@
     "rate-limiter-flexible": "^2.1.10",
     "redis": "^3.0.2",
     "require-directory": "^2.1.1",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.5",
     "set-interval-async": "^1.0.33",
     "unique-random-array": "^2.0.0",
     "uuid": "^8.3.0",
