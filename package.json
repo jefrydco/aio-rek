@@ -100,7 +100,7 @@
     "uuid": "^8.3.0",
     "uuid-validate": "^0.0.3",
     "v-mask": "^2.2.3",
-    "vee-validate": "^3.3.9",
+    "vee-validate": "^4.11.8",
     "vue-directive-long-press": "^1.1.0",
     "vuex-persist": "^2.2.0"
   },
