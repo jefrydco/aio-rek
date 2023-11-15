@@ -31,4 +31,12 @@ router.get(
   handleRole('user'),
   getUserProgress
 )
+// Add new route for updating user progress details
+router.put(
+  '/users/:id/progress',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('user'),
+  updateProgress
+)
 module.exports = router

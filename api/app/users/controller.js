@@ -6,28 +6,29 @@ class UserController extends Controller {
     super(UserController.name);
   }
   // Existing code...
-  getUserProgress(req, res, next) {
+  updateUserProgress(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { id } = req.params;
+      const { progress } = req.body;
       const service = this._getService(res);
-      const progressDetails = await service.getUserProgress(id);
-      return res.status(200).json(progressDetails);
-    })(req, res, next);
-  }
-  resetPassword(req, res, next) {
-    return errorCatcher(async (req, res) => {
-      const { email } = req.body;
-      const service = this._getService(res);
-      const message = await service.resetPassword(email);
-      return res.json({ message });
-    })(req, res, next);
-  }
-  updateProgress(req, res, next) {
-    return errorCatcher(async (req, res) => {
-      const { id, progress } = req.body;
-      const service = this._getService(res);
-      const result = await service.updateUserProgress(id, progress);
-      return res.json(result);
+      if (isNaN(id)) {
+        return res.status(422).json({ message: "Wrong format." });
+      }
+      if (isNaN(progress)) {
+        return res.status(422).json({ message: "Wrong format." });
+      }
+      try {
+        const updatedUser = await service.updateUserProgress(id, progress);
+        if (!updatedUser) {
+          return res.status(404).json({ message: "This user is not found." });
+        }
+        return res.status(200).json({
+          status: 200,
+          user: updatedUser
+        });
+      } catch (error) {
+        return res.status(500).json({ message: error.message });
+      }
     })(req, res, next);
   }
   // Other existing methods...

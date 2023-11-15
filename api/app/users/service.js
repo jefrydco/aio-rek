@@ -1,3 +1,4 @@
+// PATH: /api/app/users/service.js
 const jwt = require('jsonwebtoken')
 const config = require('../../config')
 const uuid = require('uuid')
@@ -29,10 +30,17 @@ class UserService extends Service {
   }
   // Function to update user progress
   async updateUserProgress(id, progress) {
+    // Validate input parameters
+    if (typeof id !== 'number') {
+      throw new Error('Wrong format.')
+    }
+    if (typeof progress !== 'number') {
+      throw new Error('Wrong format.')
+    }
     // Validate user ID
     const user = await this.app.models.User.findOne({ where: { id } })
     if (!user) {
-      throw new Error('User not found')
+      throw new Error('This user is not found.')
     }
     // Update progress
     user.progress = progress
@@ -44,8 +52,12 @@ class UserService extends Service {
     }
     // Combine progress and progress meaning into a single response
     return {
-      progress: user.progress,
-      progress_meaning: progressDetails.progress_meaning
+      status: 200,
+      user: {
+        id: user.id,
+        name: user.name,
+        progress: user.progress
+      }
     }
   }
   // Rest of the code
