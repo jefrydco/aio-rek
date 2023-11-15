@@ -18,6 +18,7 @@ const {
   destroy,
   forgotPassword,
   resetPassword,
+  getUserProgress, // import the getUserProgress function
   updateProgress // import the updateProgress function
 } = require('./controller')
 const { resetPasswordRules } = require('./validation');
@@ -101,5 +102,13 @@ router.post(
   handleRole('user'),
   resetPasswordRules,
   resetPassword
-);
+)
+// Add new route for getting user progress details
+router.get(
+  '/users/:id/progress',
+  createTransaction,
+  jwtAuth.required,
+  handleRole('user'),
+  getUserProgress
+)
 module.exports = router

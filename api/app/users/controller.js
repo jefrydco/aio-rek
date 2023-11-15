@@ -6,6 +6,14 @@ class UserController extends Controller {
     super(UserController.name);
   }
   // Existing code...
+  getUserProgress(req, res, next) {
+    return errorCatcher(async (req, res) => {
+      const { id } = req.params;
+      const service = this._getService(res);
+      const progressDetails = await service.getUserProgress(id);
+      return res.status(200).json(progressDetails);
+    })(req, res, next);
+  }
   resetPassword(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { email } = req.body;
@@ -14,7 +22,6 @@ class UserController extends Controller {
       return res.json({ message });
     })(req, res, next);
   }
-  // Updated method
   updateProgress(req, res, next) {
     return errorCatcher(async (req, res) => {
       const { id, progress } = req.body;

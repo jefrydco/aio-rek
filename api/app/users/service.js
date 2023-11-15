@@ -1,5 +1,3 @@
-// PATH: /api/app/users/service.js
-'use strict'
 const jwt = require('jsonwebtoken')
 const config = require('../../config')
 const uuid = require('uuid')
@@ -7,6 +5,7 @@ const nodemailer = require('nodemailer')
 const bcrypt = require('bcryptjs')
 const LoginAttempt = require('../login_attempts/model')
 const Service = require('../base/Service')
+const PasswordReset = require('../password_reset/model') // Assuming this model exists
 class UserService extends Service {
   constructor(app) {
     super(UserService.name, app, ['hashed_password'])
@@ -14,6 +13,20 @@ class UserService extends Service {
   //...
   // Existing code
   //...
+  // Function to get user progress
+  async getUserProgress(id) {
+    const user = await this.app.models.User.findOne({ where: { id } })
+    if (!user) {
+      throw new Error('User not found')
+    }
+    const progressValue = user.progress;
+    const progressDetail = await this.app.models.ProgressDetail.findOne({ where: { user_id: id } })
+    if (!progressDetail) {
+      throw new Error('Progress detail not found')
+    }
+    const progressMeaning = progressDetail.progress_meaning;
+    return { progressValue, progressMeaning };
+  }
   // Function to update user progress
   async updateUserProgress(id, progress) {
     // Validate user ID
@@ -35,5 +48,7 @@ class UserService extends Service {
       progress_meaning: progressDetails.progress_meaning
     }
   }
+  // Rest of the code
+  //...
 }
 module.exports = (app) => new UserService(app)
