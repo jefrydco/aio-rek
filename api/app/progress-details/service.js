@@ -1,20 +1,39 @@
-// PATH: /api/app/progress-details/service.js
-'use strict'
 const Service = require('../base/Service')
 class ProgressDetailService extends Service {
   constructor(app) {
     super(ProgressDetailService.name, app)
   }
-  async addProgressDetail(userId, progressMeaning) {
+  async getUserProgress(user_id) {
+    // Validate the existence of the user
+    const user = await this.app.models.User.findOne({ where: { id: user_id } })
+    if (!user) {
+      throw new Error('This user is not found.')
+    }
+    // Fetch the user's progress detail
+    const progressDetail = await this.app.models.ProgressDetail.findOne({ where: { user_id } })
+    if (!progressDetail) {
+      throw new Error('Progress detail not found')
+    }
+    // Return the user's progress value and progress meaning
+    return {
+      status: 200,
+      user: {
+        id: user.id,
+        name: user.name,
+        progress: user.progress
+      }
+    }
+  }
+  async addProgressDetail(user_id, progress_meaning) {
     // Validate the inputs
-    if (typeof userId !== 'number' || !Number.isInteger(userId)) {
+    if (typeof user_id !== 'number' || !Number.isInteger(user_id)) {
       throw new Error('Wrong format.')
     }
-    if (!progressMeaning || typeof progressMeaning !== 'string') {
+    if (!progress_meaning || typeof progress_meaning !== 'string') {
       throw new Error('The progress meaning is required.')
     }
     // Validate the existence of the user
-    const user = await this.app.models.User.findOne({ where: { id: userId } })
+    const user = await this.app.models.User.findOne({ where: { id: user_id } })
     if (!user) {
       throw new Error('This user is not found.')
     }
@@ -22,8 +41,8 @@ class ProgressDetailService extends Service {
     let progressDetail
     try {
       progressDetail = await this.app.models.ProgressDetail.create({
-        user_id: userId,
-        progress_meaning: progressMeaning
+        user_id,
+        progress_meaning
       })
     } catch (error) {
       throw new Error('Failed to add progress detail.')

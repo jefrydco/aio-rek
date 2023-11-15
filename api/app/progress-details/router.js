@@ -7,7 +7,8 @@ const {
   handleRole
 } = require('../middleware')
 const {
-  addProgressDetail
+  addProgressDetail,
+  getUserProgress
 } = require('./controller')
 router.post(
   '/api/users/:id/progress_details',
@@ -20,5 +21,11 @@ router.post(
     check('progress_meaning').notEmpty().withMessage('The progress meaning is required.')
   ],
   addProgressDetail
+)
+router.get(
+  '/users/:id/progress',
+  jwtAuth.required,
+  handleRole('user'),
+  getUserProgress
 )
 module.exports = router
