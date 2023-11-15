@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 // PATH: /api/app/users/router.js
-=======
->>>>>>> test-github
 const bodyParser = require('body-parser')
 const router = require('express').Router()
 const {
@@ -20,16 +17,10 @@ const {
   update,
   destroy,
   forgotPassword,
-<<<<<<< HEAD
   resetPassword,
-  updatePassword // import the updatePassword function
-} = require('./controller')
-const { resetPasswordRules, updatePasswordRules } = require('./validation'); // import the updatePasswordRules function
-=======
-  resetPassword
+  updateProgress // import the updateProgress function
 } = require('./controller')
 const { resetPasswordRules } = require('./validation');
->>>>>>> test-github
 router.post(
   '/users/login',
   bodyParser.json(),
@@ -67,6 +58,14 @@ router.put(
   handleRole('admin'),
   update
 )
+router.put(
+  '/users/:id/progress',
+  bodyParser.json(),
+  createTransaction,
+  jwtAuth.required,
+  handleRole('admin'),
+  updateProgress
+)
 router.delete(
   '/users/:id',
   createTransaction,
@@ -102,17 +101,5 @@ router.post(
   handleRole('user'),
   resetPasswordRules,
   resetPassword
-<<<<<<< HEAD
-)
-router.post(
-  '/users/update-password',
-  bodyParser.json(),
-  createTransaction,
-  jwtAuth.required,
-  handleRole('user'),
-  updatePasswordRules,
-  updatePassword
-=======
->>>>>>> test-github
 );
 module.exports = router
